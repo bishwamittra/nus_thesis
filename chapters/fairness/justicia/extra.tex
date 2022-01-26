@@ -1,0 +1,43 @@
+\clearpage
+\section{Verifying Fairness}
+With an increasing applications of different algorithmic decision processes in our day to day life, it becomes crucial to evaluate if the algorithm is fair with respect to  all concerned ethnic groups.  In our study we focus on machine learning (ML) algorithms that are trained on a given training set. Now the decision may be unfair for one of the following two reasons or both. 
+\begin{enumerate}
+	\item \label{data-bias} The underlying data on which the algorithm is trained is biased towards a particular ethnic group(s) and the ML algorithm essentially learns to be unfair during its training. 
+	\item \label{model-bias} The training dataset is not biased, however, the ML algorithm is showing bias in its decision. Various factors can cause such an unfairness. For instance, the ML algorithm typically considers different hyper-parameters and optimizes them during training. Such an optimization (towards higher accuracy) may be the reason why the ML algorithm becomes unfair although the training set is not biased. 
+\end{enumerate}
+
+In this study, we refer \ref{data-bias} as data bias and \ref{model-bias} as model bias. Now the goal of this study is to verify the fairness of a prediction system that may be vulnerable to be unfair in its decision either for data-bias or model-bias or both.  
+
+We now discuss the set of challenges to address in this study. Firstly, there are different definitions of fairness in the literature, of which we primarily focus on counterfactual fairness. \blue{[We need to give reasons as to why we focus on counterfactual fairness.]} Secondly,  we make an assumption that the causal graph of the training dataset is available. Although this assumption may not be always met due to the unavailability of causal graph for a particular dataset or the higher computational expense of calculating the exact causal graph for a given dataset.  Thirdly, we assume the ML algorithm to be a black-box meaning that the knowledge of the inner working of the prediction model is unknown. However, the model can be queried to get the classification of an input. 
+
+
+Since in the practical situation, only the ML model is given but not the training dataset, we still assume that the specification of the dataset is known in advance so that we can generate random inputs meeting the specification and query the model to get its class label. By specification, we mean the description of input features, their ranges and other meta information of the features, i.e., whether a feature is a sensitive feature or not. In this context, the sensitive feature carry the same definition as discussed in fairness literature.  
+
+
+We now give a formal definition of the problem. Let $ X $ and $ A $ be the set of non-sensitive features and sensitive features, respectively and $ M $ be the ML model that we treat as a black-box. $ M $ implements a classification function $ Y=f(X,A) $  and for binary classification $ Y \in \{0,1\} $. Therefore, $ Y $ can be utilized to answer membership queries of input $ x\circ a  $ where $ x \circ a $ is the valuation of features in $ X \cup A $. Here $ \circ $ denotes the concatenation of two vector $ x $ and $ a $.   We are then interested in verifying whether $ Y $ is fair or not depending on the definition of counterfactual fairness, which we introduce next.
+
+\textbf{Counterfactual fairness:} Consider that $ X $, $ A $, and $ Y $ are three random variables on non-sensitive features, sensitive features, and predictor, respectively. Now a predictor $ Y $ is counterfactually fair if the following condition holds. 
+
+\begin{equation}
+\label{eq:counterfactual-fairness}
+\mathsf{Pr}(Y = y| X=x, A=a) = \mathsf{Pr}(Y=y| X=x, A=a')
+\end{equation}
+
+In words,  a predictor $ Y $ is counterfactually fair if the $ Y $  is independent of the  valuation of the sensitive feature of the input. 
+
+Given a predictor $ Y $, we want to verify if $ Y $ satisfies Eq.~\ref{eq:counterfactual-fairness}. 
+
+\red{[Now introduce $ \epsilon, \delta $] definition of fairness verification.}
+
+\textbf{Independence.} e.g. demographic parity, statistical parity, group parity
+
+\textbf{Separation.} e.g. equalizing the odds over groups
+
+\textbf{Sufficiency.} e.g. Counterfactual fairness
+
+
+
+
+
+	
+	

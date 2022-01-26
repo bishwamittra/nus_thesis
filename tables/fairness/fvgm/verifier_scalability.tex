@@ -1,0 +1,121 @@
+\clearpage
+
+\begin{table}[t!]
+    \centering
+        \setlength{\tabcolsep}{.3em}
+%        \vspace*{-.3em}
+            \begin{tabular}{lrrrrrrrrrrrrrrr}
+                \toprule
+                Dataset   & \multicolumn{3}{c}{Ricci} & \multicolumn{3}{c}{Titanic} & \multicolumn{3}{c}{COMPAS} &  \multicolumn{3}{c}{Adult} &
+                \multicolumn{3}{c}{German} \\ 
+                
+                \cmidrule(lll){2-4}
+                \cmidrule(lr){5-7}
+                \cmidrule(lr){8-10}
+                \cmidrule(lr){11-13}
+                \cmidrule(lr){14-16}
+                
+
+                Classifier & 
+                LR & SVC & DT &
+                LR & SVC & DT &
+                LR & SVC & DT &
+                LR & SVC & DT &
+                LR & SVC & DT \\
+				 \midrule
+
+{\framework} &  $ \textbf{0.1} $  &  $ \textbf{0.1} $  &  $ \textbf{0.1} $  &  $ \textbf{0.1} $  &  $ \textbf{0.1} $  &  $ 1.6 $  &  $ \textbf{0.4} $  &  $ \textbf{0.5} $  &  $ 121.7 $  &  $ \textbf{0.9} $  &  $ 1.8 $  &  $ \textbf{0.3} $  &  $ \textbf{1.4} $  &  $ \textbf{1.4} $  &  $ 2.3 $  \\ 
+Justicia &  $ 2.2 $  &  $ 2.2 $  &  $ \textbf{0.1} $  &  $ 0.3 $  &  $ 0.2 $  &  $ \textbf{0.3} $  & \textemdash & \textemdash &  $ \textbf{0.3} $  & \textemdash &  $ \textbf{1.7} $  &  $ 0.4 $  & \textemdash & \textemdash &  $ \textbf{0.2} $  \\ 
+VeriFair &  $ 2.0 $  &  $ 1.8 $  &  $ 1.9 $  &  $ 0.5 $  &  $ 0.4 $  &  $ 17.2 $  &  $ 12.2 $  &  $ 11.6 $  &  $ 377.1 $  &  $ 7.3 $  &  $ 21.7 $  &  $ 57.9 $  &  $ 19.2 $  &  $ 28.8 $  &  $ 78.5 $  \\ 
+FairSquare & \textemdash & \textemdash &  $ 4.6 $  & \textemdash & \textemdash &  $ 432.9 $  & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash \\ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+		
+			
+				
+				
+				
+				
+				
+				
+				
+
+
+    \end{tabular}
+\caption{Scalability of different verifiers in terms of execution time (in seconds).  DT and LR refer to decision tree and logistic regression respectively. `\textemdash'~ refers to timeout. \red{Restricted experiments with Boolean single sensitive attribute.}}
+\label{tab:FS_VF_Justicia}
+%\vspace*{-1em}
+\end{table}
+
+
+
+
+
+
+
+
+\begin{table}[t!]
+	\centering
+	\setlength{\tabcolsep}{.3em}
+	%        \vspace*{-.3em}
+	\begin{tabular}{lrrrrrrrrrrrrrrr}
+		\toprule
+		Dataset   & \multicolumn{3}{c}{Ricci} & \multicolumn{3}{c}{Titanic} & \multicolumn{3}{c}{COMPAS} &  \multicolumn{3}{c}{Adult} &
+		\multicolumn{3}{c}{German} \\ 
+		
+		\cmidrule(lr){2-4}
+		\cmidrule(lr){5-7}
+		\cmidrule(lr){8-10}
+		\cmidrule(lr){11-13}
+		
+		
+		Classifier & 
+		LR & SVC & DT &
+		LR & SVC & DT &
+		LR & SVC & DT &
+		LR & SVC & DT &
+		LR & SVC & DT \\
+		\midrule
+		
+		{\framework} &  $ 0.86 $  &  $ 1.0 $  &  $ 1.0 $  &  $ 0.16 $  &  $ 0.0 $  &  $ 0.59 $  &  $ 0.74 $  &  $ 0.85 $  &  $ 0.94 $  &  $ 0.65 $  &  $ 1.0 $  &  $ 0.49 $  &  $ 0.82 $  &  $ 0.9 $  &  $ 0.94 $  \\ 
+		Justicia &  $ 0.26 $  &  $ 0.36 $  &  $ 0.3 $  &  $ 0.14 $  &  $ 0.0 $  &  $ 0.55 $  & \textemdash & \textemdash &  $ 0.79 $  & \textemdash &  $ 0.85 $  &  $ 0.22 $  & \textemdash & \textemdash &  $ 0.89 $  \\ 
+		VeriFair &  $ 0.28 $  &  $ 0.4 $  &  $ 0.49 $  &  $ 0.1 $  &  $ 0.0 $  &  $ 0.87 $  &  $ 0.79 $  &  $ 0.74 $  &  $ 0.97 $  &  $ 0.79 $  &  $ 0.88 $  &  $ 0.93 $  &  $ 0.66 $  &  $ 0.64 $  &  $ 0.89 $  \\ 
+		FairSquare & \textemdash & \textemdash &  $ 0.52 $  & \textemdash & \textemdash &  $ 0.87 $  & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash & \textemdash \\ 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	\end{tabular}
+	\caption{Computed disparate impact by different fairness verifiers on different datasets and classifiers.  DT and LR refer to decision tree and logistic regression respectively. `\textemdash'~ refers to timeout.}
+	\label{tab:FS_VF_Justicia}
+	%\vspace*{-1em}
+\end{table}

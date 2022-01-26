@@ -1,0 +1,93 @@
+\section{Applications of {\fvgm}}\label{fairness_fvgm_sec:applications}
+In this section, we apply {\fvgm} for verifying fairness-enhancing algorithms and depreciation attacks. We also show that {\fvgm} facilitates computation of fairness influence functions enabling detection of bias due to individual features. 
+
+
+\iffalse
+\begin{figure}[t!]
+	%\vspace{-1em}
+	
+	\centering
+	\subfloat{\includegraphics[scale=0.25]{figures/fairness/fvgm/disp_fairness_attack}}
+	\subfloat{\includegraphics[scale=0.25]{figures/fairness/fvgm/stat_fairness_attack}}
+	%\vspace{-0.5em}
+	\caption{Verifying poisoning attack against fairness using {\fvgm}. The red line denotes the safety margin of the ML model against the attack.}\label{fairness_fvgm_fig:fairness_attacks}
+\end{figure}
+\fi
+
+
+\paragraph{Verifying Fairness-enhancing Algorithms.} We deploy {\fvgm} in verifying the effectiveness of fairness-enhancing algorithms designed to ameliorate bias. For example, fairness 
+pre-processing algorithms can be validated by applying {\fvgm} on the unprocessed and the processed data separately and comparing different fairness metrics. In Table~\ref{fairness_fvgm_tab:fair_algo_verification}, we report the effect of fairness algorithms w.r.t. four fairness metrics: disparate impact (DI), path-specific causal fairness (PCF), statistical parity (SP), and equalized odds (EO). Note that, fairness is improved if DI increases and the rest of the metrics decrease. In most instances for Adult dataset, reweighing (RW)~\cite{kamiran2012data} and optimized pre-processing (OP)~\cite{calmon2017optimized} algorithms are successful in improving fairness. Except for the unfairness regarding the sensitive feature `sex', where OP algorithm fails. Thus, \textit{{\fvgm} verifies the enhancement and decrement in fairness by  fairness-enhancing algorithms. }
+
+
+\paragraph{Verifying Fairness Attacks.}
+We apply {\fvgm} in verifying a fairness poisoning-attack algorithm. This algorithm injects a small fraction of poisoned samples into the training data such that the classifier becomes relatively unfair~\cite{solans2020poisoning}. We apply this attack to add $\{1, 5, \dots, 160\}$ poisoned samples  and measure the corresponding DI's. In Figure~\ref{fairness_fvgm_fig:fairness_attacks},  {\fvgm} verifies that DI of the classifier decreases, i.e.\textit{ the classifier becomes more unfair},\textit{ as the number of poisoned samples increases}. Therefore, {\fvgm} shows the potential of being deployed in safety-critical applications to detect fairness attacks. For example, if we set $0.9$ as an acceptable threshold of DI, {\fvgm} can raise an alarm once $160$ poisoned samples are added.
+
+
+\iffalse
+\begin{table}[!t]
+	
+	\centering
+	\small
+	\caption{Verification of fairness algorithms using {\fvgm}. Numbers in bold refer to fairness improvement. RW and OP refer to reweighing and optimized-preprocessing algorithms.  }\label{fairness_fvgm_tab:fair_algo_verification}
+	\setlength{\tabcolsep}{.4em}
+	
+	\begin{tabular}{lllrrrrrrrrrrrrr}
+		
+		\toprule
+		Dataset & Sensitive & Algo. & $ \Delta $ DI &  $ \Delta $ PCF & $ \Delta $ SP & $ \Delta $ EO\\
+		\midrule
+		
+		
+		\multirow{4}{*}{Adult}&\multirow{2}{*}{race}&RW&$ \textbf{0.53} $&$ \textbf{-0.06} $&$ \textbf{-0.06} $&$ \textbf{-0.02} $\\
+		&&OP&$ \textbf{0.57} $&$ \textbf{-0.07} $&$ \textbf{-0.07} $&$ \textbf{-0.02} $\\
+		\cmidrule{2-7}
+		&\multirow{2}{*}{sex}&RW&$ \textbf{0.96} $&$ \textbf{-0.16} $&$ \textbf{-0.15} $&$ \textbf{-0.08} $\\
+		&&OP&$ \textbf{0.43} $&$ \textbf{-0.08} $&$ \textbf{-0.08} $&$ 0.03 $\\
+		
+		\midrule
+		\multirow{4}{*}{COMPAS}&\multirow{2}{*}{race}&RW&$ \textbf{0.13} $&$ \textbf{-0.07} $&$ \textbf{-0.07} $&$ \textbf{-0.06} $\\
+		&&OP&$ \textbf{0.15} $&$ \textbf{-0.08} $&$ \textbf{-0.08} $&$ \textbf{-0.05} $\\
+		\cmidrule{2-7}
+		&\multirow{2}{*}{sex}&RW&$ \textbf{0.1} $&$ \textbf{-0.04} $&$ \textbf{-0.04} $&$ 0.04 $\\
+		&&OP&$ \textbf{0.09} $&$ \textbf{-0.04} $&$ \textbf{-0.04} $&$ \textbf{-0.03} $\\
+		
+		\midrule
+		\multirow{4}{*}{German}&\multirow{2}{*}{age}&RW&$ \textbf{0.52} $&$ \textbf{-0.53} $&$ \textbf{-0.52} $&$ \textbf{-0.47} $\\
+		&&OP&$ \textbf{0.53} $&$ \textbf{-0.53} $&$ \textbf{-0.53} $&$ \textbf{-0.51} $\\
+		\cmidrule{2-7}
+		&\multirow{2}{*}{sex}&RW&$ -0.06 $&$ 0.06 $&$ 0.06 $&$ 0.02 $\\
+		&&OP&$ -0.12 $&$ 0.12 $&$ 0.12 $&$ 0.07 $\\
+		
+		
+		\bottomrule
+	\end{tabular}
+\end{table}
+\fi
+
+
+
+
+\paragraph{Fairness Influence Function (FIF): Tracing Sources of Unfairness.}
+Another application of \fvgm{} as a fairness verifier is to quantify the effect of a subset of features on fairness. Thus, we define fairness influence function (FIF)  that computes the effect of a subset of features $\mathbf{S}$ on the PPV of a classifier given a specific sensitive group $ \sensitive = \mathbf{a}$,
+$
+	\mathsf{FIF}(\mathbf{S}) \triangleq \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}, \mathcal{D}] - \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a},  \mathcal{D}_{-\mathbf{S}}].
+$
+FIF allows us to explain the sources of unfairness in the classifier. In practice, we compute FIF of $\mathbf{S}$ by replacing the probability distribution of $\mathbf{S}$ with a uniformly random distribution, referred to as  $ \mathcal{D}_{-\mathbf{S}} $, and reporting differences in the conditional PPVs. Further details of FIF are in Appendix.
+
+In Figure~\ref{fairness_fvgm_fig:influence function}, we compute FIF for all features in COMPAS dataset, separately for two sensitive groups: Female (`sex' $ = 1 $) and Male. This dataset concerns the likelihood of a person of re-offending crimes within the next two years. We first observe that the base PPV values are different for the two groups ($ 0.46 $ vs $ 0.61 $ for Female and Male), thereby showing Male as more probable to re-offend crimes than Female. Moreover, FIF of the feature `age' is comparatively higher in magnitude for Male than Female. 
+This implies that while deciding recidivism the algorithm assumes that Female individuals across different ages re-offend crimes with almost the same probability and the probability of re-offending for Male individuals highly depends on age. Thus, applying {\fvgm} to compute FIF provides us insights about sources of bias and thus, indicators to improve fairness.
+
+
+\begin{figure}[t!]	
+	\centering
+	\vspace{-2ex}
+	\subfloat{\includegraphics[scale=0.23]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_1}}
+	\subfloat{\includegraphics[scale=0.23]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_0}}
+	%\vspace{-0.5em}
+%	\vspace{-2ex}
+	\caption{\footnotesize FIF computation for COMPAS dataset. For Female (left plot) and Male, influence of `age' decreases and the PPV of the classifier increases  by different magnitudes.}\label{fairness_fvgm_fig:influence function}
+%	\vspace{-2ex}
+\end{figure}
+
+
+

@@ -1,0 +1,121 @@
+
+\begin{table*}       
+    \centering
+        \setlength{\tabcolsep}{.2em}
+            \begin{tabular}{ll
+            				ccc
+            				ccc
+            				ccc
+            				ccc
+            				ccc
+            				ccc}
+                \toprule
+                \multirow{3}{*}{Encoding}& Dataset $ \rightarrow $   & 
+                \multicolumn{8}{c}{Adult} &
+%                \multicolumn{6}{c}{German} &
+                \multicolumn{8}{c}{COMPAS} \\ 
+                \cmidrule(lr){3-10}
+                \cmidrule(lr){11-18}
+                & Protected  $ \rightarrow $ & 
+                \multicolumn{4}{c}{Race}   & \multicolumn{4}{c}{Sex}  &
+%                \multicolumn{3}{c}{Age}   & \multicolumn{3}{c}{Sex}  &
+                \multicolumn{4}{c}{Race}   & \multicolumn{4}{c}{Sex}
+                \\ 
+                \cmidrule(lr){3-6}
+                \cmidrule(lr){7-10}
+                \cmidrule(lr){11-14}
+                \cmidrule(lr){15-18}
+
+                 & Algorithm  $ \rightarrow $ &  
+                orig. & RCO &
+                orig. & CPP &
+                orig. & RCO &
+                orig. & CPP &
+                orig. & RCO &
+                orig. & CPP &
+				orig. & RCO &
+				orig. & CPP &
+               \\
+                \midrule
+          
+              
+              
+			Ind
+			& DI&  $ 0.76 $ &  $ 0.67 $ &  $ 1.00 $ &  $ 0.71 $ &  $ 0.30 $ &  $ \mathbf{0.63} $ &  $ 1.00 $ &  $ 0.06 $ &  $ 0.96 $ &  $ 0.62 $ &  $ 1.00 $ &  $ \mathbf{1.00} $ &  $ 0.60 $ &  $ 0.55 $ &  $ 0.80 $ &  $ 0.75 $  \\
+			& SP&  $ 0.15 $ &  $ 0.16 $ &  $ 0.00 $ &  $ 0.05 $ &  $ 0.53 $ &  $ \mathbf{0.21} $ &  $ 0.00 $ &  $ 0.13 $ &  $ 0.01 $ &  $ 0.14 $ &  $ 0.00 $ &  $ \mathbf{0.00} $ &  $ 0.13 $ &  $ \mathbf{0.13} $ &  $ 0.11 $ &  $ \mathbf{0.10} $  \\
+			\midrule
+			DAG
+			& DI&  $ 0.73 $ &  $ 0.68 $ &  $ 1.00 $ &  $ 0.71 $ &  $ 0.33 $ &  $ \mathbf{0.68} $ &  $ 1.00 $ &  $ 0.05 $ &  $ 0.93 $ &  $ 0.62 $ &  $ 1.00 $ &  $ \mathbf{1.00} $ &  $ 0.62 $ &  $ 0.56 $ &  $ 0.80 $ &  $ 0.75 $  \\
+			& SP&  $ 0.17 $ &  $ \mathbf{0.15} $ &  $ 0.00 $ &  $ 0.05 $ &  $ 0.51 $ &  $ \mathbf{0.17} $ &  $ 0.00 $ &  $ 0.15 $ &  $ 0.02 $ &  $ 0.14 $ &  $ 0.00 $ &  $ \mathbf{0.00} $ &  $ 0.13 $ &  $ \mathbf{0.13} $ &  $ 0.11 $ &  $ \mathbf{0.10} $  \\
+			
+			
+               
+            \bottomrule
+    \end{tabular}
+\caption{Logistic regression and two encodings: learn and learn-dependency. ``\textemdash'' refers to timeout of DAG learner (Notears). }
+\end{table*}
+
+
+
+\begin{table*}       
+	\centering
+	        \setlength{\tabcolsep}{.2em}
+	\begin{tabular}{ll
+			ccc
+			ccc
+			%            				ccc
+			%            				ccc
+			ccc
+			ccc}
+		\toprule
+		\multirow{3}{*}{Classifier}& Dataset $ \rightarrow $   & 
+		\multicolumn{6}{c}{Adult} &
+		%                \multicolumn{6}{c}{German} &
+		\multicolumn{6}{c}{COMPAS} \\ 
+		\cmidrule(lr){3-8}
+		\cmidrule(lr){9-14}
+		%                \cmidrule(lr){15-20}
+		& Protected  $ \rightarrow $ & 
+		\multicolumn{3}{c}{Race}   & \multicolumn{3}{c}{Sex}  &
+		%                \multicolumn{3}{c}{Age}   & \multicolumn{3}{c}{Sex}  &
+		\multicolumn{3}{c}{Race}   & \multicolumn{3}{c}{Sex}
+		\\ 
+		\cmidrule(lr){3-5}
+		\cmidrule(lr){6-8}
+		\cmidrule(lr){9-11}
+		\cmidrule(lr){12-14}
+		%                \cmidrule(lr){15-17}
+		%                \cmidrule(lr){18-20}
+		
+		& Algorithm  $ \rightarrow $ &  
+		orig. & RW & OP & 
+		orig. & RW & OP &
+		%                orig. & RW & OP &
+		%                orig. & RW & OP &
+		orig. & RW & OP &
+		orig. & RW & OP \\ 
+		\midrule
+		
+		
+		
+		\multirow{3}{*}{\shortstack{Logistic \\ regression}}
+		& Disparte impact&  $ 0.41 $ &  $ \mathbf{0.67} $ &  $ \mathbf{0.97} $ &  $ 0.04 $ &  $ \mathbf{1.00} $ &  $ \mathbf{0.76} $ &  $ 0.78 $ &  $ 0.49 $ &  $ 0.63 $ &  $ 0.64 $ &  $ 0.63 $ &  $ \mathbf{1.00} $  \\
+		& Stat. parity&  $ 0.07 $ &  $ \mathbf{0.05} $ &  $ \mathbf{0.00} $ &  $ 0.16 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.02} $ &  $ 0.09 $ &  $ 0.31 $ &  $ 0.21 $ &  $ 0.16 $ &  $ 0.21 $ &  $ \mathbf{0.00} $  \\
+		& Equalized odds&  $ 0.03 $ &  $ \mathbf{0.02} $ &  $ \mathbf{0.00} $ &  $ 0.08 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.06} $ &  $ 0.09 $ &  $ 0.31 $ &  $ 0.20 $ &  $ 0.17 $ &  $ 0.20 $ &  $ \mathbf{0.00} $  \\
+		\midrule
+		\multirow{3}{*}{\shortstack{Decision \\ tree}}
+		& Disparte impact&  $ 0.65 $ &  $ \mathbf{1.00} $ &  $ \mathbf{0.80} $ &  $ 0.00 $ &  $ \mathbf{1.00} $ &  $ \mathbf{0.92} $ &  $ 0.96 $ &  $ \mathbf{0.97} $ &  $ \mathbf{1.00} $ &  $ 0.82 $ &  $ \mathbf{1.00} $ &  $ \mathbf{0.95} $  \\
+		& Stat. parity&  $ 0.04 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.03} $ &  $ 0.17 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.01} $ &  $ 0.02 $ &  $ \mathbf{0.01} $ &  $ \mathbf{0.00} $ &  $ 0.07 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.02} $  \\
+		& Equalized odds&  $ 0.12 $ &  $ \mathbf{-0.00} $ &  $ \mathbf{0.03} $ &  $ 0.45 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.06} $ &  $ 0.02 $ &  $ \mathbf{0.01} $ &  $ \mathbf{0.00} $ &  $ 0.07 $ &  $ \mathbf{0.00} $ &  $ \mathbf{0.06} $  \\
+		
+		
+		
+		
+		
+		
+		
+		
+		\bottomrule
+	\end{tabular}
+	\caption{Verification of different fairness enhancing algorithms for multiple datasets and classifiers using {\framework}. Numbers in bold refer to fairness improvement  compared against the unprocessed (orig.) dataset. RW and OP refer to reweighing and optimized-preprocessing algorithm respectively. }
+\end{table*}

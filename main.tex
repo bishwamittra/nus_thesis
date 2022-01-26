@@ -1,6 +1,4 @@
-% Layout similar to 
-% https://admin-eguide.web.cern.ch/en/content/thesis-description-template
-\documentclass{article}
+\documentclass[12pt]{report}
 
 
 % Define margins
@@ -9,60 +7,117 @@
 \setlength{\textwidth}{16.5cm}
 \setlength{\textheight}{23.0cm}
 
-% language
-\usepackage[english]{babel}
-
-% graphics
-\usepackage{pstool}                    % post-script editing from latex
-\usepackage[dvips]{rotating,graphicx}  % use graphics 
-\usepackage{float}                     % enables float options (positioning of elements)
-
-% fonts
-\usepackage[utf8]{inputenc}            % encode strings properly
-\usepackage{lmodern}                   % loads latin-modern fonts
-\usepackage{color}                     % use colors in text
-
-% links
-\usepackage{hyperref}
-\hypersetup{
-            %backref,  % already set somewhere
-            pdfpagemode=UseOutlines ,
-            linkcolor=[RGB]{0,51,160}, % blue,
-            citecolor=[RGB]{0,51,160}, % blue,
-            urlcolor=[RGB]{0,51,160}, % blue,
-            % hyperfigures=true,  % already set somewhere
-            colorlinks=true}
 
 
-% other styles
-\usepackage{enumitem}  % helps to make smaller dots in enum
-\usepackage{latexsym}
 
-% math
-\usepackage{siunitx}                        % use si units with \si{unit} or \SI{#}{unit}
-\usepackage{amsmath}                        % math package
-\usepackage{mathtools}                      % allows mulit-column cases*
-\usepackage{bm}                             % bold math symbols
+
+
 
 % Define header and footer
 \usepackage{lastpage}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{\href{http://www.cern.ch}{\includegraphics[height=.8cm]{nus.png}}}
+\lhead{{\includegraphics[height=.8cm]{figures/nus.png}}}
 \rhead{\textbf{\textit{Interpretable and Fair Machine Learning}} }
 \lfoot{\textbf{\textit{Page \thepage/\pageref*{LastPage}}}}
 \renewcommand{\footrulewidth}{0.7pt}
 \renewcommand{\headrulewidth}{0.7pt}
 
-% tables
-\usepackage{multirow}       % allows multiple rows put into one
-\usepackage{booktabs}       % hline extensions like \toprule \bottomrule \midrule 
-\usepackage{makecell}       % multiline cells
 
-% references
+
+% Packages
+\usepackage{amsmath}
+\usepackage{amsthm,dsfont,amssymb}
+\newtheorem{comment}{Comment}
+%\theoremstyle{definition}
+\usepackage[utf8]{inputenc} 
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{comment}
+\usepackage{microtype}
+\usepackage{wrapfig}
+\usepackage{hyperref,url}
+\usepackage[
+font=footnotesize % or small or scriptsize
+]{subfig}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{enumitem,kantlipsum}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+
+% Theorem
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{property}[theorem]{Property}
+\newtheorem*{remark}{Remark}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{lemmarep}{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}{Example}[section]
+\newtheorem{corollary}{Corollary}
+
+
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{automata}
+\usetikzlibrary{bayesnet,arrows}
+\usetikzlibrary{shapes,fit,calc,positioning}
+\tikzset{box/.style={draw, diamond, thick, text centered, minimum height=0.5cm, minimum width=1cm, text width=0.9cm}}
+\tikzset{line/.style={draw, thick, -latex'}}
+
+
+% References
 \usepackage{cite}
 \usepackage[nameinlink,capitalize]{cleveref}  % easy referencing
+
+
+
+
+% Macros
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+
+% Fairness 
+%	Justicia
+			\newcommand{\justicia}{\ensuremath{\mathsf{Justicia}}}
+			\newcommand{\nonsensitive}{\ensuremath{\mathbf{X}}}
+			\newcommand{\sensitive}{\ensuremath{\mathbf{A}}}
+			\newcommand{\bool}{\ensuremath{B}}
+			\newcommand{\alg}{\mathcal{M}}
+			\newcommand{\R}{\ensuremath{\raisebox{\depth}{\rotatebox{180}{R}}}}
+			\newcommand{\justiciaenum}{\ensuremath{\mathsf{Justicia\_enum}}}
+			\newcommand{\justicialearn}{\ensuremath{\mathsf{Justicia\_learn}}}
+			\newcommand{\justiciacond}{\ensuremath{\mathsf{Justicia\_cond}}}
+	
+%	FVGM
+			\newcommand{\fvgm}{\ensuremath{\mathsf{FVGM}}}
+			\newcommand{\mediator}{\ensuremath{\mathbf{Z}}}
+			\newcommand{\stochastic}{\ensuremath{\mathsf{S3P}}}
+			\DeclareMathOperator*{\argmax}{arg\,max}
+			\DeclareMathOperator*{\argmin}{arg\,min}
+			\newcommand{\graph}{\ensuremath{G}}
+			\newcommand{\factors}{\ensuremath{\theta}}
+			\newcommand{\parent}{\ensuremath{\mathrm{Pa}}}
+			\newcommand{\BN}{\ensuremath{\mathsf{BN}}}
+			
+%			color
+			\definecolor{terminate}{gray}{0.8}
+			\definecolor{collision}{rgb}{0.2,1,0.3}
+			\definecolor{existential}{rgb}{0.9,0.9, 0.1}
+			
+			
+			
+			
+			
+			
+
 
 \begin{document}
 	\begin{center}
@@ -71,22 +126,35 @@
 		\large Bishwamittra Ghosh
 	\end{center}
 	
-	\vspace{1em}
-	The tremendous success of machine learning in recent years has found its applications in different high-stake and  safety-critical domains, such as medical, law, education, and transportation. In such domains, the interpretability and fairness of machine learning classifiers are of paramount importance. In this work, we focus on improving the interpretability and fairness in machine learning. 
+	\input{chapters/introduction.tex}
 	
-	There are two-fold objectives in interpretable machine learning: (i) designing classifiers that are interpretable by design and (ii) leveraging already interpretable models to explain the prediction of black-box classifiers. In this work, we propose an efficient learning framework~\cite{ghosh19incremental} for a rule-based classifier\textemdash a popular interpretable model because of expressing the decision function in terms of rules corresponding to input features.  Our framework allows us to learn classification rules expressible in propositional logic, for example, CNF (Conjunctive Normal Form) and DNF (Disjunctive formal form) formulas.  The benefit of learning CNF classifiers is that this is the fundamental block for learning other popular interpretable representations: decision lists and decision sets. Learning rule-based classifiers is an intractable problem because of solving a combinatorial optimization problem. To efficiently learn these classifiers, we propose a MaxSAT-based formulation and scale it by combining incremental learning. The result is an efficient learning framework that can classify datasets even with 1 million samples while also balancing between high accuracy and small rule size. As an application of incremental learning, we propose to learn more relaxed logical rules~\cite{ghosh20classification} which demonstrate higher succinctness in their representation while achieving better accuracy. Furthermore, as an application of MaxSAT, we solve group testing problems based on compressed sensing~\cite{ciampiconi20maxsat}. Our MaxSAT-based formulation for group testing has impressive scalability than state-of-the-art approaches. 
-	
-	
-	
-	We study the application of interpretable machine learning models in explaining the prediction of black-box models such as neural networks. To this end, we propose a PAC-based (Probably Approximately Correct) local explanations of feed-forward and recurrent neural networks using rule-based classifiers and their variants~\cite{neider2020probably,ghosh2020formal}. To explain feed-forward neural networks, we learn flexible classification rules using SyGuS~\cite{neider2020probably}. Such rules have the theoretical property that they are PAC approximate to the neural network within the locality of a query of interest. Similarly, to explain recurrent neural networks, we propose learning explanations in LTL formulas (Linear Temporal Logic)~\cite{ghosh2020formal}. 
-	
-	
-	Machine learning models may become biased in their decisions towards certain demographic populations. One important question in fairness in machine learning is to verify whether the model is unfair or not with respect to multiple definitions of fairness studied in the literature. To this end, we propose a scalable fairness verification framework based on formal methods, particularly stochastic satisfiability (SSAT)~\cite{ghosh2020justicia} and stochastic subset-sum problem (S3P)~\cite{ghosh2021algorithmic}. The input to the fairness verifier is a machine learning model and the distribution of input features and the output is an assessment of different fairness metrics that the model obtains given the distribution. Our fairness verifier has the following advantages over existing verifiers. We can efficiently verify the fairness of compound sensitive groups\textemdash such as, white-male and black-female\textemdash by combining multiple sensitive features, unlike existing works that only consider a single binary sensitive feature. We also consider feature-correlation represented as a Bayesian network whereas existing methods consider limited correlation among features. As a result, the proposed verifier has higher accuracy than existing verifiers. Finally, our verifier is more scalable than existing verifiers because of the efficient formulation based on SSAT and S3P. 
-	
-	
-	As future work, we aim to combine the interpretability and fairness of machine learning in a single framework. In particular, we explain the unfairness of models by combining explanation methods in machine learning. Our hypothesis is that such a combination would be effective in identifying the bias of a model and also mitigate the bias through imperative actions.
-	
-	
+%	Fairness
+%		Justicia
+			\chapter{Justicia: A Stochastic SAT Approach to Formally Verify Fairness}
+				\input{chapters/fairness/justicia/abstract.tex}
+				\input{chapters/fairness/justicia/introduction.tex}
+				\input{chapters/fairness/justicia/preliminaries.tex}
+				\input{chapters/fairness/justicia/framework.tex}
+				\input{chapters/fairness/justicia/practical.tex}
+				\input{chapters/fairness/justicia/experiments.tex}
+				\input{chapters/fairness/justicia/discussion.tex}
+				
+				
+%		FVGM
+		\chapter{Algorithmic Fairness Verification with Graphical Models}
+				\input{chapters/fairness/fvgm/abstract}
+				\input{chapters/fairness/fvgm/introduction}
+				\input{chapters/fairness/fvgm/background}
+				\input{chapters/fairness/fvgm/framework}
+				\input{chapters/fairness/fvgm/framework2}
+				\input{chapters/fairness/fvgm/evaluations}
+				\input{chapters/fairness/fvgm/applications}
+				\input{chapters/fairness/fvgm/conclusion}
+				
+				
+			
+		
+			 
 	
 \bibliographystyle{siamurl}
 \bibliography{ref}

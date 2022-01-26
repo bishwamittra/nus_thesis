@@ -1,0 +1,106 @@
+\begin{figure*}[t!]
+	\centering
+
+	\subfloat[Known marginal  probabilities.]{
+%		\centering
+		\scalebox{0.75}{
+		\begin{tikzpicture}[>=stealth',shorten >=1pt, on grid,initial/.style={}]
+			\node[state, align=center, fill=existential] (T1) {$ 1, 2 $\\$ 0.55 $};
+			\node[state, align=center, label={[align=left,right]0:$ 0.85\Pr[Q] + 0.35\Pr[\neg Q] $\\$ =0.55 $}] (T2) [below = 1.6 cm of T1] {$2,1$\\$ 0.55 $};
+			\node[state, align=center] (T3) [below left = 1.5 cm and 1.8 cm of T2] {$ 3,0 $\\$ 0.85$};
+			\node[state, align=center, fill=terminate] (T4) [below left = 1.5 cm and 1 cm of T3] {$ 4, -1$\\$ 1 $};
+			\node[state, align=center] (T5) [below right = 1.5 cm and 1 cm of T3] {$ 4, 0$\\$ 0.7 $};
+			\node[state, align=center, fill=terminate] (T6) [below left = 1.5 cm and 1 cm of T5] {$ 5,1 $\\ $0 $};
+			\node[state, align=center, fill=terminate] (T7) [below right = 1.5 cm and 1 cm of T5] {$ 5,0 $\\$ 1 $};
+			\node[state, align=center] (T8) [below right = 1.5 cm and 1.6 cm of T2] {$ 3,1 $\\$ 0.35 $};
+			\node[state, align=center, fill=collision] (T9) [below left = 1.5 cm and 1 cm of T8] {$ 4, 0$\\$ 0.7$};
+			\node[state, align=center] (T10) [below right = 1.5 cm and 1 cm of T8] {$ 4, 1$\\$ 0 $};
+			\node[state, align=center, fill=terminate] (T11) [below left = 1.5 cm and 1 cm of T10] {$ 5, 2$\\$ 0 $};
+			\node[state, align=center, fill=terminate] (T12) [below right = 1.5 cm and 1 cm of T10] {$ 5,1 $\\$ 0 $};
+			
+			
+			
+			
+			\tikzset{every node/.style={fill=white}}
+			\path (T1) edge [right] node {$P$}  (T2);
+			\path (T2) edge [left] node {$Q$}  (T3);
+			\path (T3) edge [left] node {$R$}  (T4);
+			\path (T3) edge [right] node {$\neg R$}  (T5);
+			\path (T5) edge [left] node {$S$}  (T6);
+			\path (T5) edge [right] node {$\neg S$}  (T7);
+			\path (T2) edge [right] node {$\neg Q$}  (T8);
+			\path (T8) edge [left] node {$R$}  (T9);
+			\path (T8) edge [left] node {$\neg R$}  (T10);
+			\path (T10) edge [left] node {$S$}  (T11);
+			\path (T10) edge [left] node {$\neg S$}  (T12);
+			\end{tikzpicture}
+		}
+\label{fairness_fvgm_fig:example_dp}}
+\hspace*{-0.5cm}
+\subfloat[Probabilities computed with Bayesian network.]
+{  
+%		\centering
+		\scalebox{0.75}{
+			\begin{tikzpicture}[>=stealth',shorten >=1pt, on grid,initial/.style={}]
+			\node[state, align=center, fill=existential, accepting] (T1) {$ 1, 2 $\\$ 0.65 $};
+			\node[state, align=center, accepting, label={[align=left,right]0:$ 0.85\Pr[Q|P] + $ \\ $   0.35\Pr[\neg Q|P] $\\$ =0.65 $}] (T2) [below left = 1.6 cm and 2 cm of T1] {$2,1$\\$ 0.65 $};
+			\node[state, align=center] (T3) [below left = 1.5 cm and 1.8 cm of T2] {$ 3,0 $\\$ 0.85$};
+			\node[state, align=center, fill=terminate] (T4) [below left = 1.5 cm and 1 cm of T3] {$ 4, -1$\\$ 1 $};
+			\node[state, align=center] (T5) [below right = 1.5 cm and 1 cm of T3] {$ 4, 0$\\$ 0.7 $};
+			\node[state, align=center, fill=terminate] (T6) [below left = 1.5 cm and 1 cm of T5] {$ 5,1 $\\ $0 $};
+			\node[state, align=center, fill=terminate] (T7) [below right = 1.5 cm and 1 cm of T5] {$ 5,0 $\\$ 1 $};
+			\node[state, align=center] (T8) [below right = 1.5 cm and 1.6 cm of T2] {$ 3,1 $\\$ 0.35 $};
+			\node[state, align=center, fill=collision] (T9) [below left = 1.5 cm and 1 cm of T8] {$ 4, 0$\\$ 0.7$};
+			\node[state, align=center] (T10) [below right = 1.5 cm and 1 cm of T8] {$ 4, 1$\\$ 0 $};
+			\node[state, align=center, fill=terminate] (T11) [below left = 1.5 cm and 1 cm of T10] {$ 5, 2$\\$ 0 $};
+			\node[state, align=center, fill=terminate] (T12) [below right = 1.5 cm and 1 cm of T10] {$ 5,1 $\\$ 0 $};
+			
+			
+			\node[state, align=center, accepting] (T13) [below right = 1.6 and 2 cm of T1] {$2,2$\\$ 0.11 $};
+			\node[state, align=center, fill=collision] (T14) [below left = 1.5 and 1 cm of T13] {$3,1$\\$ 0.35 $};
+			\node[state, align=center] (T15) [below right = 1.5 and 1 cm of T13] {$3,2$\\$ 0 $};
+			\node[state, align=center, fill=collision] (T16) [below left = 1.5 and 1 cm of T15] {$4,1$\\$ 0 $};
+			\node[state, align=center] (T17) [below right = 1.5 and 1 cm of T15] {$4,2$\\$ 0 $};
+			\node[state, align=center, fill=terminate] (T18) [below left = 1.5 and 1 cm of T17] {$5,3$\\$ 0 $};
+			\node[state, align=center, fill=terminate] (T19) [below right = 1.5 and 1 cm of T17] {$5,2$\\$ 0 $};
+			
+			
+			
+			\node[state, align=center] (P) [right = 5 cm of T1] {$P$};
+			\node[state, align=center] (Q) [right = 2 cm of T15] {$Q$};
+			
+			
+			
+			
+			
+			\tikzset{every node/.style={fill=white}}
+			\path (T1) edge [right] node {$P$}  (T2);
+			\path (T2) edge [left] node {$Q$}  (T3);
+			\path (T3) edge [left] node {$R$}  (T4);
+			\path (T3) edge [right] node {$\neg R$}  (T5);
+			\path (T5) edge [left] node {$S$}  (T6);
+			\path (T5) edge [right] node {$\neg S$}  (T7);
+			\path (T2) edge [left] node {$\neg Q$}  (T8);
+			\path (T8) edge [left] node {$R$}  (T9);
+			\path (T8) edge [left] node {$\neg R$}  (T10);
+			\path (T10) edge [left] node {$S$}  (T11);
+			\path (T10) edge [left] node {$\neg S$}  (T12);
+			\path (T1) edge [right] node {$\neg P$}  (T13);
+			\path (T13) edge [right] node {$Q$}  (T14);
+			\path (T13) edge [right] node {$\neg Q$}  (T15);
+			\path (T15) edge [right] node {$R$}  (T16);
+			\path (T15) edge [right] node {$\neg R$}  (T17);
+			\path (T17) edge [right] node {$S$}  (T18);
+			\path (T17) edge [right] node {$\neg S$}  (T19);
+			
+			
+			
+			\path (P) edge [->] node [left=0.1cm] {\parbox{01.2cm}{Bayesian\\network}}(Q);
+		\end{tikzpicture}
+	}
+	\label{fairness_fvgm_fig:example_BN}
+}
+
+\caption{\footnotesize Search tree representation of {\stochastic} for computing the maximum PPV of the classifier on variables $ \mathbf{B} =  \{P,Q,R,S\} $ with weights $ \{1,1,1,-1\} $ and threshold $ \tau = 2 $ . Each node is labeled by $ (i,\tau') $, where $ i $ is the index of $ \mathbf{B} $ and $ \tau' $ is the residual threshold. The tree is explored using Depth-First Search (DFS) starting with left child. Within a node, the value in the bottom denotes $ \mathsf{dp}(i, \tau') $ that is solved recursively based on sub-problems $ \mathsf{dp}(i+1, \cdot) $ in child nodes. 	Yellow nodes denote \textit{existential} variables and all other nodes are  \textit{random} variables. Additionally, a green node denotes a collision, in which case a previously computed $ \mathsf{dp} $ solution is returned. Leaf nodes (gray) are computed based on terminating conditions in Eq.~\ref{fairness_fvgm_eq:dp_terminus}. In Figure~\ref{fairness_fvgm_fig:example_BN},  nodes with double circles, such as $ \{(1,2), (2,1), (2,2)\} $,  are enumerated exponentially to compute conditional probabilities from the Bayesian network.}
+\label{fairness_fvgm_fig:example_tree_exploration}
+\end{figure*}

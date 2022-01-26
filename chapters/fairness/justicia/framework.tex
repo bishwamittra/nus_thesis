@@ -1,0 +1,292 @@
+\section{{\justicia}: An SSAT Framework to Verify Fairness Metrics}
+\label{fairness_justicia_sec:framework}
+In this section, we present the primary contribution of this paper, {\justicia}, which is an SSAT-based framework for verifying independence and separation metrics of fairness. 
+
+Given a binary classifier $\alg$ and a probability distribution over dataset $(X,A,Y) \sim \mathcal{D} $, our goal is to verify whether $\alg$ achieves independence and separation metrics with respect to the distribution $\mathcal{D}$. We  focus on a classifier that can be translated to a CNF formula of Boolean variables $\mathbf{B} $. 
+The probability $ p_i $ of $\bool_i \in \mathbf{B}$ being assigned to $1$ is induced by the data generating distribution $\mathcal{D}$. 
+In order to verify fairness metrics in compound protected groups, we discuss an enumeration-based approach and an equivalent learning-based approach. 
+%We conclude this section by proposing a conditional distribution based enumeration for compound protected groups in Section~\ref{fairness_justicia_sec:cond_ssat}. 
+We then provide a theoretical analysis for a high-probability error bound on the fairness metric and conclude with extension of {\justicia} in practical settings.
+
+\iffalse
+In this section, we present the main contribution of this paper, {\justicia}, which is an SSAT framework for verifying independence and separation metrics of fairness. 
+We first state the problem formally in Section~\ref{fairness_justicia_sec:problem_statement}. 
+To verify fairness metrics in compound protected groups, we discuss an enumeration approach in Section~\ref{fairness_justicia_sec:enumeration_ssat} and an equivalent but more efficient learning approach in Section~\ref{fairness_justicia_sec:learn_ssat}. 
+We conclude this section by proposing a conditional distribution based enumeration for compound protected groups in Section~\ref{fairness_justicia_sec:cond_ssat}. 
+
+
+\subsection{Problem Statement}
+\label{fairness_justicia_sec:problem_statement}
+Given a binary classifier $\alg$ and a probability distribution over dataset $(X,A,Y) \sim \mathcal{D} $, our goal is to verify whether $\alg$ achieves independence and separation metrics with respect to the distribution $\mathcal{D}$. We  focus on a classifier that can be translated to a CNF formula of Boolean variables $\mathbf{B} $. 
+The probability $ p_i $ of $\bool_i \in \mathbf{B}$ being assigned to $1$ is induced by the data generating distribution $\mathcal{D}$. 
+In our contribution, we reduce the verification problem to solving appropriately designed SSAT instances.
+\fi 
+
+\subsection{Evaluating Fairness with RE-SSAT Encoding}
+\label{fairness_justicia_sec:enumeration_ssat}
+In order to verify independence and separation metrics, the core component of {\justicia} is to compute the positive predictive value $\Pr[\hat{Y} = 1 | A = \mathbf{a}]$ for a compound protected group $\mathbf{a}$.  For simplicity, we  initially make some assumptions and discuss their practical relaxations later in this section.   
+We first assume the classifier $\alg$ is representable as a CNF formula, namely $\phi_{\hat{Y}}$, such that $ \hat{Y} = 1 $ when $ \phi_{\hat{Y}}$ is satisfied and  $\hat{Y} =0$ otherwise. Since a Boolean CNF classifier is defined over Boolean variables, we  assume all attributes in $X$ and $A$ to be Boolean. Finally, we assume independence of non-protected attributes on protected attributes and $p_i $ is the  probability of the attribute $ \nonsensitive_i $ being assigned to $ 1 $ for any  $\nonsensitive_i \in X  $. 
+
+Now, we define an RE-SSAT formula $\Phi_{\mathbf{a}}$ to compute the probability $\Pr[\hat{Y} = 1 | A = \mathbf{a}]$. In the prefix of $ \Phi_{\mathbf{a}} $,  all non-protected Boolean attributes in $X$ are assigned randomized quantification and they are followed by the protected Boolean attributes in $ A $ with existential quantification. The CNF formula $ \phi $ in $ \Phi_{\mathbf{a}} $ is constructed such that $ \phi $ encodes the event inside the target probability $ \Pr[\hat{Y} = 1 | A = \mathbf{a}] $. In order to encode the conditional $ A = \mathbf{a} $, we take the conjunction of the Boolean variables in $ A $ that symbolically specifies the compound protected group $ \mathbf{a} $. For example, we represent two protected attributes: race $ \in $ \{White, Colour\} and sex $ \in $ \{male, female\} by the Boolean variables $ R $ and $ S $  respectively. Hence, the compound groups $\{\textrm{White}, \textrm{male}\}$ and $\{\textrm{Colour}, \textrm{female}\}$ are represented by $ R \wedge S $ and $ \neg R \wedge \neg S $, respectively. Thus, the RE-SSAT formula for computing the probability  $ \Pr[\hat{Y} = 1 | A = \mathbf{a}] $ is
+\begin{equation}	\label{fairness_justicia_eq:re}
+\begin{split}
+	\Phi_{\mathbf{a}} := \underbrace{\R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m}_{\text{non-protected attributes}},  &\underbrace{\exists \sensitive_1,\dots, \exists \sensitive_n}_{\text{protected attributes}},
+\phi_{\hat{Y}} \wedge (A=\mathbf{a}).\notag
+\end{split}
+\end{equation}
+In $ \Phi_{\mathbf{a}} $, the existentially quantified variables $ \sensitive_1, \dots, \sensitive_n $ are assigned values  according  to the constraint $ A=\mathbf{a} $. \footnote{An RE-SSAT formula becomes an R-SSAT formula when the assignment to the existential variables are fixed.} Therefore, by solving the SSAT formula $ \Phi_{\mathbf{a}} $,  the SSAT solver finds the probability $ \Pr[\Phi_{\mathbf{a}}] $ for the protected group $ A=\mathbf{a} $ given the random values of $ \nonsensitive_1, \dots, \nonsensitive_m $, which is the PPV of the protected group $\mathbf{a} $ for the distribution $ \mathcal{D} $ and algorithm $\alg$. 
+
+For simplicity, we have described computing the PPV of each compound protected group without considering the correlation between the protected and non-protected attributes. In reality, correlation exists between the protected and non-protected attributes. Thus, the non-protected attributes may have different conditional distributions for different protected groups. We incorporate these conditional distributions in RE-SSAT encoding by evaluating the conditional probability $ p_i = \Pr[\nonsensitive_i =\text{TRUE}| A=\mathbf{a}] $ instead of the independent probability $\Pr[\nonsensitive_i =\text{TRUE}]$ for any $\nonsensitive_i\in \nonsensitive$. We illustrate this method in Example~\ref{fairness_justicia_example:re_ssat}.
+%This relaxes the independence requirement.
+
+\begin{example}[RE-SSAT encoding]
+	\label{fairness_justicia_example:re_ssat}
+	Here, we illustrate the RE-SSAT formula for calculating the PPV for the protected group `age $ \ge 40 $' in the decision tree of Figure~\ref{fairness_justicia_fig:fair_example}. We assign three Boolean variables $ F,I,J $ for the three nodes in the tree such that the literal $ F,I,J $ denote `fitness $ \ge 0.61 $', `income $ \ge 0.29 $', and `income $ \ge 0.69 $', respectively. We consider another Boolean variable $A$  where the literal $ A $ represents the protected group `age $ \ge 40 $'. Thus, the CNF formula  for the decision tree is $ (\neg F \vee I) \wedge (F \vee J) $. From the distribution in Figure~\ref{fairness_justicia_fig:fair_example}, we get $ \Pr[F] = 0.41, \Pr[I] = 0.93 $, and $ \Pr[J] = 0.09 $. Given this information, we calculate the PPV for the protected group `age $ \ge 40 $' by solving the RE-SSAT formula:
+	\begin{equation}
+	\Phi_A := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge A.\notag
+	\end{equation}
+	From the solution to this SSAT formula, we get $ \Pr[\Phi_A] = 0.43 $. Similarly, to calculate the PPV for the group `age $ < 40 $', we replace the unit (single-literal) clause $ A $ with $ \neg A $ in the CNF in $ \Phi_A $ and construct another SSAT formula $ \Phi_{\neg A} $ where $ \Pr[\Phi_{\neg A}] = 0.43 $. 
+	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of $A$ and $\neg A$, both age groups demonstrate equal PPV as the protected attribute is not explicitly present in the classifier. 
+	However, there is an implicit bias in the data distribution for different protected groups and the classifier unintentionally learns it. 
+	To capture this implicit bias, we calculate the conditional probabilities  $ \Pr[F|A] = 0.01, \Pr[I|A] = 0.99 $, and $ \Pr[J|A] = 0.18 $ from the distribution. Using the conditional probabilities in  $\Phi_A $, we find that $ \Pr[\Phi_A] = 0.18 $ for `age $ \ge 40 $'. For `age $ < 40 $',  we similarly obtain $ \Pr[F|\neg A] = 0.82, \Pr[I|\neg A] = 0.88 $, and $ \Pr[J|\neg A] = 0.01 $, and thus  $ \Pr[\Phi_{\neg A}] = 0.72 $. 
+	Therefore, presented RE-SSAT encoding detects the discrimination of the classifier among different protected groups. An astute reader would observe that $I$ and $J$ are not independent. Following~\cite{chavira2008probabilistic}, we can simply capture relationship between the variables using constraints and if needed, auxiliary variables. In this case, it suffices to add the the constraint $J \rightarrow I$. 
+\end{example}
+
+\subsubsection{Measuring Fairness Metrics.}
+As we compute the probability $\Pr[\hat{Y} = 1 | A = \mathbf{a}]$ by solving the SSAT formula $ \Phi_\mathbf{a} $, we  use $ \Pr[\Phi_\mathbf{a}] $ to measure different fairness metrics. 
+For that, we compute $ \Pr[\Phi_\mathbf{a}] $ for all compound groups $\mathbf{a} \in A$ that requires solving exponential (with $n$) number of SSAT instances. 
+We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\ref{fairness_justicia_algo:enum}  (Line~\ref{fairness_justicia_algo:justicia_enum_begin}--\ref{fairness_justicia_algo:justicia_enum_end}).
+
+\begin{algorithm}[t!]
+	\caption{\justicia: SSAT-based Fairness Verifier}
+	\label{fairness_justicia_algo:enum}
+	\footnotesize
+	\begin{algorithmic}[1]
+		\Function{{\justiciaenum}}{$ X,A,\hat{Y} $}
+		\label{fairness_justicia_algo:justicia_enum_begin}
+		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y} = 1) $
+		%\State $ p_{i} = \mathsf{CalculateProb}(\nonsensitive_i), \forall \nonsensitive_i \in X $
+		\ForAll{$\mathbf{a} \in A$ }
+		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(\nonsensitive_i | \mathbf{a}), \forall \nonsensitive_i \in X $
+		\State $ \phi := \phi_{\hat{Y}} \wedge (A=\mathbf{a}) $
+		\State $  \Phi_\mathbf{a} := \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m, \exists \sensitive_1,\dots, \exists \sensitive_n,  \phi $
+		\State $ \Pr[\Phi_\mathbf{a}]  \leftarrow \mathsf{SSAT}(\Phi_\mathbf{a}) $ \Comment{returns a probability}
+		\EndFor
+		\State \Return $ \max_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}], \min_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] $
+		\label{fairness_justicia_algo:justicia_enum_end}
+		\EndFunction
+		
+		
+		
+		\Function{{\justicialearn}}{$ X,A,\hat{Y} $}
+		\label{fairness_justicia_algo:justicia_learn_begin}
+		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y}  = 1) $
+		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(\nonsensitive_i), \forall \nonsensitive_i \in X $
+		\State $  \Phi_\mathbf{ER} := \exists \sensitive_1,\dots, \exists \sensitive_n, \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m, \phi_{\hat{Y}} $
+		\State $  \Phi'_\mathbf{ER} := \exists \sensitive_1,\dots, \exists \sensitive_n, \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m, \neg \phi_{\hat{Y}} $
+		\State \Return $ \mathsf{SSAT}(\Phi_\mathbf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathbf{ER}) $
+		\label{fairness_justicia_algo:justicia_learn_end}
+		\EndFunction
+	\end{algorithmic}
+
+\end{algorithm}
+
+
+We calculate the ratio of the minimum and the maximum probabilities according to the definition of disparate impact. 
+We compute statistical parity by taking the difference between the maximum and the minimum probabilities of all $ \Pr[\Phi_{\mathbf{a}}] $.
+Moreover, to measure equalized odds, we compute two SSAT instances for each compound group with modified values of $ p_i $. 
+Specifically, to compute TPR, we use the conditional probability $ p_i = \Pr[\nonsensitive_i|Y=1] $ on samples with class label $ Y = 1 $ and take the difference between the maximum and the minimum probabilities of all compound groups. In addition, to compute FPR, we use the conditional probability $ p_i = \Pr[\nonsensitive_i|Y=0] $ on samples with $ Y = 0 $ and take the difference similarly.
+Thus, {\justiciaenum} allows us to compute different fairness metrics using a unified algorithmic framework.
+
+
+\subsection{Learning Fairness with ER-SSAT Encoding}
+\label{fairness_justicia_sec:learn_ssat}
+In most practical problems, there can be exponentially many compound groups based on the different combinations of valuation to the protected attributes. 
+Therefore, the enumeration approach may suffer from scalability issues. 
+Hence, we propose efficient SSAT encodings to \textit{learn} the most favored group and the least favored group for given  $\alg$ and $ \mathcal{D} $, and to compute their PPVs to measure different fairness metrics. 
+
+\subsubsection{Learning the Most Favored Group.}
+In an SSAT formula $ \Phi $, the order of quantification of the Boolean variables in the prefix  carries distinct interpretation of the satisfying probability of $ \Phi $.  
+In ER-SSAT formula, the probability of satisfying $ \Phi $ is the \textit{maximum} satisfying probability over the existentially quantified variables given the randomized quantified variables (by Rule 2, Sec.~\ref{fairness_justicia_sec:ssat}). 
+In this paper, we leverage this property to compute the most favored group with the highest PPV. 
+We consider the following ER-SSAT formula. 
+\begin{equation}
+\Phi_{\mathsf{ER}} := \exists \sensitive_1,\dots, \exists \sensitive_n,
+ \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m,   \; \phi_{\hat{Y}}.
+ \label{fairness_justicia_eq:er}
+\end{equation}
+%In the prefix of the ER-SSAT formula $ \Phi_{\mathsf{ER}} $, the protected variables are  existentially quantified and they are followed by randomized quantified non-protected variables, which is in reverse order  in Eq.~\eqref{fairness_justicia_eq:re}. 
+The CNF formula $\phi_{\hat{Y}}$ is the CNF translation  of the classifier $ \hat{Y} = 1 $ without any specification of the compound protected group.  Therefore, as we solve $ \Phi_{\mathsf{ER}} $, we find the assignment to the existentially quantified variables $ A_1 = a^{\max}_1, \dots,A_n = a^{\max}_n $ for which the satisfying probability $ \Pr[\Phi_{\mathsf{ER}}] $ is maximum. 
+Thus, we compute  the most favored group $ \mathbf{a}_{\mathsf{fav}} \triangleq \{ a^{\max}_1, \dots, a^{\max}_n \}$ achieving the highest PPV. 
+%Since an assignment to $\{\sensitive_1, \dots, \sensitive_n\}$ uniquely denotes a compound protected group, say $ \mathbf{a}_{\mathsf{fav}} \in A $, we find the most favored group $ \mathbf{a}_{\mathsf{fav}} $ for which $ \Pr[\Phi_{\mathsf{ER}}] $ achieves the highest PPV. 
+
+
+\subsubsection{Learning the Least Favored Group.}
+In order to learn the least favored group in terms of PPV, we  compute the \textit{minimum} satisfying probability of the classifier $ \phi_{\hat{Y}} $ given the random values of the non-protected variables $ \nonsensitive_1, \dots, \nonsensitive_m $. In order to do so, we have to solve a `universal-random' (UR) SSAT formula (Eq.~\eqref{fairness_justicia_eq:ar}) with  universal quantification over the protected variables and randomized quantification over the non-protected variables (by Rule 3, Sec.~\ref{fairness_justicia_sec:ssat}).
+\begin{equation}
+\Phi_{\mathsf{UR}} := \forall \sensitive_1,\dots, \forall \sensitive_n,
+\R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m,   \; \phi_{\hat{Y}}.
+\label{fairness_justicia_eq:ar}
+\end{equation}
+A UR-SSAT formula returns the minimum satisfying probability of $ \phi $ over the universally quantified variables in contrast to the ER-SSAT formula that returns the maximum satisfying  probability over the existentially quantified variables.  
+Due to practical issues to solve UR-SSAT formula, in this paper, we leverage the \textit{duality} between UR-SSAT (Eq.~\eqref{fairness_justicia_eq:ar}) and ER-SSAT formulas (Eq.~\eqref{fairness_justicia_eq:er_complement}) 
+\begin{equation}
+\Phi'_{\mathsf{ER}} := \exists \sensitive_1,\dots, \exists \sensitive_n,
+\R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m,   \; \neg \phi_{\hat{Y}}.
+\label{fairness_justicia_eq:er_complement}
+\end{equation}
+%\begin{equation}
+%\Phi'_{\mathsf{ER}} = \underbrace{\exists a_1,\dots, \exists a_n}_{\text{protected attributes}},
+%\underbrace{\R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m}_{\text{non-protected attributes}},   \; \underbrace{\neg \phi_{\hat{Y}} }_{\phi}.
+%\label{fairness_justicia_eq:er_complement}
+%\end{equation}
+and solve the UR-SSAT formula on the CNF $ \phi $ using the ER-SSAT formula on the complemented CNF $ \neg \phi $~\cite{littman2001stochastic}. Lemma~\ref{fairness_justicia_thm:dual} encodes this duality.
+%We apply such a duality because of the practical unavailability of an UR-SSAT solver (to the best of our knowledge).  Formally, we solve the following ER-SSAT formula to find the least favored group. 
+\begin{lemma}\label{fairness_justicia_thm:dual}
+Given Eq.~\eqref{fairness_justicia_eq:ar} and~\eqref{fairness_justicia_eq:er_complement},	$ \Pr[\Phi_{\mathsf{UR}}] = 1 - \Pr[\Phi'_{\mathsf{ER}}]  $.
+\end{lemma}
+As we solve $\Phi'_{\mathsf{ER}}$, we obtain the assignment to the protected attributes $\mathbf{a}_{\mathsf{unfav}} \triangleq \{a^{min}_1, \dots, a^{min}_n\}$ that maximizes $\Phi'_{\mathsf{ER}}$. 
+If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, according to Lemma~\ref{fairness_justicia_thm:dual}, $ 1 - p $ is the minimum satisfying probability of $ \Phi_{\mathsf{UR}} $,  which is the PPV of the least favored group $ \mathbf{a}_{\mathsf{unfav}}$. We present the algorithm for this learning approach, namely {\justicialearn} in Algorithm~\ref{fairness_justicia_algo:enum} (Line~\ref{fairness_justicia_algo:justicia_learn_begin}--\ref{fairness_justicia_algo:justicia_learn_end}).
+
+\iffalse
+\begin{algorithm}[t!]
+	\caption{\justicialearn: Learning ER-SSAT Encoding}
+	\label{fairness_justicia_algo:learn}
+	\begin{algorithmic}[1]
+		\Function{{\justicialearn}}{$ X,A,\hat{Y} $}
+		\State $ \phi_{\hat{Y}} = \mathsf{CNF}(\hat{Y}  = 1) $
+		\State $ p_{i} = \mathsf{CalculateProb}(x_i), \forall x_i \in X $
+		\State $  \Phi_\mathbf{ER} = \exists a_1,\dots, \exists a_n, \R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m. \; \phi_{\hat{Y}} $
+		\State $  \Phi'_\mathbf{ER} = \exists a_1,\dots, \exists a_n, \R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m. \; \neg \phi_{\hat{Y}} $
+		\State \Return $ \mathsf{SSAT}(\Phi_\mathbf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathbf{ER}) $
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+\fi
+
+In ER-SSAT formula of Eq.~\eqref{fairness_justicia_eq:er_complement}, we need to negate the classifier $ \phi_{\hat{Y}} $ to another CNF formula $ \neg \phi_{\hat{Y}} $. The na\"ive approach of negating a CNF to another CNF generates exponential number of new clauses. Here, we can apply Tseitin transformation that increases the clauses linearly while introducing linear number of new variables~\cite{tseitin1983complexity}. As an alternative, we also directly encode the classifier $\alg$ for the negative class label $\hat{Y} = 0$ as a CNF formula and pass it to $\Phi'_{\mathsf{ER}} $, if possible. The last approach is generally more efficient than the other approaches as the resulting CNF is often smaller. 
+
+
+
+\begin{example}[ER-SSAT encoding]
+	\label{fairness_justicia_example:er_ssat}
+	Here, we illustrate the ER-SSAT encodings for learning the most favored and the least favored group in presence of multiple protected groups. As the example in Figure~\ref{fairness_justicia_fig:fair_example} is degenerate for this purpose, we introduce another protected group `sex $ \in $ \{male, female\}'. Consider a Boolean variable $ S $ for `sex' where the literal $ S $ denotes `sex = male'. With this new protected attribute, let the classifier be  $\alg \triangleq (\neg F \vee I \vee S) \wedge (F \vee J)$, where $ A,F,I,J $ have same distributions as discussed in Example~\ref{fairness_justicia_example:re_ssat}. 
+	Hence, we obtain the ER-SSAT formula of $\alg$ to learn the most favored group:
+	$ \Phi_{\mathsf{ER}} =  \exists S,\exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; (\neg F \vee I \vee S) \wedge (F \vee J).
+	$
+	
+	As we solve $ \Phi_{\mathsf{ER}} $, we learn that the assignment to the existential variables $ \sigma(S) = 1, \sigma(A) = 0$, i.e. `male individuals with age $ < 40 $' is the most favored group with PPV computed as $ \Pr[\Phi_{\mathsf{ER}}] = 0.46$. Similarly, to learn the least favored group, we negate the CNF of the classifier $\alg$ to obtain the following ER-SSAT formula:
+	$	\Phi_{\mathsf{ER'}} =  \exists S, \exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; \neg((\neg F \vee I \vee S) \wedge (F \vee J)).
+	$
+	
+	Solving $ \Phi_{\mathsf{ER'}} $, we learn the assignment $ \sigma(S) = 0, \sigma(A) = 0  $ and $  \Pr[\Phi_{\mathsf{ER'}}] = 0.57 $. Thus, `female individuals with age $ < 40 $' constitute the least favored group with PPV:  $ 1-0.57 = 0.43$. 
+	Thus, {\justicialearn} allows us to learn the most and least favored groups and the corresponding discrimination.
+\end{example}
+We use the PPVs of the most and least favored groups to compute different fairness metrics. We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\ref{fairness_justicia_lm:equivalence}.
+\begin{lemma}
+	\label{fairness_justicia_lm:equivalence}
+	Let $ \Phi_{\mathbf{a}} $ be the RE-SSAT formula for computing the PPV of the compound protected group $ \mathbf{a} \in A $. If $ \Phi_{\mathsf{ER}} $ is the ER-SSAT formula for learning the most favored group and $ \Phi_{\mathsf{UR}} $ is the UR-SSAT formula for learning the least favored group, then
+	$\max_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{ER}}]$   
+	and
+	$\min_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{UR}}]$.   
+\end{lemma}
+\iffalse
+\begin{theorem}
+	For an ER-SSAT problem, the na\"ive sample complexity is given by 
+	\[ k = O\left(\frac{1}{\epsilon^2} (n + \ln(1/\delta))  \right)\]
+	where $\hat{p} - p \leq \epsilon$ with probability $1-\delta$.
+\end{theorem}
+\red{For a simple sampling based algo after evaluating $k$ assignments, the error between estimates probability and actual probability would differ by $\epsilon$ with probability $1- 2^{n+1} e^{-2\epsilon^2 k}$. So the sample complexity of a naive algo is $k = O(\epsilon^{-2} (\log(1/\delta) + n))$.}
+\fi
+
+%\subsection{Conditionally Evaluating an SSAT Encoding}
+%\label{fairness_justicia_sec:cond_ssat}
+
+
+%\begin{algorithm}[t!]
+%	\caption{\justiciacond: Conditional Evaluation of RE Encoding \red{Can be removed, only difference is in line 4}}
+%	\begin{algorithmic}[1]
+%		\Function{{\justiciacond}}{$ X,A,\hat{Y} $}
+%		\State $ \phi_{\hat{Y}} = \mathsf{CNF}(\hat{Y}  = 1) $
+%		\ForAll{$\mathbf{a} \in A$ }
+%		\State $ p_{i} = \mathsf{\blue{calculateCondProb}}(x_i, \mathbf{a}), \forall x_i \in X $
+%		\State $  \Phi_\mathbf{a} = \R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m, \exists \sensitive_1,\dots, \exists \sensitive_n. \; \phi_{\hat{Y}} \wedge \mathsf{CNF}(A=\mathbf{a}) $
+%		\State $ \Pr[\Phi_\mathbf{a}]  = \ma
+%thsf{SSAT}(\Phi_\mathbf{a}) $
+%		\EndFor
+%		\State \Return $ \max\limits_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}], \min\limits_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] $
+%		\EndFunction		
+%	\end{algorithmic}
+%\end{algorithm}
+
+\iffalse
+\red{While it is trivial to use conditional probability distribution for the RE encoding, it is not straightforward for the presented ER-encoding, which we leave as a future work. 
+}
+\fi
+
+\begin{comment}
+\red{Let $ \bool_i $ and $ \bool_j $ be two Boolean (non-protected) attributes and we want to encode their pair-wise correlation in {\justicia}. For an assignment to $ \bool_i, \bool_j $, we consider a new Boolean variable $ v $ and add a constraint $ v \leftrightarrow \bool_i \wedge \bool_j $ in the CNF $ \phi $ of the SSAT formula $ \Phi $. Additionally, $ v $ is given a randomized quantification in the prefix of $ \Phi $ and the probability of $ v $ is calculated as the probability of both $ \bool_i $ and $ \bool_j $ assigning to $ 1 $ in the distribution $ \mathcal{D} $. Note that, to encode the total correlation of all Boolean attributes, the mentioned approach introduces exponentially (with the number of attributes) many new variables and add an exponential number of constraints to $ \phi $ with an aim of computing a more precise satisfying probability of $ \Phi $. Optionally, one can encode the correlation among a selected set of attributes of interest in {\justicia}. }
+\end{comment}
+
+
+\subsection{Theoretical Analysis: Error Bounds}\label{fairness_justicia_sec:theory}
+We access the data generating distribution through  finite number of samples observed from it. These finite sample set introduce errors in the computed probabilities of the randomised quantifiers being $1$. These finite-sample errors in computed probabilities induce further errors in the computed positive predictive value (PPV) and fairness metrics. We next provide a bound on this finite-sample error.
+
+Let us consider that $\hat{p_i}$ is the estimated probability of a Boolean variable $ \bool_i $ being assigned to $ 1 $ from $k$-samples and $p_i$ is the true probability according to $ \mathcal{D} $. 
+%If $ | p_i - \hat{p_i}| \le \epsilon $, i.e., $ \epsilon $ additive error for small $ \epsilon \approx 0 $, we want to compute the error of probability $ p $ of the satisfaction of the SSAT formula $ \Phi $.  
+Thus, the true satisfying probability $p$ of $ \Phi $ is the weighted sum of all satisfying assignments of the CNF $ \phi $: $p = \sum_\sigma \prod_{\bool_i \in \sigma}p_i$.
+This probability is estimated as $\hat{p}$ using $k$-samples from the data generating distribution $\mathcal{D}$ such that $\hat{p} \leq \epsilon_0 p$ for $\epsilon_0 \geq 1$. 
+%However, the true satisfying probability $ \hat{p} $  of $ \Phi $ is 
+%\[
+%\hat{p} = \sum_\sigma \prod_{\bool_i \in \sigma}\hat{p_i}  \leq \sum_\sigma \prod_{\bool_i \in \sigma}(1 \pm \epsilon_i) p_i = \prod_{i =1}^m (1 \pm \epsilon_i) p = \epsilon_0 p
+%\]
+\iffalse
+If we consider $\epsilon_i = \frac{\ln \epsilon_0}{2^i}$, we obtain
+\begin{equation*}
+\begin{split}
+\prod_{i =1}^m (1 \pm \epsilon_i) &\leq \left(\frac{1}{n} \sum_{i} (1 + \epsilon_i)\right)^n \\
+&= (\frac{1}{n} \sum_{i} (1+\frac{\ln \epsilon_0}{2^i})^n\\
+&\leq (1  +\frac{\ln \epsilon_0}{n})^n\\
+&\leq e^{\ln \epsilon_0} = \epsilon_0.\notag
+\end{split}
+\end{equation*}
+\fi
+\begin{theorem}\label{fairness_justicia_thm:sample}
+	For an ER-SSAT problem, the sample complexity is given by 
+	$ k = O\left((n+ \ln(1/\delta))\frac{\ln m}{\ln \epsilon_0} \right),$
+	where $\frac{\hat{p}}{p} \leq \epsilon_0$ with probability $1-\delta$ such that $\epsilon_0 \geq 1$.
+\end{theorem}
+%Theorem~\ref{fairness_justicia_thm:sample} states that for the prescribed number of samples the estimated disparate impact $\hat{DI}$ and statistical parity $\hat{SP}$ would also satisfy $\hat{DI} \leq  \epsilon_0 DI, $ and $\hat{SP} \leq 2\epsilon_0 SP$.
+%Apply Hoeffding inequality for each term and then use Union bound for $2^n$ existential variables.
+\begin{corollary}
+	If $k$ samples are considered from the data-generating distribution in {\justicia} such that 
+	$
+	k = O\left((n+ \ln(1/\delta))\frac{\ln m}{\ln \epsilon_0}\right),
+	$
+	the estimated disparate impact $\hat{DI}$ and statistical parity $\hat{SP}$ satisfy, with probability $1-\delta$,
+	$
+	\hat{DI} \leq  \epsilon_0 DI, \quad \text{and} \quad \hat{SP} \leq 2\epsilon_0 SP.
+	$
+\end{corollary}
+This implies that given a classifier $ \alg \triangleq \Pr(\hat{Y}|X, A) $ represented as a CNF formula and a data-generating distribution $ (X,A,Y) \sim \mathcal{D} $, {\justicia} can verify independence and separation notion of fairness up to an error level $\epsilon_0$ and $2\epsilon_0$ with probability $1-\delta$.
+Thus, {\justicia} is a sound framework of fairness verification with high probability.
+%\red{Proof of all theorems for arxiv version}
+%Use definition of $GF = p_1/p_2$.
+
+
+
+\iffalse
+
+\begin{corollary}[Hypothesis]
+	If $k$ samples are considered in \justicia and the estimated group fairness value $\hat{GF}$ satisfies
+	\begin{equation*}
+	1- e^{\epsilon_0} \leq \frac{\hat{GF}}{GF} \leq 1 + e^{\epsilon_0}
+	\end{equation*}
+	with probability $1-\delta$, then
+	\begin{equation*}
+	k = O\left((n+ \ln(1/\delta))\frac{m + \ln m}{\ln \epsilon_0}\right).
+	\end{equation*}
+\end{corollary}
+\fi
+
+

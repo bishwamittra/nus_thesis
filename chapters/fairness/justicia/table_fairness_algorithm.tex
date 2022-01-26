@@ -1,0 +1,62 @@
+\newcommand{\STAB}[1]{\begin{tabular}{@{}c@{}}#1\end{tabular}}
+\begin{table*}       
+    \centering
+%        \setlength{\tabcolsep}{.3em}
+            \begin{tabular}{ll
+            				ccc
+            				ccc
+%            				ccc
+%            				ccc
+            				ccc
+            				ccc}
+                \toprule
+                \multirow{3}{*}{Classifier}& Dataset $ \rightarrow $   & 
+                \multicolumn{6}{c}{Adult} &
+%                \multicolumn{6}{c}{German} &
+                \multicolumn{6}{c}{COMPAS} \\ 
+                \cmidrule(lr){3-8}
+                \cmidrule(lr){9-14}
+%                \cmidrule(lr){15-20}
+                & Protected  $ \rightarrow $ & 
+                \multicolumn{3}{c}{Race}   & \multicolumn{3}{c}{Sex}  &
+%                \multicolumn{3}{c}{Age}   & \multicolumn{3}{c}{Sex}  &
+                \multicolumn{3}{c}{Race}   & \multicolumn{3}{c}{Sex}
+                \\ 
+                \cmidrule(lr){3-5}
+                \cmidrule(lr){6-8}
+                \cmidrule(lr){9-11}
+                \cmidrule(lr){12-14}
+%                \cmidrule(lr){15-17}
+%                \cmidrule(lr){18-20}
+
+                 & Algorithm  $ \rightarrow $ &  
+                orig. & RW & OP & 
+                orig. & RW & OP &
+%                orig. & RW & OP &
+%                orig. & RW & OP &
+                orig. & RW & OP &
+                orig. & RW & OP \\ 
+                \midrule
+          
+              
+              
+              \multirow{3}{*}{\shortstack{Logistic \\ regression}}
+              & Disparte impact&  $ 0.23 $ &  $ \mathbf{0.85} $ &  $ \mathbf{0.59} $ &  $ 0.03 $ &  $ \mathbf{0.61} $ &  $ \mathbf{0.62} $ &  $ 0.34 $ &  $ \mathbf{0.36} $ &  $ \mathbf{0.47} $ &  $ 0.48 $ &  $ \mathbf{0.80} $ &  $ \mathbf{0.74} $  \\
+              & Stat. parity&  $ 0.09 $ &  $ \mathbf{0.01} $ &  $ \mathbf{0.05} $ &  $ 0.16 $ &  $ \mathbf{0.04} $ &  $ \mathbf{0.03} $ &  $ 0.39 $ &  $ \mathbf{0.33} $ &  $ \mathbf{0.21} $ &  $ 0.23 $ &  $ \mathbf{0.09} $ &  $ \mathbf{0.10} $  \\
+              & Equalized odds&  $ 0.13 $ &  $ \mathbf{0.03} $ &  $ \mathbf{0.10} $ &  $ 0.30 $ &  $ \mathbf{0.02} $ &  $ \mathbf{0.06} $ &  $ 0.38 $ &  $ \mathbf{0.33} $ &  $ \mathbf{0.18} $ &  $ 0.17 $ &  $ 0.19 $ &  $ \mathbf{0.07} $  \\
+              \midrule
+              \multirow{3}{*}{\shortstack{Decision \\ tree}}
+              & Disparte impact&  $ 0.82 $ &  $ 0.60 $ &  $ 0.67 $ &  $ 0.00 $ &  $ \mathbf{0.73} $ &  $ \mathbf{0.95} $ &  $ 0.61 $ &  $ 0.58 $ &  $ 0.57 $ &  $ 0.94 $ &  $ 0.78 $ &  $ 0.63 $  \\
+              & Stat. parity&  $ 0.02 $ &  $ 0.05 $ &  $ 0.04 $ &  $ 0.14 $ &  $ \mathbf{0.05} $ &  $ \mathbf{0.01} $ &  $ 0.18 $ &  $ \mathbf{0.17} $ &  $ \mathbf{0.17} $ &  $ 0.02 $ &  $ 0.09 $ &  $ 0.18 $  \\
+              & Equalized odds&  $ 0.07 $ &  $ \mathbf{0.05} $ &  $ \mathbf{0.03} $ &  $ 0.47 $ &  $ \mathbf{0.03} $ &  $ \mathbf{0.04} $ &  $ 0.17 $ &  $ \mathbf{0.16} $ &  $ \mathbf{0.16} $ &  $ 0.07 $ &  $ \mathbf{0.05} $ &  $ 0.16 $  \\
+              
+              
+              
+              
+              
+               
+               
+                \bottomrule
+    \end{tabular}
+\caption{Verification of different fairness enhancing algorithms for multiple datasets and classifiers using {\justicia}. Numbers in bold refer to fairness improvement  compared against the unprocessed (orig.) dataset. RW and OP refer to reweighing and optimized-preprocessing algorithm respectively. }\label{fairness_justicia_tab:fair_algo_verification}
+\end{table*}

@@ -1,0 +1,46 @@
+\section{Theoretical analysis}
+
+We now discuss theoretical analysis of our framework. Our analysis considers the following points.
+
+\begin{enumerate}
+	\item \textbf{Total error due to finite sample and thus, error in probability computation.} We compute the probability of the Boolean variables on finite sample (e.g., a given dataset). Hence the computed probability may carry error that is forwarded to the computation of the positive prediction rate and eventually to measuring fairness metrics. 
+	
+	Let us consider that $ p_i $ is the computed probability of a Boolean variable $ b_i $ being assigned to $ \top $ on a finite sample $ D $ and $ \hat{p_i} $ is the probability  on the actual distribution $ \mathcal{D} $. If $ | p_i - \hat{p_i}| \le \epsilon $, i.e., $ \epsilon $ additive error for small $ \epsilon \approx 0 $, we want to compute the error of probability $ p $ of the satisfaction of the SSAT formula $ \Phi $.  
+	
+	\red{I may be wrong!!} The satisfying probability $ p $ of $ \Phi $ is the weighted sum of all satisfying assignments of the CNF $ \phi $. 
+	\[
+		p = \sum_\sigma \prod_{b_i \in \sigma}p_i	
+	\]
+	This probability is computed according to $ D $. However, the true satisfying probability $ \hat{p} $  of $ \Phi $ is 
+	\[
+		\hat{p} = \sum_\sigma \prod_{b_i \in \sigma}p_i \pm \epsilon	
+	\]
+	
+	We need to find a tight bound of $ |p - \hat{p}| $. 
+	
+	\item \textbf{Error due to thresholding of the features.} For the linear classifier, we convert the decision function to CNF using pseudo-Boolean encoding. This encoding results in a large CNF with many variables and clauses and results in more computational effort while solving the SSAT formula. In the linear classifier, the coefficients carry the weights/importance of the attributes. After normalizing all the coefficients, we can exclude attributes with coefficients less than a threshold $ \lambda $, i.e., we set the coefficient to $ 0 $ if it is less than $ \lambda $. Such thresholding would result in a smaller-size CNF. However, it  incur errors while computing the positive prediction rate of the classifier. 
+	
+	
+	\item \textbf{Error due to discretization (histogram based) of continuous attributes.} For continuous real-valued attributes, we can discretize them initially and learn a linear classifier on the Boolean discretized attributes. But this poses a limitation of {\framework} where the linear classifier must have Boolean attributes only. Instead we can apply discretization of the real-valued attributes after training, which we discuss in the following.  
+	
+	Let $ x $ be a continuous attribute and $ w $ be its weight learned during training. We want to discretize $ x $ to a set $ \mathbf{B} $ of Boolean attributes. For discretization, we simply consider interval-based approach where for each interval (or bin) in the continuous space of $ x $, we consider a Boolean variable $ b_i \in \mathbf{B} $ that is assigned $ \top $ when the value of $ x $ lies within the interval and $ b_i $ is assigned $ \bot $ otherwise. We now compute the revised weights of the  discretized variables in $ \mathbf{B} $. Let $ \mu_i $ be the mean of the interval where  $ b_i $ is active. Then we set the revised weight of $ b_i $ to be $ \mu_i\cdot w $. We can show trivially that if we consider infinite number of intervals, this revised weight is equivalent to the actual weight of the continuous attribute, i.e., $ x \approx \sum_i \mu_ib_i $. 
+	
+	We now need to measure error when considering finite number of intervals. 
+	
+	
+	\item \textbf{Error due to indistinguishably of probabilities below a threshold} Not implemented yet. 
+\end{enumerate}
+
+\todo[inline]{
+	$x_1, \ldots, x_n$ OR, $p_1, \ldots, p_n$
+	
+	$P(\phi) = 1- \prod_{i=1}^{n} (1- p_i)$.
+	
+	$|\hat{p}_i - p_i| \leq \epsilon$ w.p $1 - 1/e^2$
+	
+	$P(\phi) = 1- \prod_{i=1}^{n} (1- p_i - \epsilon)$
+	
+	$\log (1-P(\phi)) = \sum_{i=1}^{n} \log(1- p_i - \epsilon) \leq \sum_{i=1}^{n} \log(1- p_i) + n\log(\epsilon)$
+}
+
+
