@@ -1,0 +1,45 @@
+\section{Preliminaries}
+\label{interpretability_imli_sec:preliminaries}
+
+In this section, we first discuss propositional satisfiability and MaxSAT, followed by rule-based classification in machine learning. Throughout the paper, we use capital  boldface letters such as $\mathbf{X}$ to denote matrices while lower boldface letters $\mathbf{x}$ are reserved for vectors/sets. 
+
+\subsection{Propositional Satisfiability}
+
+Let $F$ be a Boolean formula defined over Boolean variables $\mathbf{b} = \{b_1,b_2,\dots ,b_m \}$. A literal or predicate $ v $ is a variable $b$ or its complement $\neg b$, and a clause $ C $ is a disjunction ($ \vee $) or a conjunction ($ \wedge $) of literals.\footnote{While \emph{term} is reserved to denote disjunction of literals in the literature, we use clause for both disjunction and conjunction.}  $F$ is in Conjunctive Normal Form (CNF) if $F \triangleq  \bigwedge_i C_i$ is a conjunction of clauses where each clause $C_i \triangleq  \bigvee_j v_j $  is a disjunction of literals. In contrast, $ F $ is in Disjunctive Normal Form (DNF) if $F \triangleq  \bigvee_i C_i$ is a disjunction of clauses where each clause $C_i \triangleq  \bigwedge_j v_j $ is a conjunction of literals. We use $\sigma$ to denote an assignment of variables in  $\mathbf{b}$ where $ \sigma(b_i) \in $ \{true, false\}. A \emph{satisfying assignment} $ \sigma^* $ of $F$ is an assignment  that evaluates $F$  to true and is denoted by $ \sigma^* \models F $. The propositional satisfiability (SAT) problem finds a satisfying assignment $ \sigma^* $ to a CNF formula $ F $  such that $ \forall i, \sigma^* \models C_i $, wherein $ \sigma^*\models C_i $ if and only if $ \exists v_j \in C_i, \sigma^*(v_j) = \text{true} $. Informally, $ \sigma^* $ satisfies at least one literal in each clause of a CNF. 
+%\red{Moreover, $ F $ is called SAT if there exists a satisfying assignment of $ F $, and $ F $ is called UNSAT otherwise.}
+
+
+In this paper, we use true as $ 1 $ and false as $ 0 $ interchangeably. Between two vectors  $\mathbf{u}$ and $\mathbf{v}$ of the same length defined over Boolean variables or constants (such as  $ 0 $ and $ 1 $), we define $\mathbf{u} \circ \mathbf{v} $  to refer to  their inner product. Formally, $\mathbf{u} \circ \mathbf{v} \triangleq \bigvee_{i} (u_{i} \wedge v_{i})$ is a disjunction of element-wise conjunction where $u_{i}$ and $v_{i}$ denote the $ i^\text{th} $ variable/constant of $\mathbf{u}$ and $\mathbf{v}$, respectively. In this context, the conjunction ``$\wedge$'' between a variable and a constant follows the standard interpretation: $b \wedge 0 = 0$ and $b \wedge 1 = b$.  For example, if $ \mathbf{u} = [u_1, u_2, u_3] $ and $ \mathbf{v} = [0,1,1] $, then $ \mathbf{u} \circ \mathbf{v} = u_2 \vee u_3 $.
+
+\subsection{MaxSAT}
+
+The MaxSAT problem is an optimization analog to the SAT problem that finds an optimal assignment satisfying the maximum number of clauses in a CNF. In this work, we consider a \emph{weighted} variant of the MaxSAT problem\textemdash more specifically, a weighted-partial MaxSAT problem\textemdash that optimizes over a set of hard and soft constraints in the form of a weighted-CNF formula. In a weighted-CNF formula, a weight $ {\weight{C_i}} \in \mathbb{R}^+ \cup \{\infty\} $ is defined over each clause $ C_i $, wherein $C_i$ is called a \emph{hard} clause if $\weight{C_i} = \infty$, and  $C_i$ is  a \emph{soft} clause, otherwise.  To avoid notational clutter, we overload {\weight{\cdot}} to denote the weight of an assignment $ \sigma $. In particular, we define $\weight{\sigma}$ as the sum of the weights of \emph{unsatisfied clauses} in a CNF, formally, $\weight{\sigma} = \Sigma_{i | \sigma \not \models C_i} \weight{C_i}$.
+
+
+Given a weighted-CNF formula $F \triangleq \bigvee_i C_i$ with weight $ \weight{C_i} $, the weighted-partial MaxSAT problems finds an optimal assignment $\sigma^*$ that achieves the minimum weight. Formally,  $\sigma^* = \MaxSAT(F,\weight{\cdot})$ if $\forall \sigma \neq \sigma^*, \weight{\sigma^*} \leq \weight{\sigma}$. The optimal weight of the MaxSAT problem $  \weight{\sigma^*} $ is infinity ($ \infty $) when at least one hard clause becomes unsatisfied.  Therefore,  the weighted-partial MaxSAT problem finds $ \sigma^* $ that satisfies all hard clauses and as many soft clauses as possible such that the total weight of unsatisfied soft clauses is minimum. In this paper, we reduce the classification problem  to the solution of a weighted-partial MaxSAT problem. The knowledge of the inner workings of {MaxSAT} solvers is  not required for this paper.   
+
+
+\subsection{Rule-based Classification}
+
+We consider a standard binary classification problem where $ \mathbf{X} \in \{0,1\}^{n\times m} $ is a binary feature matrix\footnote{Our framework allows learning on real-valued and categorical features, as discussed in Section~\ref{interpretability_imli_sec:non-binary}.} defined over Boolean features $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$ and $ \mathbf{y} \in \{0,1\}^n $ is a vector of binary class labels.  The $ i^\text{th} $ row of $ \mathbf{X} $, denoted by $ \mathbf{X}_i \in \mathcal{X} $, is called a sample, which is generated from a product distribution $ \mathcal{X} $. Thus, $ \mathbf{X}_i $ is the valuation of features in $ \mathbf{x} $ and $ y_i $ is its class label.  $ \mathbf{X}_i $ is called a positive sample if $ y_i = 1 $, otherwise a negative sample.
+
+
+A classifier $ \Rule: \mathbf{x} \rightarrow \hat{y} \in  \{0,1\} $ is a  function that takes a Boolean vector as input and outputs the predicted class label $\hat{y}$.  %We define two rules  $ \R_1 $ and $ \R_2 $ to be  equivalent  if $ \forall i,\R_1(\X_i)=\R_2(\X_i) $. 
+In a rule-based classifier, we view $ \mathcal{R} $ as a propositional formula defined over Boolean features $ \mathbf{x} $ such that, if $ \Rule $ becomes true for an input (or an assignment), the prediction $ \hat{y} = 1 $ and $ \hat{y} = 0 $, otherwise.  The goal is to design $\Rule$ not only to approximate the training data, but also to generalize to unseen samples arising from the same distribution. Additionally, we prefer to learn a \emph{sparse} $ \Rule $ in order to favor interpretability. We define the structural complexity of $ \Rule $, referred to as \emph{rule-size}, in terms of the number of literals it contains. Let $\clause(\Rule,i)$ denote  the  $i^\text{th}$ clause of $\Rule$ and $ |\clause(\Rule,i)| $ be  the number of literals in $\clause(\Rule,i)$. Thus, the size of the classifier is $|\Rule| =  \Sigma_i |\clause(\Rule,i)| $, which is the sum of literals in all clauses in $ \Rule $. 
+
+For example, let $ \Rule \triangleq (x_1 \vee x_3) \wedge (\neg x_2 \vee x_3) $ be a CNF classifier defined over three Boolean features $ \{x_1, x_2, x_3\} $. For an input $ [0, 1, 1] $, the prediction of $ \Rule  $ is $ 1 $ whereas for an input $ [1, 1, 0] $, the prediction is $ 0 $ because $ \Rule $ is true and false in these two cases, respectively. Moreover, $ |\Rule| = 2 + 2 = 4 $ is the rule-size of $ \Rule $. 
+
+\paragraph{Decision Lists.} A decision list is a rule-based classifier consisting of ``if-then-else'' rules. Formally, a decision list~\cite{rivest1987learning} is an ordered list $ \Rule_L $ of pairs $ (C_1, v_1), \dots, (C_k, v_k) $ where $ C_i $ is a conjunction of literals (alternately, a single clause in a DNF formula) and $ v_i \in \{0,1\} $ is  a Boolean class label\footnote{In a more practical setting, $ v_i \in \{0, \dots, N\} $  can be multi-class for $ N \ge 1 $.}. Additionally, the last clause $ C_k \triangleq  $ true, thereby $ v_k $ is the default class. A decision list is defined as a classifier with the following interpretation: for a feature vector $ \mathbf{x} $,  $ \Rule_L(\mathbf{x}) $ is equal to $ v_i $ where $ i $ is the least index such that $ \mathbf{x} \models C_i $. Since the last clause is true, $ \Rule_L(\mathbf{x}) $ always exists. Intuitively, whichever clause (starting from the first) in $ \Rule_L $ is satisfied for an input, the associated class-label is considered as its prediction.
+
+\paragraph{Decision sets.} A decision set is a set of \textit{independent} ``if-then'' rules. Formally,  a decision set $ \Rule_S $ is a set of pairs $ \{(C_1, v_1), \dots, (C_{k-1}, v_{k-1})\}  $ and a  default pair $ (C_k, v_k) $, where $ C_i $ is\textemdash similar to a decision list\textemdash a conjunction of literals and $ v_i \in \{0,1\} $ is a Boolean class label. In addition, the last clause $ C_k \triangleq  $ true and $ v_k $ is the default class. For a  decision set, if an input $ \mathbf{x} $ satisfies one clause, say $ C_i $, then the prediction is $ v_i $. If $ \mathbf{x} $ satisfies no clause, then the prediction is the default class $ v_k $. Finally, if $ \mathbf{x} $ satisfies  $ \ge 2 $ clauses, $ \mathbf{x} $ is assigned a class using a tie-breaking~\cite{lakkaraju2016interpretable}. 
+
+
+
+
+
+
+
+
+
+
+

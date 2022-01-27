@@ -1,0 +1,170 @@
+\section{MaxSAT-based Interpretable Classification Rule Learning}
+\label{interpretability_imli_sec:baseline}
+In this section, we discuss a MaxSAT-based framework for optimal learning of an interpretable rule-based classifier, particularly a CNF classifier $ \Rule $. 
+We first describe the decision variables in Section~\ref{interpretability_imli_sec:variables} and present the MaxSAT encoding  in Section~\ref{interpretability_imli_sec:encoding}. Our MaxSAT formulation assumes binary features as input. We
+conclude this section by learning $ \Rule $ with non-binary features in Section~\ref{interpretability_imli_sec:non-binary} and discussing more flexible interpretability constraints of $ \Rule $ in Section~\ref{interpretability_imli_sec:complex_interpretability_objectives}.  
+
+
+
+\subsection{Description of Variables}
+\label{interpretability_imli_sec:variables} 
+We initially preprocess $ \mathbf{X} $  to account for the negation of  Boolean features while learning a classifier.\footnote{This preprocessing is similarly applied in  \cite{malioutov2013exact}.} In the preprocessing step, we negate each column in $ \mathbf{X} $ to a new column and append it to $ \mathbf{X} $. For example, if ``$ \text{age }\ge 25 $'' is a Boolean feature, we add another feature ``$ \text{age }< 25 $'' in  $ \mathbf{X} $ by negating the column ``$ \text{age }\ge 25 $''. Hence, in the rest of the paper, we refer $ m $ as the modified number of columns in $ \mathbf{X} $. We next discuss the variables in the MaxSAT problem. 
+
+We consider two types of Boolean variables: (i) \emph{feature} variables $ b $ corresponding to input features and (ii) \emph{error} variables $ \eta $ corresponding to the classification error of samples. We define a Boolean variable $ b^i_j $ that becomes true if feature $ x_j $ appears in the $ i^\text{th} $ clause of $ \Rule $, thereby contributing to an increase in the rule-size of $ \Rule $, and $ b^i_j $ is assigned false, otherwise. Moreover, we define an error variable $ \eta_l $ to attribute to whether the sample $ \mathbf{X}_l $ is classified correctly or not. Specifically, $ \eta_l $ becomes true if $ \mathbf{X}_l $ is misclassified, and becomes false otherwise.  We next discuss the MaxSAT encoding to solve the classification problem.   
+
+
+
+
+\subsection{MaxSAT Encoding}
+\label{interpretability_imli_sec:encoding}
+We consider a partial-weighted MaxSAT formula, where we encode the objective function in Eq.~\eqref{interpretability_imli_eq:obj} as soft clauses. For each sample in $ \mathbf{X} $, we construct hard clauses specifying that the sample is either  classified correctly and $ \eta_l $ is false or it is misclassified and $ \eta_l $ is true. We next discuss the MaxSAT encoding in detail.
+
+\begin{itemize}
+	\item \textbf{Soft clauses for maximizing training accuracy:} For each training sample, {\imli} constructs a soft unit\footnote{A unit clause has a single literal.} clause $ \neg \eta_l $ to account for a penalty for misclassification. Since the penalty for misclassification of a sample is $ 1 $  in Eq.~\eqref{interpretability_imli_eq:obj},  the weight of this soft clause is also $ 1 $. 
+	
+	\begin{equation}
+		\label{interpretability_imli_soft_clause_error}
+		E_l:=\neg \eta_l;  \qquad \mathsf{wt}(E_l)= 1
+	\end{equation}
+	Intuitively, if a sample is misclassified, the associated error variable becomes true, thereby dissatisfying the soft clause $ E_l $.
+	 
+	
+	\item \textbf{Soft clauses for minimizing rule-sparsity:} To favor rule-sparsity, {\imli} tries to learn a classifier with as few literals as possible. Hence, for each feature variable $ b_j^i $, {\imli} constructs a unit clause as $ \neg b_j^i $. Similar to training accuracy, the weight for this clause is derived as $ \lambda $ from Eq.~\eqref{interpretability_imli_eq:obj}.
+	\begin{equation}
+		\label{interpretability_imli_soft_clause_feature}
+		S_j^i:= \neg b_j^i; \qquad \mathsf{wt}(S_j^i)= \lambda
+	\end{equation}
+	
+
+	
+	\item \textbf{Hard clauses for encoding constraints:} In a MaxSAT problem, constraints that must be satisfied are encoded as hard clauses. In {\imli}, we have a constraint that, if the error variable is false, the associated sample must be correctly classified, and vice-versa. Let  $\mathbf{b}_i= \{b^i_{j} \mid j \in \{1,\dots,m \}\}$ be a vector of feature variables corresponding to the $ i^\text{th} $  clause in $ \mathcal{R} $. Then, we define the following hard clause.
+	
+	\begin{equation}
+			\label{interpretability_imli_hard_clause_rule_consistency}
+		H_l:= \neg \eta_l \rightarrow \Big(y_l\leftrightarrow \bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}\Big); \qquad  \mathsf{wt}(H_l)=\infty
+	\end{equation}
+	
+	In the hard clause, $ \bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}\ $ is a CNF formula including variables $ b_j^i $ for which the associated  feature-value is $ 1 $ in  $ \mathbf{X}_l $. Since $ y_l \in \{0,1\} $ is a constant, the constraint to the right of the implication ``$ \rightarrow $'' is either  $ \bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}\ $ or its complement. Therefore, the hard clause enforces that if the sample is correctly classified (using $ \neg \eta_l $), either  $ \bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}\ $ or its complement is true depending on the class-label of the sample.  We highlight that according to the definition of ``$ \rightarrow $'', the left constraint $ \neg \eta_l $ can  be false while the right constraint of 	``$ \rightarrow $'' is true.  This, however, incurs unnecessarily dissatisfying the soft clause $ E_l $, which is a sub-optimal solution and hence this solution is not returned by the MaxSAT solver. Therefore, the single-implication ``$ \rightarrow $'' in the hard clause $ H_l $ acts as a double-implication ``$ \leftrightarrow $''  due to the soft clause $ E_l $. 
+	
+
+	
+
+
+\end{itemize}
+
+	  We next discuss the translation of soft and hard clauses into a CNF formula, which can be invoked by any MaxSAT solver. 
+
+\paragraph{Translating $ E_l, S^i_j, H_l $ to a CNF formula.} 
+The soft clauses $ E_l $ and $ S_j^i $ are unit clauses and hence, no translation is required for them.  In the hard clause, when $ y_l=1 $, the simplification is $ H_l:= \neg \eta_l \rightarrow \bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}  $. In this case, we apply the equivalence rule in propositional logic $ (a \rightarrow b) \equiv (\neg a \vee b) $  to encode $ H_l $ into  CNF. In contrast, when $ y_i=0 $, we simplify the hard clause as $ H_l:= \neg \eta_l \rightarrow \neg (\bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}) \Rightarrow  \neg \eta_l \rightarrow \bigvee_{i=1}^k \neg({\mathbf{X}_l} \circ {\mathbf{b}_{i}})$. Since $ \mathbf{X}_l \circ \mathbf{b}_{i} $ constitutes a disjunction of literals (defined in Section~\ref{interpretability_imli_sec:preliminaries}), we apply Tseytin transformation to encode  $ \neg (\mathbf{X}_l \circ \mathbf{b}_{i}) $ into CNF. More specifically, we introduce an auxiliary variable $ z_{l,i} $ corresponding to the clause $ \neg ({\mathbf{X}_l} \circ {\mathbf{b}_{i}}) $. Formally, we replace $ H_l := \neg \eta_l \rightarrow  \bigvee_{i=1}^k \neg ({\mathbf{X}_l} \circ {\mathbf{b}_{i}}) $ with   $ \bigwedge_{i=0}^k H_{l,i} $,  where $ H_{l,0}:= (\neg \eta_l \rightarrow  \bigvee_{i=1}^k  z_{l,i}) $  and  $  H_{l,i}:= z_{l,i} \rightarrow  \neg({\mathbf{X}_l} \circ {\mathbf{b}_{i}})  $ for $ i=\{1,\dots,k\} $. Finally, we  apply the equivalence of $ (a \rightarrow b) \equiv (\neg a \vee b) $ on $ H_{l,i} $ to translate them into CNF. For either value of $ y_l $, the weight of each translated hard clause in the CNF formula is $ \infty $.
+
+% Now,  the hard clause can be simplified as $ H_l:= \neg \eta_l \rightarrow \bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}  $ when $ y_l=1 $, otherwise  $ H_l:= \neg \eta_l \rightarrow \neg (\bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}) \Rightarrow  \neg \eta_l \rightarrow \bigvee_{i=1}^k \neg({\mathbf{X}_l} \circ {\mathbf{b}_{i}})$. 
+
+
+
+% In the hard clause,  $\bigwedge_{i=1}^k {\mathbf{X}_l} \circ {\mathbf{b}_{i}}  $ is already in CNF. When $ y_l=1 $, the constraint $ H_l $ can be directly encoded as CNF by using equivalence of $ (a \rightarrow b) \equiv (\neg a \vee b) $. When $ y_i=0 $, we apply 
+
+
+
+Once we translate  all soft and hard clauses into CNF, the MaxSAT query $ Q $ is the conjunction of all clauses. 
+\[
+Q:= \bigwedge_{l=1}^n E_l \wedge  \bigwedge_{i=1,j=1}^{i=k,j=m} S_j^i \wedge \bigwedge_{l=1}^n H_l 
+\]
+		
+Any off-the-shelf MaxSAT solver can output an optimal assignment $ \sigma^* $ of the MaxSAT query $ (Q, \weight{\cdot}) $. We extract $ \sigma^* $ to construct the classifier $ \Rule $ and compute training errors as follows.
+\begin{construction}
+	\label{interpretability_imli_construction:rule}
+	Let $\sigma^* = \MaxSAT(Q,\weight{\cdot})$. Then $x_j \in {\clause(\Rule,i)}$ if and only if $\sigma^*(b_{j}^{i}) = 1$. Additionally, $ \mathbf{X}_l $ is misclassified if and only if $ \sigma^*(\eta_l) = 1 $.
+\end{construction}
+
+
+
+
+	
+	
+	 
+\paragraph{Complexity of the MaxSAT query.}
+
+We analyze the complexity of the MaxSAT query in terms of the number of Boolean variables and clauses in the CNF formula $ Q $. 
+
+\begin{proposition}
+	\label{interpretability_imli_prop:maxsat_variables}
+	 To learn a $ k $-clause CNF classifier for a dataset of  $ n $ samples over $ m $ boolean features, the MaxSAT query $ Q $ defines $ km +n $ Boolean variables. Let $ n_{neg} $ be the number of negative samples in the training dataset. Then the number of auxiliary variables in $ Q $ is  $ kn_{neg}  $.
+\end{proposition}
+
+
+\begin{proposition}
+	\label{interpretability_imli_prop:maxsat_clauses}
+	The MaxSAT query $ Q $ has $ k m+n $ unit clauses corresponding to the constraints $ E_l $ and $ S_j^i $. For a positive sample, the hard clause $ H_l $ is translated into $ k $  clauses. For each negative sample, the CNF translation requires at most $ k m+1 $ clauses. Let $ n_{pos} $ and $ n_{neg} $ be the number of positive and negative samples in the training set. Therefore, the number of clauses in the MaxSAT Query $ Q $ is $ k m+n+k n_{pos}+(k m+1)n_{neg} \approx \mathcal{O}(k m  n ) $ when $ n_{pos}= n_{neg} =\frac{n}{2} $. 
+\end{proposition}
+
+\subsubsection*{Example of encoding}
+
+We illustrate the MaxSAT encoding for a toy example consisting of four samples and two binary features. Our goal is to learn a two clause CNF classifier that can approximate the training data. 
+\[ 
+\mathbf{X}_\mathsf{orig} = 
+\begin{blockarray}{cc}
+x_1 & x_2 \\
+\begin{block}{[cc]}
+0 & 0 \\
+0 & 1 \\
+1 & 0 \\
+1 & 1 \\
+\end{block}
+\end{blockarray} \implies 
+\mathbf{X} = 
+\begin{blockarray}{cccc}
+x_1 & \neg x_1 & x_2  & \neg x_2\\
+\begin{block}{[cccc]}
+0 & 1 & 0 & 1\\
+0 & 1 & 1 & 0\\
+1 & 0 & 0 & 1\\
+1 & 0 & 1 & 0\\
+\end{block}
+\end{blockarray}; \quad 
+\mathbf{y} = 
+\begin{bmatrix} 
+1 \\ 0 \\ 0 \\ 1
+\end{bmatrix}
+\]
+In the preprocessing step, we negate the columns in $ \mathbf{X}_\mathsf{orig} $ and add complemented features $ \{\neg x_1, \neg x_2\} $ in $ \mathbf{X} $. In the MaxSAT encoding, we define $ 8 $ feature variables ($ 4 $ features $ \times $ $ 2 $ clauses in the classifier) and $ 4 $ error variables. For example, for feature $ x_2 $, introduced feature variables are $ \{b^1_3, b^2_3\} $ and for feature $ \neg x_2 $, introduced variables are $ \{b^1_4, b^2_4\} $. For four samples, error variables are $ \{\eta_1, \eta_2, \eta_3, \eta_4\} $. We next show the soft and hard clauses in the MaxSAT encoding
+
+
+\[
+\begin{split}
+&E_1:= (\neg \eta_1); \quad
+E_2:= (\neg \eta_2); \quad E_3:= (\neg \eta_3); \quad
+E_4:= (\neg \eta_4)\\
+& S_1^1 := (\neg b_1^1);\quad 
+ S^1_2 := (\neg b^1_2);\quad 
+ S^1_3 := (\neg b^1_3);\quad
+ S^1_4 := (\neg b^1_4);\quad \\ 
+& S_1^2 := (\neg b_1^2);\quad 
+S^2_2 := (\neg b^2_2);\quad 
+S^2_3 := (\neg b^2_3);\quad 
+S^2_4 := (\neg b^2_4);\quad\\ 
+& H_1:= (\neg \eta_1 \rightarrow ((b_2^1 \vee b_4^1)\wedge (b_2^2 \vee b_4^2)));\\
+& H_2:= (\neg \eta_2 \rightarrow (\neg(b_2^1 \vee b_3^1) \vee \neg(b_2^2 \vee b_3^2)));\\
+& H_3:= (\neg \eta_3 \rightarrow (\neg (b_1^1 \vee b_4^1) \vee \neg(b_1^2 \vee b_4^2)));\\
+& H_4:= (\neg \eta_4 \rightarrow ((b_1^1 \vee b_3^1) \wedge (b_1^2 \vee b_3^2)));\\
+\end{split}
+\]
+
+In this example, we consider regularizer $ \lambda = 0.1 $, thereby setting the weight on accuracy as $ \weight{E_i} = 1 $ and rule-sparsity weight as $ \weight{S_j^i} = 0.1 $. Intuitively, the penalty for misclassifying a sample is $ 10 $ times more than the penalty for adding a feature in the classifier. For this MaxSAT query, the optimal solution classifies all samples correctly by assigning four feature variables $ \{b^1_1, b^1_4, b^2_2, b^2_3\} $ to true. Therefore, by applying Construction~\ref{interpretability_imli_construction:rule}, the classifier is $ (x_1 \vee \neg x_2)  \wedge (\neg x_1 \vee x_2) $.\footnote{The presented MaxSAT-based formulation does not learn a CNF classifier with both $ x_i $ and $ \neg x_i $ in the same clause. The reason is that a clause with both $ x_i $ and $ \neg x_i $ connected by OR $ (\vee) $ does not increase accuracy but increases rule-size and hence, this is not an optimal classifier.}
+	
+	
+	
+\subsection{Learning with Non-binary Features}
+	\label{interpretability_imli_sec:non-binary}
+	The presented MaxSAT encoding requires input samples to have binary features. Therefore, we discretize datasets with categorical and continuous features into binary features. For each continuous feature, we apply equal-width discretization that splits the feature into a fixed number of bins. For example, consider a continuous feature $ x_c \in [a,b] $. In discretization, we split the domain $ [a,b] $ into three bins with two split points $ \{a',b'\} $ such that $ a<a'<b'<b $.  Therefore, the resulting three discretized features are $ { a \le x_c < a'} $, $ {a' \le x_c < b'} $, and $ { b' \le x_c  \le b } $. An alternate to this close-interval discretization is open-interval discretization, where we consider six discretized features with each feature being compared with one threshold. In that case, the discretized features are: $ x_c \ge a, x_c \ge a', x_c \ge b', x_c < a', x_c < b', x_c \le b $. Both open-interval and close-interval discretization techniques have their use-cases where one or the other is appropriate. For simplicity, we experiment with close-interval discretization in this paper.
+	
+	After applying discretization on continuous features, the dataset contains categorical features only, which we convert to binary features using one-hot encoding~\cite{lakkaraju2019faithful,ghosh19imli}. In one-hot encoding, a Boolean vector of features is introduced with cardinality equal to the number of distinct categories. For example, consider a categorical feature having three categories `red', `green', and `yellow'. In one hot encoding, samples with category-value `red', `green', and `yellow' would be converted into binary features by taking values $ 100 $, $ 010 $, and $ 001 $, respectively. 
+	
+	
+\subsection{Flexible Interpretability Objectives}
+\label{interpretability_imli_sec:complex_interpretability_objectives}
+{\imli} can be extended to consider more flexible interpretability objectives than the simplified one in Eq.~\eqref{interpretability_imli_eq:obj}. In Eq.~\eqref{interpretability_imli_eq:obj}, we prioritize all features equally by providing the same weight to the clause $ S_j^i $ for all  values of $ i $ and $ j $. In practice, users may prefer rules containing certain features. In {\imli}, such an extension can be achieved by modifying the weight function and/or the definition of  $ S_j^i $. For example, to constrain the classifier to never include a feature, the weight of the clause $ S_j^i := \neg b_j^i $ can be set to $ \infty $. In contrast, to always include a feature, we can define $ S_j^i := b_j^i $ with weight $ \infty $. In both cases, we treat $ S_j^i $ as a hard clause. 
+
+Another use case may be to learn rules where clauses have disjoint set of features. To this end, we consider a pseudo-Boolean constraint $ \sum_{i=1}^k b^i_j \le 1 $, which specifies that the feature $ x_j $ appears in at-most one of the $ k $ clauses. This constraint may be soft or hard depending on the priority in the application domain. In either case, we convert this constraint to CNF using pseudo-Boolean to CNF translation~\cite{philipp2015pblib}. Thus, {\imli} allows us to consider varied interpretability constraints by only modifying the MaxSAT query without requiring changes in the MaxSAT solving. Therefore, the \emph{separation between modeling and solving} turns out to be the key strength of {\imli}.
+
+
+

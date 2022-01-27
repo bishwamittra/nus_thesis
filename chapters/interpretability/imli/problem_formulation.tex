@@ -1,0 +1,30 @@
+
+
+ \section{Problem Formulation}
+ \label{interpretability_imli_sec:problem}
+Given (i) a binary feature matrix $ \mathbf{X} \in \{0,1\}^{n \times m} $ with $ n $ samples and $ m $ features, (ii) a class-label vector $ \mathbf{y} \in \{0,1\}^n $, (iii) a positive integer $ k \ge 1 $ denoting the number of clauses, and (iv) a regularization parameter $ \lambda \in \mathbb{R}^+ $, we learn a classifier $ \Rule $ represented as a $ k $-clause CNF formula that can separate samples of class $ 1 $ from class $ 0 $. 
+ 
+ 
+
+ Our goal is to learn classifiers that balance two 
+ goals: of  being accurate but also interpretable.  
+ Various notions of interpretability have been proposed in the context of   classification problems. A common proxy for interpretability in the context of decision rules 
+ is the sparsity of rule. For instance, a rule involving fewer literals is highly interpretable.  In this work, we minimize the total number of literals in all clauses, as discussed in Section~\ref{interpretability_imli_sec:preliminaries}, which motivates us to  find $ \Rule  $ with minimum  $ |\Rule| $. Let $ \Rule $ classify all samples correctly during training. Among all the classification rules that classify all samples correctly,  we choose the sparsest (most interpretable) such $ \Rule $. 
+ 
+ 
+
+ \[
+ \min\limits_{\mathcal{R}} |\mathcal{R}|\text{ such that }\forall i, y_i=\mathcal{R}(\mathbf{X}_i)
+ \]
+
+ 
+
+ In practical classification tasks, perfect classification is unlikely. Hence, we need to balance interpretability with classification error.  Let $ \mathcal{E}_\mathbf{X} = \{(\mathbf{X}_i,y_i) | y_i \ne \mathcal{R}(\mathbf{X}_i) \} $   be  the set of samples in $ \mathbf{X} $ that are misclassified  by $ \mathcal{R} $. Therefore, we balance between classification-accuracy and rule-sparsity and optimize the following function.\footnote{In our formulation, it is  straightforward to add class-conditional weights  (e.g., to penalize  false-alarms more than mis-detects), and to allow instance weights (per sample).}
+
+ \begin{equation}
+  \label{interpretability_imli_eq:obj}
+ \min\limits_{\mathcal{R}} \;  |\mathcal{E}_\mathbf{X}| +\lambda |\mathcal{R}|
+ \end{equation}
+ 
+Higher  values of $ \lambda $ generate a rule with a smaller rule-size but of more training errors, and vice-versa. Thus, $ \lambda $ can be tuned to trade-off between accuracy and interpretability for a rule-based classifier, which we experiment extensively in Section~\ref{interpretability_imli_sec:experiments}.
+

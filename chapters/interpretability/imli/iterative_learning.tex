@@ -1,0 +1,135 @@
+\subsection{Iterative Learning}  We now discuss an iterative learning algorithm for rule-based classifiers.  The major advantage of iterative learning is that we solve a smaller MaxSAT query because of learning a \textit{partial} classifier in each iteration. Our iterative approach is motivated by the set-covering algorithm\textemdash also known as separate-and-conquer algorithm\textemdash in symbolic rule learning~\cite{furnkranz1999separate}. In this approach, the core idea is to define the \emph{coverage of a partial classifier} (for example, a clause in a CNF classifier). For a specific definition of coverage, this  algorithm separates samples covered by the partial classifier and recursively conquers remaining samples in the training data by learning another partial classifier until no sample remains. The final classifier is an aggregation of all partial classifiers\textemdash the conjunction of clauses in a CNF formula, for example. 
+
+Iterative learning is different from mini-batch learning in several aspects. In mini-batch learning, we learn all clauses in a CNF formula together, while in iterative learning, we learn a single clause of a CNF in each iteration. Additionally, in mini-batch learning, we improve scalability by reducing the number of samples in the training data using mini-batches, while in iterative learning, we improve scalability by reducing the number of clauses to learn at once. Therefore, an efficient integration of iterative learning and mini-batch learning would benefit scalability from both worlds. In the following, we discuss this integration by first stating iterative learning for CNF classifiers.
+
+
+In iterative learning, we learn one clause of a CNF classifier in each iteration, where the clause refers to a partial classifier. The coverage of a clause in a CNF formula is the set of samples that \emph{do not satisfy} the clause. The reason is that if a sample does not satisfy at least one clause in a CNF formula, the prediction of the sample by the full formula is class $ 0 $ because CNF is a conjunction of clauses. As a result, considering covered samples in the next iteration does not change their prediction regardless of whatever clause we learn in later iterations. To this end, a single clause learning can be performed efficiently by applying mini-batch learning discussed before. In Algorithm~\ref{interpretability_imli_algo:iterative_CNF_learning}, we provide an algorithm for learning a CNF classifier iteratively by leveraging mini-batch learning. This algorithm is a double-loop algorithm, where in the outer loop we apply iterative learning and in the inner loop, we apply mini-batch learning.
+
+
+\begin{algorithm}
+	\caption{Iterative CNF Classifier Learning}
+	\label{interpretability_imli_algo:iterative_CNF_learning}
+	\begin{algorithmic}[1]
+		\Procedure{IterativeCNFLearning}{$ \mathbf{X},\mathbf{y},\lambda, k $}
+		\State $ \mathcal{R} \leftarrow $ true \Comment{Initial formula}
+		\For{$ i \leftarrow 1, \dots, k $ and $ (\mathbf{X},\mathbf{y}) \ne \emptyset $}
+		\State $ C_i \leftarrow \mathsf{MiniBatchLearning}( \mathbf{X},\mathbf{y},\lambda, 1) $ \Comment{Single clause learning, $ k = 1 $}
+		\label{interpretability_imli_algo:iterative_CNF_learning_incremental_learning}
+		\State $ \mathbf{X}',\mathbf{y}' \leftarrow \mathsf{Coverage}(\mathbf{X}, C_i) $
+		\label{interpretability_imli_algo:iterative_CNF_learning_coverage}
+		\If{$ (\mathbf{X}',\mathbf{y}') = \emptyset $} \Comment{Terminating conditions}
+		\State break
+		\EndIf
+		\State $ \mathcal{R} \leftarrow \mathcal{R}  \wedge C_i $
+		\State $ \mathbf{X},\mathbf{y}  \leftarrow (\mathbf{X},\mathbf{y})  \setminus (\mathbf{X}',\mathbf{y}') $ \Comment{Removing covered samples}
+		\EndFor
+		\State \Return $ \Rule $
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Terminating conditions.} In Algorithm~\ref{interpretability_imli_algo:iterative_CNF_learning}, we terminate iterative learning based on three conditions: (i) when $ \Rule $ contains all $ k $ clauses , (ii) the training data $ (\mathbf{X},\mathbf{y}) $ is empty (that is, no sample remains uncovered), and (iii) no new sample is covered by the partial classifier. Since the first two conditions are trivial, we elaborate on the third condition. When clause $ C_i $ cannot cover any new sample from the training dataset $ (\mathbf{X},\mathbf{y}) $, the next iteration will result in the same clause $ C_i $ because the training data remains the same. In this case, we do not include clause $ C_i $ to classifier $ \Rule $ because of zero coverage. 
+
+
+
+
+\section{Applying {\imli} on Learning Other Interpretable Classifiers.}
+\label{interpretability_imli_sec:application}
+In earlier sections, we discuss the learning of CNF classifiers using  {\imli}. {\imli} can also be applied to learning other interpretable rule-based representations. In this section, we discuss how {\imli} can be applied in learning DNF classifiers, decision lists, and decision sets.
+
+\subsection{Learning DNF classifiers} 
+\label{interpretability_imli_sec:dnf_learning}
+For learning DNF classifiers, we leverage De Morgan's law where complementing a CNF formula results in a DNF formula. To learn a DNF classifier, say $ \Rule'(\mathbf{x}) $, we can trivially show that $ y = \Rule'(\mathbf{x}) \leftrightarrow \neg (y = \neg \Rule'(\mathbf{x})) $ for the feature vector $ \mathbf{x} $. Here $ \neg \Rule'(\mathbf{x}) $ is a CNF formula, by definition. Thus, we learn a DNF classifier by first complementing the class-label $ \mathbf{y} $ to $ \neg \mathbf{y}$ in the training dataset, learning a CNF classifier on $ (\mathbf{X}, \neg \mathbf{y}) $ and finally complementing the learned classifier to DNF. For example, the CNF classifier  ``(Male $ \vee $ Age $ < 50 $) $ \wedge $ (Education $ = $ Graduate $ \vee $ Income  $ \ge 1500 $)'' 	is complemented to a DNF classifier as 	 ``(not Male $ \wedge $ Age $ \ge 50 $) $ \vee $ (Education $ \ne $ Graduate $ \wedge $ Income $ \le 1500 $)''. 
+
+
+To learn a DNF classifier incrementally, such as through mini-batch and iterative learning, we adopt the following procedure. For learning a DNF classifier using mini-batch learning, we first learn a CNF classifier on dataset $ (\mathbf{X}, \neg \mathbf{y}) $ and complement the classifier to a DNF classifier at the end of mini-batch learning. To learn a DNF classifier in the iterative approach, we  learn a single clause of the DNF classifier in each iteration, remove covered samples, and continue till no training sample remains. In this context, the coverage of a clause in a DNF formula is the set of samples satisfying the clause. 
+
+
+
+\subsection{Learning Decision Lists}
+In {\imli}, we apply an iterative learning approach for efficiently learning a  decision list. A decision list  $ \Rule_L $ is a list of pairs $ (C_1, v_1), \dots, (C_k, v_k) $, where we propose to learn one pair in each iteration.  We note that the clause $ C_i $ is a conjunction of literals\textemdash equivalently, a single clause DNF formula. Hence, our task is to deploy {\imli} to efficiently learn a single clause DNF formula $ C_i $. In particular, we opt to learn this clause for the majority class, say $ v_i $, in the training dataset by setting the majority samples as class $ 1 $ and all other samples as class $ 0 $. As a result, even if the MaxSAT-based learning, presented in this paper, is targeted for binary classification, we can learn a multi-class decision list in {\imli}. 
+
+
+In Algorithm~\ref{interpretability_imli_algo:iterative_decision_lists_learning}, we present the iterative algorithm for learning decision lists.  In each iteration, the algorithm learns a pair $ (C_i, v_i) $, separates the training set based on the coverage of $ (C_i, v_i) $ and conquers the remaining samples recursively. The coverage of $ (C_i, v_i) $ is the set of samples that satisfies clause $ C_i $. Finally, we add a default rule $ (C_k, v_\mathsf{default}) $ to $ \Rule_L $ where $ C_k \triangleq  $ true denoting that the clause is satisfied by all samples. We select the default class $ v_\mathsf{default} $ in the following order: (i) if any class(s) is not in the predicted classes $ \{v_i\}_{i=1}^{k-1} $ of the decision list, 
+ $ v_{\mathsf{default}} $ is the majority class among missing classes, and (ii)  $ v_{\mathsf{default}} $ is the majority class of the original training set $ (\mathbf{X}, \mathbf{y}) $, otherwise. 
+
+
+\begin{algorithm}
+	\caption{Iterative learning of decision lists}
+	\label{interpretability_imli_algo:iterative_decision_lists_learning}
+	\begin{algorithmic}[1]
+		\Procedure{DecisionListLearning}{$ \mathbf{X},\mathbf{y},\lambda, k $}
+		\State $ \mathcal{R}_L \leftarrow \{\}$
+		\For{$ i \leftarrow 1, \dots, k-1 $ and $ (\mathbf{X},\mathbf{y}) \ne \emptyset $}
+		\State $ v_i \leftarrow \mathsf{MajorityClass(\mathbf{y})} $ \Comment{$ v_i $ specifies the target class}
+		\State $ C_i \leftarrow \mathsf{MiniBatchDNFLearning}( \mathbf{X},\mathbf{y},\lambda, 1, v_i) $ \Comment{Ref. Section~\ref{interpretability_imli_sec:dnf_learning}}
+		
+%		\label{interpretability_imli_algo:iterative_CNF_learning_incremental_learning}
+		\State $ \mathbf{X}',\mathbf{y}' \leftarrow \mathsf{Coverage}(\mathbf{X}, C_i) $
+%		\label{interpretability_imli_algo:iterative_CNF_learning_coverage}
+		\If{$ (\mathbf{X}',\mathbf{y}') = \emptyset $} 
+		\State break
+		\EndIf
+		\State $ \mathcal{R}_L \leftarrow \mathcal{R}_L \cup \{(C_i, v_i)\} $
+		\State $ \mathbf{X},\mathbf{y}  \leftarrow (\mathbf{X},\mathbf{y})  \setminus (\mathbf{X}',\mathbf{y}') $ 
+		\EndFor
+		\State $ \mathcal{R}_L \leftarrow \mathcal{R}_L  \cup \{(\text{true}, v_{\mathsf{default}} )\}$	\Comment{Default rule}
+		\State \Return $ \Rule_L $
+		\EndProcedure
+	\end{algorithmic}
+	
+\end{algorithm}
+
+\subsection{Learning Decision Sets}
+We now describe an iterative procedure for learning decision sets. A decision set comprises of an individual clause-class  pair $ (C_i, v_i) $ where $ C_i $ denotes a single clause DNF formula similar to decision lists. In a decision set, a sample can satisfy multiple clauses simultaneously, which is attributed as an \textit{overlapping between clauses}~\cite{lakkaraju2016interpretable}. Concretely, the overlap between two clauses $ C_i $ and $ C_j $ with $ i \ne j $ is the set of samples $ \{\mathbf{X}_l | \mathbf{X}_l \models C_i \wedge \mathbf{X}_l \models C_j\} $ satisfying both clauses. One additional objective in learning a decision set is to minimize the overlap between clauses, as studied in~\cite{lakkaraju2016interpretable}. 
+Therefore, along with optimizing accuracy and rule-sparsity, we propose an iterative procedure for decision sets that additionally minimizes the overlap between clauses.
+
+\begin{algorithm}
+	\caption{Iterative learning of decision sets}
+	\label{interpretability_imli_algo:iterative_decision_sets_learning}
+	\begin{algorithmic}[1]
+		\Procedure{DecisionSetsLearning}{$ \mathbf{X},\mathbf{y},\lambda, k$}
+		\State $ \mathcal{R}_S=\{\} $
+		\State $ \mathbf{X}^\text{cc} = \{\}$  \Comment{Contains correctly covered samples}
+		\For{$ i \leftarrow 1, \dots, k-1 $ and $ (\mathbf{X},\mathbf{y}) \ne \emptyset $}
+		\State $ v_i \leftarrow \mathsf{MajorityClass(\mathbf{X},\mathbf{y})} $
+		\State $ \mathbf{X}^\text{w} \leftarrow \mathbf{X} \cup \mathbf{X}^\text{cc} $ \Comment{Correctly covered samples are included}
+		\State $ \mathbf{y}^\text{w} \leftarrow  \mathbf{y} \cup  \{\neg v_i\}^{|\mathbf{X}^\text{cc}|}$ \Comment{$ \mathbf{X}^\text{cc} $ have complemented class $ \neg v_i $ to minimize overlap}
+		\State $ C_i \leftarrow \mathsf{MiniBatchDNFLearning}( \mathbf{X}^\text{w},\mathbf{y}^\text{w},\lambda, 1, v_i) $ 
+		\State $ \mathbf{X}',\mathbf{y}' \leftarrow \mathsf{CorrectCoverage}(\mathbf{X}, \mathbf{y}, C_i, v_i) $
+		\If{$ (\mathbf{X}',\mathbf{y}') = \emptyset $} 
+		\State break
+		\EndIf
+		\State $ \mathcal{R}_S \leftarrow \mathcal{R}_S \cup \{(C_i, v_i)\} $
+		\State $ \mathbf{X},\mathbf{y} \leftarrow (\mathbf{X},\mathbf{y})  \setminus (\mathbf{X}',\mathbf{y}') $
+		\State $ \mathbf{X}^\text{cc} = \mathbf{X}^\text{cc} \cup \mathbf{X}'$ 
+		\EndFor
+		\State $ \mathcal{R}_S \leftarrow \mathcal{R}_S  \cup \{(\text{true}, v_{\mathsf{default}} )\}$
+		\State \Return $ \Rule_S $
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm} 
+
+
+
+
+
+
+In Algorithm~\ref{interpretability_imli_algo:iterative_decision_sets_learning}, we present an iterative algorithm for learning a decision set. The iterative algorithm is a modification of separate-and-conquer algorithm  by additionally focusing on minimizing overlaps in a decision set.  Given a training data $ (\mathbf{X}, \mathbf{y}) $, a  regularization parameter $ \lambda $, and the number of clauses $ k $, the core idea of Algorithm~\ref{interpretability_imli_algo:iterative_decision_sets_learning} is to learn a pair $ (C_i,v_i) $ in each iteration, separate covered samples from $ (\mathbf{X}, \mathbf{y}) $, and conquer remaining samples recursively. In contrast to learning decision lists, we have following modifications in Algorithm~\ref{interpretability_imli_algo:iterative_decision_sets_learning}. 
+
+\begin{itemize}
+	\item The first modification is with respect to the definition of coverage for decision sets. Unlike decision lists, we separate samples that are \textit{correctly covered} by $ (C_i, v_i) $ in each iteration. Given  $ (\mathbf{X}, \mathbf{y}) $, the correctly covered samples of $ (C_i, v_i) $ is a set $  \{(\mathbf{X}_l, \mathbf{y}_l)| \mathbf{X}_l \models C_i \wedge \mathbf{y}_l = v_i \} \subseteq (\mathbf{X}, \mathbf{y}) $ of samples that satisfy $ C_i $ and have matching class-label as $ v_i $. 
+	\item The second modification is related to the  training dataset considered in each iteration. Let $ (\mathbf{X},\mathbf{y}) $ denote the remaining training set in the current iteration and $ v_i $ be the majority class in  $ (\mathbf{X},\mathbf{y}) $. Hence, $ v_i $ is the target class in the current iteration. In Algorithm~\ref{interpretability_imli_algo:iterative_decision_sets_learning}, we learn $ C_i $ on a sample set $ (\mathbf{X}^\text{w},\mathbf{y}^\text{w}) $, where $ \mathbf{X}^\text{w} \triangleq \mathbf{X} \cup \mathbf{X}^\text{cc} $ comprises of both remaining and already covered samples. However, the vector of class labels $ \mathbf{y}^\text{w} \triangleq  \mathbf{y} \cup  \{\neg v_i\}^{|\mathbf{X}^\text{cc}|} $  comprises of remaining class-label vector $ \mathbf{y} $ and complemented class label vector $ \{\neg v_i\}^{|\mathbf{X}^\text{cc}|} $ associated with feature-matrix $ \mathbf{X}^\text{cc} $. By explicitly labeling covered samples as class $ \neg v_i $, the new clause $ C_i $ learns to falsify already covered samples. This heuristic allows us to minimize the overlap of $ C_i $ compared to previously learned clauses $ \{C_j\}_{j=1}^{i-1} $.
+\end{itemize}
+
+Finally, the default clause for decision sets is learned similarly as in decision lists. 
+
+
+
+
+
+\newcommand{\maxsatquery}{\ensuremath{\mathsf{ConstructQuery}}}
+\newcommand{\createclause}{\ensuremath{\mathsf{ConstructClause}}}
+\newcommand{\iterativeClauseLearning}{\ensuremath{\mathsf{IterativeClauseLearning}}}
+\let\oldReturn\Return
+\renewcommand{\Return}{\State\oldReturn}

@@ -1,4 +1,5 @@
 \documentclass[12pt]{report}
+%\renewcommand{\baselinestretch}{1.5} 
 
 
 % Define margins
@@ -20,7 +21,7 @@
 \fancyhf{}
 \lhead{{\includegraphics[height=.8cm]{figures/nus.png}}}
 \rhead{\textbf{\textit{Interpretable and Fair Machine Learning}} }
-\lfoot{\textbf{\textit{Page \thepage/\pageref*{LastPage}}}}
+\rfoot{\thepage}
 \renewcommand{\footrulewidth}{0.7pt}
 \renewcommand{\headrulewidth}{0.7pt}
 
@@ -39,14 +40,13 @@
 \usepackage{microtype}
 \usepackage{wrapfig}
 \usepackage{hyperref,url}
-\usepackage[
-font=footnotesize % or small or scriptsize
-]{subfig}
+\usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage{enumitem,kantlipsum}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{blkarray}
 
 
 % Theorem
@@ -130,6 +130,12 @@ font=footnotesize % or small or scriptsize
 			\newcommand{\MLIC}{\ensuremath{\mathsf{MLIC}}}
 			\newcommand{\IMLI}{\ensuremath{\mathsf{IMLI}}}
 			\newcommand{\ILP}{\ensuremath{\mathsf{ILP}}}
+			
+			
+%	    IMLI
+			\newcommand{\imli}{\ensuremath{\mathsf{IMLI}}}
+			
+		
 
 			
 			
@@ -185,6 +191,22 @@ font=footnotesize % or small or scriptsize
 				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
 				\input{chapters/interpretability/relaxed-cnf/experiment.tex}
 				\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
+				
+				
+%		IMLI
+			\chapter{Efficient Learning of  Interpretable Classification Rules}
+				\input{chapters/interpretability/imli/abstract}
+				\input{chapters/interpretability/imli/introduction}
+				\input{chapters/interpretability/imli/related_work}
+				\input{chapters/interpretability/imli/preliminaries}
+				\input{chapters/interpretability/imli/problem_formulation}
+				\input{chapters/interpretability/imli/baseline}
+				\input{chapters/interpretability/imli/incremental_learning}
+				\input{chapters/interpretability/imli/iterative_learning}
+				\input{chapters/interpretability/imli/experiment}
+				\input{chapters/interpretability/imli/conclusion}
+				
+
 				
 
 				
