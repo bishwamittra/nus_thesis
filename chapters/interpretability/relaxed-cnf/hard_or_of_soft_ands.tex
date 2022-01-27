@@ -1,0 +1,34 @@
+
+\section{Hard-ORs  of Soft ANDs }
+several notations: 
+\begin{itemize}
+	\item $ m $: no of features
+	\item $ k $: no of clause in the formula
+	\item $ n $: no of samples 
+	\item $ \eta_{c} $ : at least $ \eta_{c} $  clauses out of $ k $ clauses have to be active.
+	\item $ \eta_{l} $ : in each clause, at least $ \eta_{l} $ literals have to be active.
+	
+\end{itemize}
+Here $ m,k,n $ are inputs. 
+We can jointly learn $ \eta_{c} $ and $ \eta_l $. The set of constraints are given below.
+
+\begin{equation}
+ 	\label{eq:ilp}
+ 	\begin{split}
+ 	&\min \sum_{i=1}^k\sum_{j=1}^m b_j^i + \lambda \sum_{q=1}^n \xi_q \\
+ 	&\text{such that,}\\
+ 	& \eta_c \in [1,k]\\
+ 	& \eta_l \in [1,m] \\
+ 	&b_j^i \in \{0,1\},  \forall i \in [1,k], \forall j \in [1,m]\\
+ 	&\xi_q \in \{0,1\}, \forall q \in [1,n]\\
+ 	& \sum_{j=1}^m b_i^j \ge \eta_l, \forall i \in [1,k] \\ 
+ 	&\text{if } \forall q \in [1,n], y_q=1,\\
+ 	&\qquad \X_q\circ \B_i+ m\xi_{q,i} \ge \eta_{l},  \forall i \in [1,k]\\
+ 	& \qquad   k*\xi_p + k-\eta_c \ge \sum \xi_{q,i}\\
+ 	&\qquad \xi_{q,i} \in \{0,1\},  \forall i \in [1,k]\\
+ 	&\text{if } \forall q \in [1,n], y_q=0,\\
+ 	&\qquad \X_q\circ \B_i < \eta_{l} + m  \xi_{q,i},  \forall i\in [1.k]\\
+ 	&\qquad  k.\xi_q  + \eta_{c} > \sum_{i=1}^k\xi_{q,i}\\
+ 	&\qquad \xi_{q,i} \in \{0,1\},  \forall i \in [1,k]
+ 	\end{split}
+\end{equation}

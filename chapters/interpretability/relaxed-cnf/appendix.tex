@@ -1,0 +1,586 @@
+\begin{table}
+	\setlength{\tabcolsep}{3pt}
+	%\scriptsize 
+	\begin{center}
+		\begin{tabular}{l  r  r r r r r r r rrr}
+			\toprule
+			{{Dataset}} & Size & Features  & RIPPER & BRS & IMLI & CRR\\
+			\midrule
+			{ Parkinsons}   & $  195 $  & $  51 $  & $   88.75  $    & $   89.74  $    & $   92.3  $    & $   89.47  $   \\ & & 
+			& $   3 $    & $   9 $    & $   6 $    & $   4 $   \\ & & 
+			& $   5.32 \text{s}  $    & $   16.3 \text{s}  $    & $   1.44 \text{s}  $    & $   3.54 \text{s}  $   \\[.1cm] 
+			{ Heart}   & $  303 $  & $  31 $  & $   78.69  $    & $   72.13  $    & $   72.13  $    & $   77.69  $   \\ & & 
+			& $   7 $    & $   19 $    & $   13 $    & $   4.5  $   \\ & & 
+			& $   5.27 \text{s}  $    & $   25.07 \text{s}  $    & $   1.8 \text{s}  $    & $   122.5 \text{s}  $   \\[.1cm] 
+			{ Ionosphere}   & $  351 $  & $  144 $  & $   88.65  $    & $   91.43  $    & $   89.29  $    & $   91.43  $   \\ & & 
+			& $   8 $    & $   4 $    & $   8.5  $    & $   20 $   \\ & & 
+			& $   5.87 \text{s}  $    & $   75.53 \text{s}  $    & $   2.09 \text{s}  $    & $   5.59 \text{s}  $   \\[.1cm] 
+			{ WDBC}   & $  569 $  & $  88 $  & $   95.22  $    & $   95.65  $    & $   93.91  $    & $   94.69  $   \\ & & 
+			& $   7.5  $    & $   12 $    & $   7 $    & $   34.5  $   \\ & & 
+			& $   5.7 \text{s}  $    & $   630.23 \text{s}  $    & $   1.38 \text{s}  $    & $   316.32 \text{s}  $   \\[.1cm] 
+			{ Ilpd}   & $  583 $  & $  14 $  & $   71.55  $    & $   68.38  $    & $   71.55  $    & $   71.55  $   \\ & & 
+			& $   1 $    & $   3 $    & $   0 $    & $   2 $   \\ & & 
+			& $   5.07 \text{s}  $    & $   19.46 \text{s}  $    & $   1.51 \text{s}  $    & $   2.24 \text{s}  $   \\[.1cm] 
+			{ Transfusion}   & $  748 $  & $  6 $  & $   76 $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   76 $    & $   76 $   \\ & & 
+			& $   1 $    &       & $   0 $    & $   2 $   \\ & & 
+			& $   5.1 \text{s}  $    &       & $   1.38 \text{s}  $    & $   1.99 \text{s}  $   \\[.1cm] 
+			{ Pima}   & $  768 $  & $  30 $  & $   76.3  $    & $   73.38  $    & $   70.59  $    & $   74.51  $   \\ & & 
+			& $   9.5  $    & $   3 $    & $   7 $    & $   6 $   \\ & & 
+			& $   5.45 \text{s}  $    & $   24.58 \text{s}  $    & $   2.02 \text{s}  $    & $   11.06 \text{s}  $   \\[.1cm] 
+			{ TicTacToe}   & $  958 $  & $  27 $  & $   96.88  $    & $   100 $    & $   84.33  $    & $   76.96  $   \\ & & 
+			& $   25 $    & $   24 $    & $   6 $    & $   27 $   \\ & & 
+			& $   5.66 \text{s}  $    & $   15.09 \text{s}  $    & $   194.36 \text{s}  $    & $   1002.04 \text{s}  $   \\[.1cm] 
+			{ Titanic}   & $  1309 $  & $  26 $  & $   79.77  $    & $   78.54  $    & $   77.1  $    & $   77.48  $   \\ & & 
+			& $   5 $    & $   2 $    & $   7 $    & $   13 $   \\ & & 
+			& $   5.72 \text{s}  $    & $   15.33 \text{s}  $    & $   2.78 \text{s}  $    & $   3.72 \text{s}  $   \\[.1cm] 
+			{ Banknote}   & $  1372 $  & $  16 $  & $   94.53  $    & $   81.09  $    & $   92.34  $    & $   94.89  $   \\ & & 
+			& $   10 $    & $   2 $    & $   10 $    & $   9 $   \\ & & 
+			& $   5.6 \text{s}  $    & $   11.02 \text{s}  $    & $   2.07 \text{s}  $    & $   3.31 \text{s}  $   \\[.1cm] 
+			{ Compas}   & $  7210 $  & $  19 $  & $   67.65  $    & $   34.26  $    & $   65.19  $    & $   66.02  $   \\ & & 
+			& $   19 $    & $   8 $    & $   3 $    & $   11 $   \\ & & 
+			& $   7.38 \text{s}  $    & $   20.42 \text{s}  $    & $   4.16 \text{s}  $    & $   577.03 \text{s}  $   \\[.1cm] 
+			{ Mushroom}   & $  8124 $  & $  115 $  & $   100 $    & $   99.91  $    & $   99.75  $    & $   100 $   \\ & & 
+			& $   12 $    & $   20.5  $    & $   10 $    & $   17 $   \\ & & 
+			& $   8.02 \text{s}  $    & $   35.82 \text{s}  $    & $   6.84 \text{s}  $    & $   720.13 \text{s}  $   \\[.1cm] 
+			{ Magic}   & $  19020 $  & $  79 $  & $   84.04  $    & $   74.15  $    & $   71.97  $    & $   81.31  $   \\ & & 
+			& $   115 $    & $   3 $    & $   24 $    & $   31 $   \\ & & 
+			& $   15.86 \text{s}  $    & $   56.46 \text{s}  $    & $   141.2 \text{s}  $    & $   1012.6 \text{s}  $   \\[.1cm] 
+			{ Tom's HW}   & $  28179 $  & $  910 $  & $   97.4  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   95.88  $    & $   97.34  $   \\ & & 
+			& $   36 $    &       & $   30 $    & $   4 $   \\ & & 
+			& $   42.73 \text{s}  $    &       & $   92.65 \text{s}  $    & $   1071.58 \text{s}  $   \\[.1cm] 
+			{ Credit}   & $  30000 $  & $  110 $  & $   81.68  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   81.42  $    & $   82.04  $   \\ & & 
+			& $   38.5  $    &       & $   10 $    & $   32 $   \\ & & 
+			& $   14.52 \text{s}  $    &       & $   17.66 \text{s}  $    & $   1021.35 \text{s}  $   \\[.1cm] 
+			{ Adult}   & $  32561 $  & $  144 $  & $   84.31  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   82.08  $    & $   84.86  $   \\ & & 
+			& $   94 $    &       & $   23 $    & $   18 $   \\ & & 
+			& $   27.61 \text{s}  $    &       & $   11.91 \text{s}  $    & $   1016.36 \text{s}  $   \\[.1cm] 
+			{ Twitter}   & $  49999 $  & $  1511 $  & $   95.74  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   94.24  $    & $   95.16  $   \\ & & 
+			& $   179.5  $    &       & $   57 $    & $   12 $   \\ & & 
+			& $   170.87 \text{s}  $    &       & $   238.29 \text{s}  $    & $   1144.66 \text{s}  $   \\[.1cm] 
+			{ Weather-AUS}   & $  107696 $  & $  141 $  & $   84.57  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   82.83  $    & $   83.34  $   \\ & & 
+			& $   195 $    &       & $   7 $    & $   2 $   \\ & & 
+			& $   121.02 \text{s}  $    &       & $   366.12 \text{s}  $    & $   1115.27 \text{s}  $   \\[.1cm] 
+			{ Skin}   & $  245057 $  & $  119 $  & $   98.32  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   98.92  $    & $   95.08  $   \\ & & 
+			& $   725 $    &       & $   201 $    & $   29 $   \\ & & 
+			& $   1313.19 \text{s}  $    &       & $   103.8 \text{s}  $    & $   825.6 \text{s}  $   \\[.1cm] 
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	\caption{Comparisons of test accuracy, validation accuracy and training time among different classifiers. Every cell in the last eight columns contain the test accuracy in percentage (top value), validation accuracy in percentage (middle value within square bracket), and  train time in seconds (bottom value within  parentheses).}
+	\label{tab:result}
+\end{table}
+
+
+
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l   r r r r r  r }
+			\toprule
+			{Dataset}  & LR & SVC & RF & $k$-NN & CRR\\\midrule
+			\multirow{1}{*}{ Parkinsons}   & $   92.5  $    & $   94.74  $    & $   92.31  $    & $   92.5  $    & $   89.47  $   \\ 
+			\multirow{1}{*}{ Heart}   & $   84.29  $    & $   83.33  $    & $   81.97  $    & $   78.69  $    & $   77.69  $   \\ 
+			\multirow{1}{*}{ Ionosphere}   & $   94.29  $    & $   91.43  $    & $   92.96  $    & $   91.43  $    & $   91.43  $   \\ 
+			\multirow{1}{*}{ WDBC}   & $   98.26  $    & $   96.46  $    & $   96.9  $    & $   95.61  $    & $   94.69  $   \\ 
+			\multirow{1}{*}{ Ilpd}   & $   71.55  $    & $   71.55  $    & $   71.55  $    & $   69.65  $    & $   71.55  $   \\ 
+			\multirow{1}{*}{ Transfusion}   & $   76.0  $    & $   76.0  $    & $   76.0  $    & $   76.51  $    & $   76.0  $   \\ 
+			\multirow{1}{*}{ Pima}   & $   81.37  $    & $   75.82  $    & $   74.03  $    & $   78.43  $    & $   74.51  $   \\ 
+			\multirow{1}{*}{ TicTacToe}   & $   98.95  $    & $   98.95  $    & $   98.69  $    & $   92.75  $    & $   76.96  $   \\ 
+			\multirow{1}{*}{ Titanic}   & $   79.01  $    & $   77.48  $    & $   79.54  $    & $   77.1  $    & $   77.48  $   \\ 
+			\multirow{1}{*}{ Banknote}   & $   93.8  $    & $   94.89  $    & $   94.89  $    & $   93.25  $    & $   94.89  $   \\ 
+			\multirow{1}{*}{ Compas}   & $   68.03  $    & $   65.6  $    & $   67.82  $    & $   67.13  $    & $   66.02  $   \\ 
+			\multirow{1}{*}{ Mushroom}   & $   100.0  $    & $   100.0  $    & $   100.0  $    & $   100.0  $    & $   100.0  $   \\ 
+			\multirow{1}{*}{ Magic}   & $   85.15  $    & $   84.45  $    & $   85.3  $    & $   77.9  $    & $   81.31  $   \\ 
+			\multirow{1}{*}{ Tom's HW}   & $   97.62  $    & $   97.66  $    & $   97.52  $    & $   94.59  $    & $   97.34  $   \\ 
+			\multirow{1}{*}{ Credit}   & $   82.04  $    & $   82.12  $    & $   81.97  $    & $   80.5  $    & $   82.04  $   \\ 
+			\multirow{1}{*}{ Adult}   & $   87.24  $    & $   86.82  $    & $   86.84  $    & $   84.68  $    & $   84.86  $   \\ 
+			\multirow{1}{*}{ Twitter}   & $   96.28  $    & $   96.34  $    & $   96.37  $     &  \multicolumn{1}{c}{\textemdash}      & $   95.16  $   \\ 
+			\multirow{1}{*}{ Weather-AUS}   & $   85.71  $     &  \multicolumn{1}{c}{\textemdash}      & $   85.63  $     &  \multicolumn{1}{c}{\textemdash}      & $   83.34  $   \\ 
+			\multirow{1}{*}{ Skin}   & $   97.21  $     &  \multicolumn{1}{c}{\textemdash}      & $   99.81  $     &  \multicolumn{1}{c}{\textemdash}      & $   95.08  $   \\ 
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	\caption{Size of the rules generated by  interpretable classifiers.}
+	\label{tab:rule_size}
+\end{table}
+
+
+
+\begin{table*}[h]		
+	\setlength{\tabcolsep}{3pt}
+	%\scriptsize 
+	\begin{center}
+		\begin{tabular}{l  r  r r r r r r r rrr}
+			\toprule	
+			{{Dataset}} & Size & Features  & LR & SVC & RF & $k$-NN & RIPPER & BRS & IMLI & CRR\\	
+			\midrule
+			{ Parkinsons}   & $  195 $  & $  51 $  & $   92.5  $    & $   94.74  $    & $   92.31  $    & $   92.5  $    & $   88.75  $    & $   89.74  $    & $   92.3  $    & $   89.47  $   \\ & & 
+			& $  [ 93.75 ] $    & $  [ 93.75 ] $    & $  [ 93.75 ] $    & $  [ 93.33 ] $    & $  [ 88.71 ] $    & $  [ 93.75 ] $    & $  [ 90.62 ] $    & $  [ 93.75 ] $   \\ & & 
+			& $  ( 1.23 \text{s} ) $    & $  ( 1.01 \text{s} ) $    & $  ( 2.91 \text{s} ) $    & $  ( 1.03 \text{s} ) $    & $  ( 5.32 \text{s} ) $    & $  ( 16.3 \text{s} ) $    & $  ( 1.44 \text{s} ) $    & $  ( 3.54 \text{s} ) $   \\[.1cm] 
+			{ Heart}   & $  303 $  & $  31 $  & $   84.29  $    & $   83.33  $    & $   81.97  $    & $   78.69  $    & $   78.69  $    & $   72.13  $    & $   72.13  $    & $   77.69  $   \\ & & 
+			& $  [ 85.71 ] $    & $  [ 85.42 ] $    & $  [ 85.42 ] $    & $  [ 83.67 ] $    & $  [ 81.25 ] $    & $  [ 79.17 ] $    & $  [ 82] $    & $  [ 85.42 ] $   \\ & & 
+			& $  ( 1.04 \text{s} ) $    & $  ( 0.98 \text{s} ) $    & $  ( 3.02 \text{s} ) $    & $  ( 1.02 \text{s} ) $    & $  ( 5.27 \text{s} ) $    & $  ( 25.07 \text{s} ) $    & $  ( 1.8 \text{s} ) $    & $  ( 122.5 \text{s} ) $   \\[.1cm] 
+			{ Ionosphere}   & $  351 $  & $  144 $  & $   94.29  $    & $   91.43  $    & $   92.96  $    & $   91.43  $    & $   88.65  $    & $   91.43  $    & $   89.29  $    & $   91.43  $   \\ & & 
+			& $  [ 94.64 ] $    & $  [ 94.64 ] $    & $  [ 92.92 ] $    & $  [ 91.07 ] $    & $  [ 91.23 ] $    & $  [ 92.86 ] $    & $  [ 89.29 ] $    & $  [ 94.64 ] $   \\ & & 
+			& $  ( 2.21 \text{s} ) $    & $  ( 1.01 \text{s} ) $    & $  ( 2.93 \text{s} ) $    & $  ( 1.03 \text{s} ) $    & $  ( 5.87 \text{s} ) $    & $  ( 75.53 \text{s} ) $    & $  ( 2.09 \text{s} ) $    & $  ( 5.59 \text{s} ) $   \\[.1cm] 
+			{ WDBC}   & $  569 $  & $  88 $  & $   98.26  $    & $   96.46  $    & $   96.9  $    & $   95.61  $    & $   95.22  $    & $   95.65  $    & $   93.91  $    & $   94.69  $   \\ & & 
+			& $  [ 96.7 ] $    & $  [ 97.8 ] $    & $  [ 96.7 ] $    & $  [ 96.7 ] $    & $  [ 95.6 ] $    & $  [ 96.74 ] $    & $  [ 94.51 ] $    & $  [ 97.25 ] $   \\ & & 
+			& $  ( 2.18 \text{s} ) $    & $  ( 0.99 \text{s} ) $    & $  ( 3.08 \text{s} ) $    & $  ( 1.03 \text{s} ) $    & $  ( 5.7 \text{s} ) $    & $  ( 630.23 \text{s} ) $    & $  ( 1.38 \text{s} ) $    & $  ( 316.32 \text{s} ) $   \\[.1cm] 
+			{ Ilpd}   & $  583 $  & $  14 $  & $   71.55  $    & $   71.55  $    & $   71.55  $    & $   69.65  $    & $   71.55  $    & $   68.38  $    & $   71.55  $    & $   71.55  $   \\ & & 
+			& $  [ 71.28 ] $    & $  [ 71.28 ] $    & $  [ 71.28 ] $    & $  [ 71.28 ] $    & $  [ 71.28 ] $    & $  [ 70.21 ] $    & $  [ 71.28 ] $    & $  [ 71.28 ] $   \\ & & 
+			& $  ( 1.01 \text{s} ) $    & $  ( 1.02 \text{s} ) $    & $  ( 2.86 \text{s} ) $    & $  ( 1.03 \text{s} ) $    & $  ( 5.07 \text{s} ) $    & $  ( 19.46 \text{s} ) $    & $  ( 1.51 \text{s} ) $    & $  ( 2.24 \text{s} ) $   \\[.1cm] 
+			{ Transfusion}   & $  748 $  & $  6 $  & $   76 $    & $   76 $    & $   76 $    & $   76.51  $    & $   76 $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   76 $    & $   76 $   \\ & & 
+			& $  [ 76.47 ] $    & $  [ 76.47 ] $    & $  [ 76.47 ] $    & $  [ 76.47 ] $    & $  [ 76.47 ] $    &       & $  [ 76.47 ] $    & $  [ 76.47 ] $   \\ & & 
+			& $  ( 1.03 \text{s} ) $    & $  ( 1\text{s} ) $    & $  ( 2.91 \text{s} ) $    & $  ( 1\text{s} ) $    & $  ( 5.1 \text{s} ) $    &       & $  ( 1.38 \text{s} ) $    & $  ( 1.99 \text{s} ) $   \\[.1cm] 
+			{ Pima}   & $  768 $  & $  30 $  & $   81.37  $    & $   75.82  $    & $   74.03  $    & $   78.43  $    & $   76.3  $    & $   73.38  $    & $   70.59  $    & $   74.51  $   \\ & & 
+			& $  [ 80.45 ] $    & $  [ 78.46 ] $    & $  [ 78.86 ] $    & $  [ 79.27 ] $    & $  [ 80.08 ] $    & $  [ 79.67 ] $    & $  [ 76.23 ] $    & $  [ 78.86 ] $   \\ & & 
+			& $  ( 1.3 \text{s} ) $    & $  ( 0.94 \text{s} ) $    & $  ( 3.37 \text{s} ) $    & $  ( 0.98 \text{s} ) $    & $  ( 5.45 \text{s} ) $    & $  ( 24.58 \text{s} ) $    & $  ( 2.02 \text{s} ) $    & $  ( 11.06 \text{s} ) $   \\[.1cm] 
+			{ TicTacToe}   & $  958 $  & $  27 $  & $   98.95  $    & $   98.95  $    & $   98.69  $    & $   92.75  $    & $   96.88  $    & $   100 $    & $   84.33  $    & $   76.96  $   \\ & & 
+			& $  [ 98.69 ] $    & $  [ 98.69 ] $    & $  [ 97.39 ] $    & $  [ 92.81 ] $    & $  [ 98.69 ] $    & $  [ 100] $    & $  [ 83.34 ] $    & $  [ 84.97 ] $   \\ & & 
+			& $  ( 1.52 \text{s} ) $    & $  ( 1.06 \text{s} ) $    & $  ( 3.82 \text{s} ) $    & $  ( 1.01 \text{s} ) $    & $  ( 5.66 \text{s} ) $    & $  ( 15.09 \text{s} ) $    & $  ( 194.36 \text{s} ) $    & $  ( 1002.04 \text{s} ) $   \\[.1cm] 
+			{ Titanic}   & $  1309 $  & $  26 $  & $   79.01  $    & $   77.48  $    & $   79.54  $    & $   77.1  $    & $   79.77  $    & $   78.54  $    & $   77.1  $    & $   77.48  $   \\ & & 
+			& $  [ 78.1 ] $    & $  [ 78.47 ] $    & $  [ 79] $    & $  [ 78.1 ] $    & $  [ 79.05 ] $    & $  [ 78.95 ] $    & $  [ 79.19 ] $    & $  [ 79.52 ] $   \\ & & 
+			& $  ( 1.84 \text{s} ) $    & $  ( 1.06 \text{s} ) $    & $  ( 3.78 \text{s} ) $    & $  ( 1.04 \text{s} ) $    & $  ( 5.72 \text{s} ) $    & $  ( 15.33 \text{s} ) $    & $  ( 2.78 \text{s} ) $    & $  ( 3.72 \text{s} ) $   \\[.1cm] 
+			{ Banknote}   & $  1372 $  & $  16 $  & $   93.8  $    & $   94.89  $    & $   94.89  $    & $   93.25  $    & $   94.53  $    & $   81.09  $    & $   92.34  $    & $   94.89  $   \\ & & 
+			& $  [ 94.52 ] $    & $  [ 94.52 ] $    & $  [ 94.09 ] $    & $  [ 92.92 ] $    & $  [ 94.09 ] $    & $  [ 81.74 ] $    & $  [ 94.52 ] $    & $  [ 94.52 ] $   \\ & & 
+			& $  ( 1.36 \text{s} ) $    & $  ( 1.01 \text{s} ) $    & $  ( 3.66 \text{s} ) $    & $  ( 1.03 \text{s} ) $    & $  ( 5.6 \text{s} ) $    & $  ( 11.02 \text{s} ) $    & $  ( 2.07 \text{s} ) $    & $  ( 3.31 \text{s} ) $   \\[.1cm] 
+			{ Compas}   & $  7210 $  & $  19 $  & $   68.03  $    & $   65.6  $    & $   67.82  $    & $   67.13  $    & $   67.65  $    & $   34.26  $    & $   65.19  $    & $   66.02  $   \\ & & 
+			& $  [ 67.76 ] $    & $  [ 66.09 ] $    & $  [ 66.58 ] $    & $  [ 67.16 ] $    & $  [ 67.1 ] $    & $  [ 64.61 ] $    & $  [ 66] $    & $  [ 67.65 ] $   \\ & & 
+			& $  ( 3.6 \text{s} ) $    & $  ( 4.06 \text{s} ) $    & $  ( 12.76 \text{s} ) $    & $  ( 3.28 \text{s} ) $    & $  ( 7.38 \text{s} ) $    & $  ( 20.42 \text{s} ) $    & $  ( 4.16 \text{s} ) $    & $  ( 577.03 \text{s} ) $   \\[.1cm] 
+			{ Mushroom}   & $  8124 $  & $  115 $  & $   100 $    & $   100 $    & $   100 $    & $   100 $    & $   100 $    & $   99.91  $    & $   99.75  $    & $   100 $   \\ & & 
+			& $  [ 100] $    & $  [ 100] $    & $  [ 100] $    & $  [ 100] $    & $  [ 100] $    & $  [ 100] $    & $  [ 99.77 ] $    & $  [ 100] $   \\ & & 
+			& $  ( 3.33 \text{s} ) $    & $  ( 4.33 \text{s} ) $    & $  ( 13.15 \text{s} ) $    & $  ( 9.92 \text{s} ) $    & $  ( 8.02 \text{s} ) $    & $  ( 35.82 \text{s} ) $    & $  ( 6.84 \text{s} ) $    & $  ( 720.13 \text{s} ) $   \\[.1cm] 
+			{ Magic}   & $  19020 $  & $  79 $  & $   85.15  $    & $   84.45  $    & $   85.3  $    & $   77.9  $    & $   84.04  $    & $   74.15  $    & $   71.97  $    & $   81.31  $   \\ & & 
+			& $  [ 84.78 ] $    & $  [ 84.49 ] $    & $  [ 85.56 ] $    & $  [ 77.46 ] $    & $  [ 84.39 ] $    & $  [ 76.11 ] $    & $  [ 77.42 ] $    & $  [ 81.86 ] $   \\ & & 
+			& $  ( 4.06 \text{s} ) $    & $  ( 58.06 \text{s} ) $    & $  ( 24.57 \text{s} ) $    & $  ( 49.08 \text{s} ) $    & $  ( 15.86 \text{s} ) $    & $  ( 56.46 \text{s} ) $    & $  ( 141.2 \text{s} ) $    & $  ( 1012.6 \text{s} ) $   \\[.1cm] 
+			{ Tom's HW}   & $  28179 $  & $  910 $  & $   97.62  $    & $   97.66  $    & $   97.52  $    & $   94.59  $    & $   97.4  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   95.88  $    & $   97.34  $   \\ & & 
+			& $  [ 97.54 ] $    & $  [ 97.47 ] $    & $  [ 97.47 ] $    & $  [ 94.52 ] $    & $  [ 97.52 ] $    &       & $  [ 96.32 ] $    & $  [ 97.32 ] $   \\ & & 
+			& $  ( 5.37 \text{s} ) $    & $  ( 231.87 \text{s} ) $    & $  ( 66.53 \text{s} ) $    & $  ( 1366.39 \text{s} ) $    & $  ( 42.73 \text{s} ) $    &       & $  ( 92.65 \text{s} ) $    & $  ( 1071.58 \text{s} ) $   \\[.1cm] 
+			{ Credit}   & $  30000 $  & $  110 $  & $   82.04  $    & $   82.12  $    & $   81.97  $    & $   80.5  $    & $   81.68  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   81.42  $    & $   82.04  $   \\ & & 
+			& $  [ 82.17 ] $    & $  [ 81.94 ] $    & $  [ 81.99 ] $    & $  [ 80.52 ] $    & $  [ 82] $    &       & $  [ 81.91 ] $    & $  [ 81.98 ] $   \\ & & 
+			& $  ( 4.78 \text{s} ) $    & $  ( 170.76 \text{s} ) $    & $  ( 41.19 \text{s} ) $    & $  ( 258.2 \text{s} ) $    & $  ( 14.52 \text{s} ) $    &       & $  ( 17.66 \text{s} ) $    & $  ( 1021.35 \text{s} ) $   \\[.1cm] 
+			{ Adult}   & $  32561 $  & $  144 $  & $   87.24  $    & $   86.82  $    & $   86.84  $    & $   84.68  $    & $   84.31  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   82.08  $    & $   84.86  $   \\ & & 
+			& $  [ 87.38 ] $    & $  [ 87.18 ] $    & $  [ 86.84 ] $    & $  [ 84.53 ] $    & $  [ 84.35 ] $    &       & $  [ 82.65 ] $    & $  [ 85.35 ] $   \\ & & 
+			& $  ( 6.46 \text{s} ) $    & $  ( 326.45 \text{s} ) $    & $  ( 47.44 \text{s} ) $    & $  ( 391.66 \text{s} ) $    & $  ( 27.61 \text{s} ) $    &       & $  ( 11.91 \text{s} ) $    & $  ( 1016.36 \text{s} ) $   \\[.1cm] 
+			{ Twitter}   & $  49999 $  & $  1511 $  & $   96.28  $    & $   96.34  $    & $   96.37  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   95.74  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   94.24  $    & $   95.16  $   \\ & & 
+			& $  [ 96.32 ] $    & $  [ 96.36 ] $    & $  [ 96.41 ] $    &       & $  [ 96.23 ] $    &       & $  [ 95] $    & $  [ 95.68 ] $   \\ & & 
+			& $  ( 8.28 \text{s} ) $    & $  ( 1419.34 \text{s} ) $    & $  ( 230.56 \text{s} ) $    &       & $  ( 170.87 \text{s} ) $    &       & $  ( 238.29 \text{s} ) $    & $  ( 1144.66 \text{s} ) $   \\[.1cm] 
+			{ Weather-AUS}   & $  107696 $  & $  141 $  & $   85.71  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   85.63  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   84.57  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   82.83  $    & $   83.34  $   \\ & & 
+			& $  [ 85.71 ] $    &       & $  [ 85.61 ] $    &       & $  [ 84.78 ] $    &       & $  [ 82.75 ] $    & $  [ 83.52 ] $   \\ & & 
+			& $  ( 11.21 \text{s} ) $    &       & $  ( 174.59 \text{s} ) $    &       & $  ( 121.02 \text{s} ) $    &       & $  ( 366.12 \text{s} ) $    & $  ( 1115.27 \text{s} ) $   \\[.1cm] 
+			{ Skin}   & $  245057 $  & $  119 $  & $   97.21  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   99.81  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   98.32  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   98.92  $    & $   95.08  $   \\ & & 
+			& $  [ 97.23 ] $    &       & $  [ 99.8 ] $    &       & $  [ 98.37 ] $    &       & $  [ 98.88 ] $    & $  [ 95.25 ] $   \\ & & 
+			& $  ( 8.36 \text{s} ) $    &       & $  ( 460.25 \text{s} ) $    &       & $  ( 1313.19 \text{s} ) $    &       & $  ( 103.8 \text{s} ) $    & $  ( 825.6 \text{s} ) $   \\[.1cm] 
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	\caption{Comparisons of test accuracy, validation accuracy and training time among different classifiers. Every cell in the last eight columns contain the test accuracy in percentage (top value), validation accuracy in percentage (middle value within square bracket), and  train time in seconds (bottom value within  parentheses).}
+	\label{tab:result}
+\end{table*}
+
+
+
+
+
+
+\begin{table*}[h]		
+	\begin{center}
+		\begin{tabular}{l   r r r r r  }
+			\toprule
+			{Dataset}  & RIPPER & BRS & IMLI & CRR\\\midrule
+			\multirow{1}{*}{ Parkinsons}   & $   3 $    & $   9 $    & $   6 $    & $   4 $   \\ 
+			\multirow{1}{*}{ Heart}   & $   7 $    & $   19 $    & $   13 $    & $   4.5  $   \\ 
+			\multirow{1}{*}{ Ionosphere}   & $   8 $    & $   4 $    & $   8.5  $    & $   20 $   \\ 
+			\multirow{1}{*}{ WDBC}   & $   7.5  $    & $   12 $    & $   7 $    & $   34.5  $   \\ 
+			\multirow{1}{*}{ Ilpd}   & $   1 $    & $   3 $    & $   0 $    & $   2 $   \\ 
+			\multirow{1}{*}{ Transfusion}   & $   1 $     &  \multicolumn{1}{c}{\textemdash}      & $   0 $    & $   2 $   \\ 
+			\multirow{1}{*}{ Pima}   & $   9.5  $    & $   3 $    & $   7 $    & $   6 $   \\ 
+			\multirow{1}{*}{ TicTacToe}   & $   25 $    & $   24 $    & $   6 $    & $   27 $   \\ 
+			\multirow{1}{*}{ Titanic}   & $   5 $    & $   2 $    & $   7 $    & $   13 $   \\ 
+			\multirow{1}{*}{ Banknote}   & $   10 $    & $   2 $    & $   10 $    & $   9 $   \\ 
+			\multirow{1}{*}{ Compas}   & $   19 $    & $   8 $    & $   3 $    & $   11 $   \\ 
+			\multirow{1}{*}{ Mushroom}   & $   12 $    & $   20.5  $    & $   10 $    & $   17 $   \\ 
+			\multirow{1}{*}{ Magic}   & $   115 $    & $   3 $    & $   24 $    & $   31 $   \\ 
+			\multirow{1}{*}{ Tom's HW}   & $   36 $     &  \multicolumn{1}{c}{\textemdash}      & $   30 $    & $   4 $   \\ 
+			\multirow{1}{*}{ Credit}   & $   38.5  $     &  \multicolumn{1}{c}{\textemdash}      & $   10 $    & $   32 $   \\ 
+			\multirow{1}{*}{ Adult}   & $   94 $     &  \multicolumn{1}{c}{\textemdash}      & $   23 $    & $   18 $   \\ 
+			\multirow{1}{*}{ Twitter}   & $   179.5  $     &  \multicolumn{1}{c}{\textemdash}      & $   57 $    & $   12 $   \\ 
+			\multirow{1}{*}{ Weather-AUS}   & $   195 $     &  \multicolumn{1}{c}{\textemdash}      & $   7 $    & $   2 $   \\ 
+			\multirow{1}{*}{ Skin}   & $   725 $     &  \multicolumn{1}{c}{\textemdash}      & $   201 $    & $   29 $   \\ 
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	\caption{Size of the rules generated by  interpretable classifiers.}
+	\label{tab:rule_size}	
+\end{table*}
+
+
+\begin{figure*}[t]
+\includegraphics[width=0.18\linewidth]{figures/adult_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_validation_accuracy_vary_lambda.pdf}
+
+\end{figure*}
+\begin{figure*}
+
+
+\includegraphics[width=0.18\linewidth]{figures/skin_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_validation_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_rule_size_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_test_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_time_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_train_accuracy_vary_lambda.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_validation_accuracy_vary_lambda.pdf}
+\end{figure*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{figure*}[t]
+\includegraphics[width=0.18\linewidth]{figures/adult_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/adult_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/banknote_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/compas_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/credit_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/heart_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ilpd_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/ionosphere_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/magic_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/mushroom_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/parkinsons_validation_accuracy_vary_clause.pdf}
+
+\end{figure*}
+
+
+\begin{figure*}
+\includegraphics[width=0.18\linewidth]{figures/skin_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/skin_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/tictactoe_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/titanic_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/transfusion_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/wdbc_validation_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_rule_size_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_test_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_time_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_train_accuracy_vary_clause.pdf}
+\includegraphics[width=0.18\linewidth]{figures/weatherAUS_validation_accuracy_vary_clause.pdf}
+\end{figure*}
+
+
+
+
+
+
+
+
+
+\begin{figure*}
+	\includegraphics[width=0.18\linewidth]{figures/adult_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_validation_accuracy_vary_iteration.pdf}
+	
+	\end{figure*}
+
+	\begin{figure*}
+	
+	\includegraphics[width=0.18\linewidth]{figures/skin_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_validation_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_rule_size_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_test_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_time_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_train_accuracy_vary_iteration.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_validation_accuracy_vary_iteration.pdf}
+\end{figure*}
+
+
+
+\begin{figure*}
+	\includegraphics[width=0.18\linewidth]{figures/adult_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/adult_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/banknote_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/credit_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/heart_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ilpd_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/ionosphere_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/magic_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/mushroom_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/parkinsons_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/pima_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/pima_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/pima_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/pima_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/pima_validation_accuracy_vary_subsamplesize.pdf}
+	
+	\end{figure*}
+	
+	\begin{figure*}
+	\includegraphics[width=0.18\linewidth]{figures/skin_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/skin_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/tictactoe_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/titanic_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/transfusion_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/wdbc_validation_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_rule_size_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_test_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_time_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_train_accuracy_vary_subsamplesize.pdf}
+	\includegraphics[width=0.18\linewidth]{figures/weatherAUS_validation_accuracy_vary_subsamplesize.pdf}
+\end{figure*}

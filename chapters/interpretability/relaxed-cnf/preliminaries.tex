@@ -1,0 +1,63 @@
+%\vspace{-8pt}
+\section{Preliminaries}
+\label{interpretability_crr_sec:preliminaries}
+We use capital  boldface letters such as $\mathbf{X}$ to denote matrices, while lower boldface letters $\mathbf{y}$ are reserved for vectors. For a matrix $\mathbf{X}$, $\mathbf{X}_i$  represents the $ i $-th row of $\mathbf{X}$ while for a vector $\mathbf{y}$, $y_i$ represents the $ i $-th element of $\mathbf{y}$. 
+% For a vector/set $ \mathbf{u} $ we  use $ |\mathbf{u}| $ to denote the number of elements in $ \mathbf{u} $.
+
+% introduce cardinality constraint in this part
+
+Let $F$ be a Boolean formula and  $\mathbf{b} = \{b_1,b_2,\dots ,b_m \}$ be the set of Boolean propositional variables appearing in $F$. A literal $ v_i $ is a variable ($b_i$) or its complement ($\neg b_i$).  A \emph{satisfying assignment} or a \emph{witness} $ \sigma $ of $F$ is an assignment of variables in $\mathbf{b}$ that makes $F$ evaluate to $ 1 $ and is denoted as $ \sigma \models F $.  If $\sigma$ is an assignment of variables and $b_i \in \mathbf{b}$, we use $\sigma(b_i)$ to denote the value assigned to $b_i$ in $\sigma$. $F$ is in CNF if $F :=  \bigwedge_{i=1}^k C_i$ is conjunction (AND) of clauses, where each clause $C_i :=  \bigvee_j v_j $  is represented as a disjunction (OR) of literals.  {A hard OR (resp. soft AND) clause $ (C,\eta) $ has an extra parameter $ \eta $, where $ \eta $ is the threshold on the literals in $ C $.} Let $ \mathbb{1}[true]=1 $ and $ \mathbb{1}[false]=0 $. Motivated by checklists, we propose relaxed-CNF where in addition to $F$, we have two more parameters $\eta_c$ and $\eta_l$. We say that $(F,\eta_c, \eta_l)$ is in relaxed-CNF and $ \sigma $ is its witness if $\sigma \models (F,\eta_c, \eta_l)$ whenever $\sum_{i=1}^k \mathbb{1}[\sigma \models (C_i,\eta_l)] \ge \eta_c$ where $\sigma \models (C_i, \eta_l)$ iff $\sum_{v \in C_i} \mathbb{1}[\sigma \models v] \geq \eta_l$. Informally,  $\sigma$ satisfies a clause $(C_i, \eta_l)$ if  at least $\eta_l$ literals in $C_i$ are set to true by $\sigma$ and $\sigma$ satisfies $(F,\eta_c, \eta_l)$ if at least $\eta_c$ of $\{(C_i,\eta_l)\}$ are true. In the  example in Figure~\ref{interpretability_crr_exmpl:wdbc}, $ \eta_c=1 $ and $ \eta_l=2 $. 
+
+
+\begin{theorem}[\cite{benhamou1994two}]
+	\label{interpretability_crr_thm:succinctness}	
+	Let $ (C,\eta) $ be a clause in relaxed-CNF where  $ C $ has $ m  $ literals and $ \eta \in \{1,\dots,m\} $ is the threshold on literals.  An equivalent compact encoding of $ (C,\eta) $  into a CNF formula $ F= \bigwedge_i C_i $ requires $ {m \choose{m-\eta+1}} $  clauses where each clause is distinct and has $ m-\eta+1 $ literals of $ (C,\eta) $. Therefore,  the total number of literals in $ F $ is $ (m-\eta+1){m\choose{m-\eta+1}} = m $ when $ \eta=1 $, otherwise $ (m-\eta+1){m\choose{m-\eta+1}} > m $.
+\end{theorem}
+
+
+%\red{Relaxed-CNF rules generalize both CNF and DNF rules. }
+%Properly define k-DNF, i.e., every clause has k literals. Every $-$DNF rule can be viewed as a relaxed-CNF rule with $\eta_c = 1$ and $\eta_l = k$. Similarly, every $k-$CNF rule can be viewed as a relaxed-CNF rule with $\eta_c=k$ 
+% $ F $ is a relaxed-CNF if $ F:=[\sum_{i=1}^k C_i] \ge \eta_c $, where each clause $ C_i := [\sum_j l_j] \ge \eta_l $. Here $ \eta_c $  and $ \eta_l $ are two positive integer thresholds.
+
+
+%We use $|C_i|$ to denote the number of literals in $C_i$.  
+%A \emph{pseudo-boolean constraint} over literals is defined as $ \sum_i a_i\cdot l_i \ge \card; a_i,\card \in \mathbb{R} $.  The special case $ \sum_i l_i \ge \card $ is denoted as a \emph{cardinality constraint}. In the  case of cardinality constraint, $ \card $ is called a  cardinality constant and $ \card \in \mathbb{Z} ^+$. 
+%A pseudo-boolean constraint can be encoded into a CNF formula by applying the state of the art encoding technique. 
+%Therefore, a cardinality constraint is a variant of general  CNF clause. 
+% Specifically,  a cardinality constraint is satisfied if at least $ \card $ literals in that clause are assigned to $ 1 $, which is different from a CNF clause where $ \card=1 $ is applied.
+
+
+Between two vectors  $\mathbf{u}$ and $\mathbf{v}$ of the same size over Boolean variables/constants (e.g.,  $ 0 $, $ 1 $), we use $\mathbf{u} \circ \mathbf{v} $  to denote the inner product, i.e.,     $\mathbf{u} \circ \mathbf{v} = \sum_{i} (u_{i} \cdot v_{i})$, where $u_{i}$ and $v_{i}$ are a variable/constant  at the $i$-th index of $\mathbf{u}$ and $\mathbf{v}$, respectively. In this context,  the operator ``$\cdot$'' between a variable and a constant follows the standard interpretation, i.e., $0 \cdot b = 0$ and $1 \cdot b = b$. 
+
+%KSM: Define CNF and define relaxed-CNF before you start talking about clauses of CNF/relaxed-CNF. Also, define literal
+
+We consider a standard binary classification problem, where we are given a collection of 
+training samples $\{ (\mathbf{X}_i, y_i) \}$. For sample $ i $, $\mathbf{X}_i \in \{0,1\}^m$ contains the valuation of the feature vector $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$, and $y_i \in \{0,1\}$ is the binary class label.
+A classifier {\Rule} is a mapping that takes in the feature vector $\mathbf{x}$ and returns a class $\hat{y} \in \{0,1\}$, i.e., $\hat{y} = \Rule(\mathbf{x})$. The goal is not 
+only to design $\Rule$ to approximate the training set, but also to generalize to unseen samples arising from the same distribution. 
+We focus on classifiers that can be expressed  as  relaxed-CNF. We use $\clause(\Rule,i)$ to denote  the  $i$-th clause of $\Rule$ and $ |\clause(\Rule,i)| $ to  denote the size of  $\clause(\Rule,i)$, which is measured as the number of literals in the $ i $-th clause. Furthermore, we use $|\Rule|$ to denote the rule-size of classifier $ \Rule $, which is defined as the number of literals in all the clauses, i.e., $|\Rule| = \Sigma_i |\clause(\Rule,i)|$. In the example in Figure~\ref{interpretability_crr_exmpl:wdbc}, $ |\Rule| = |\clause(\Rule, 1)| + |\clause(\Rule, 2)| = 3+3=6 $.
+
+
+In this work, we consider the learning problem as an optimization problem, wherein we reduce the construction of $\Rule$ to computing assignments of appropriately designed variables.  An optimization problem consisting of Boolean variables can be solved using Integer Linear Programming (ILP) where each variable takes value either $ 0 $ or $ 1 $.\footnote{The problem can be viewed as either ILP or MaxSAT, but we obtained better performance from ILP solvers.} Given an objective function and a set of constraints comprising of variables with range $ \{0,1\} $, ILP finds an optimal assignment of variables that minimizes the objective function.
+% We assume $ \sigma(\cdot) $ is a function over variables which outputs the assignment (either $ 0 $ or $ 1 $) of each variable and the task is to learn $ \sigma $ by solving an ILP query.  
+% The inner knowledge of how ILP solves the problem, is not required to understand the paper. 
+
+%In our context, we define $ \Rule $ to be a set of important features which we aim to identify and $ \Rule \subseteq \mathbf{x} $. We use the notation $ |\Rule| $ to denote the count of features in $ \Rule $.For example, let $ \mathbf{x}=\{x_1,x_2,x_3,x_4\} $ and we learn  $ \Rule=\{x_1,x_3,x_4\} $. Therefore $ |\Rule|=3 $. 
+
+
+
+%We define two rules  $ \Rule_1 $ and $ \Rule_2 $ to be  equivalent  if $ \forall i,\Rule_1(\X_i)=\Rule_2(\X_i) $. 
+
+
+
+
+%We denote the set of all witnesses of $F$ by {\satisfying{F}}.
+
+
+
+%In this work, we focus on the weighted variant of CNF wherein a weight function is defined over clauses. For a clause $C_i$ and weight function {\weight{\cdot}}, we use {\weight{C_i}} to denote the weight of clause $C_i$. We say that a clause $C_i$ is hard if $\weight{C_i} = \infty$, otherwise $C_i$ is called a soft clause.  To avoid notational clutter, we overload {\weight{\cdot}} to denote the weight of an assignment or clause, depending on the context. We define weight of an assignment $\sigma$ as the sum of weight of clauses that $\sigma$ does not satisfy. Formally, $\weight{\sigma} = \Sigma_{i | \sigma \not\models C_i} \weight{C_i}$.
+
+%Given $F$ and weight function $\weight{\cdot}$, the problem of {MaxSAT} is to find an assignment $\sigma^*$ that has the minimum weight, i.e.  $\sigma^* = \MaxSAT(F,W)$ if $\forall \sigma \neq \sigma^*, \weight{\sigma*} \leq \weight{\sigma}$. Our formulation will have positive clause weights, hence MaxSAT corresponds to satisfying as many clauses as possible, and picking the strongest clauses among the unsatisfied ones. 
+%Note that the above formulation is different from the typical definition of {\MaxSAT} but the difference is only syntactic. Borrowing terminology of community focused on developing {MaxSAT} solvers, we are solving a partial weighted {MaxSAT} instance wherein we mark all the clauses with $\infty$ weight as hard and clauses with other positive value less than $ \infty $ weight as soft  and ask for a solution that optimizes the partial weighted {MaxSAT} formula.  The knowledge of encoding a  cardinality constraint into CNF clauses, the  inner working of {MaxSAT} solvers,  and  the encoding of our representation into weighted {MaxSAT} is not required for this paper.   
+
+

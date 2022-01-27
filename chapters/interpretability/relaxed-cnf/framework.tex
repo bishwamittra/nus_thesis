@@ -1,0 +1,92 @@
+\section{Description of $ \Framework $}\label{sec:maxsat} 
+
+	
+
+ 
+	\subsection{Transformation to MaxSAT Query}\label{subsec:maxsat_query}	
+	
+
+
+ 
+  
+% The construction of $Q_i$ takes in four parameters: (i) $ \noclause $, the desired number of clauses in CNF rule, (ii) $ \lambda $, the regularization parameter, (iii) a matrix ${\mathbf{X}^{i}} \in \{0,1\}^{n \times m}$  describing the  binary value of  $m$ features for each of    $n$ samples with $\mathbf{X}^{i}_q$ being a binary valued vector for the $ q $-th sample corresponding to feature vector $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$, (iv) a label vector $\mathbf{y}^{i} \in \{0,1\}^n$ containing a class label $y^{i}_q$ for the  sample $\X^{i}_q$.  
+ 
+   Given an instance space $ \{ \mathbf{X}, \mathbf{y} \} $ and  model parameters $ \noclause,\card$, and  $\lambda $, {{\Framework}} constructs a {MaxSAT} query  $ Q $ and invokes an off the shelf MaxSAT solver to compute the underlying rule $ \Rule $.
+
+ 
+
+		
+	{\Framework} considers two types of propositional variables: (i) feature variables and (ii) noise variables.
+%	 Feature variables are defined once for all partitiones. 
+ 	   In our problem setting, a $ \noclause $-clause CNF rule $ \Rule=\bigwedge_{i=1}^\noclause C_i $ is  represented as the conjunction of  $ \noclause $ cardinality constraints where  each $ C_i $ is defined as   the  arithmetic sum of   feature variables compared against a cardinal constant $ \card $. A  sample $ \X_q $ satisfies  $ C_i $ if $ \X_q $ has at least $ \card $ features whose representative variables are present in $ C_i $. If $ \X_q $ satisfies  $ \forall i, C_i$, then  $ \Rule(\X_q)=1 $ otherwise $ \Rule(\X_q)=0 $. Since  feature $ x_j $ can be present or not present  in each of   $ \noclause $ constraints, {\Framework} considers $ \noclause $  boolean variables, each denoted by $ b_j^i $ ($ i \in [1,\noclause], j \in [1,m] $) for  feature $ x_j $ to denote its participation in each of $ \noclause $ clauses. A sample $ \X_q $, however, can be misclassified by $ \Rule $ i.e. $ \Rule(\X_q)\oplus  y_q =1 $.  {\Framework}  introduces  a noise variable $ \noise_q  $ ($ q \in [1,n] $) corresponding to  sample $ \X_q $ so that the assignment of $ \noise_q $ can be interpreted whether $ \X_q $ is misclassified by $ \Rule $ or not.  Hence the key idea of {{\Framework}} for learning $ \Rule $ is to define a {MaxSAT} query over $k \times m + n$ propositional variables, denoted by $\{ b_{1}^{1}, b_{2}^{1}, \dots ,b_{m}^{1}, \dots ,b_{m}^{\noclause}, \noise_1, \dots ,\noise_n\}$.   The {\MaxSAT} query of {\Framework} consists of the following three sets of constraints:
+  
+
+ 	
+	\begin{enumerate}
+		
+		\item Since our objective is to find sparser rules,  {\Framework}  adds a constraint to falsify as many $ b_j^i $  as possible by constructing a soft clause $ (\neg b_j^i) $.   The weight  corresponding to this clause is $ 1 $. 
+	\begin{equation}
+	V^i_j:= 
+	\neg b^i_j
+	;\quad  W(V^i_j)= 1
+	\label{eq:constraint-v}
+	\end{equation}
+		\item We use noise variables to handle mis-classifications and therefore, {\Framework} tries to falsify as many   noise variables as possible. Since regularization parameter $ \lambda $ is proportionate to accuracy (higher $ \lambda $ ensures higher accuracy), {\Framework} puts $ \lambda $ weight to each of the following soft  clause. 
+%		containing the complement of  noise variable.   
+		\begin{equation}
+		N_q:= (\neg \noise_q ); \qquad \qquad W(N_q) = \lambda
+		\label{eq:constraint_two}
+		\end{equation}
+		%		Here $N_i $ is also a soft clause. 
+		
+		\item 
+		Let $\mathbf{B}_i = \{b^i_{j} \mid j \in [1,m] \}$ be the vector of feature variables corresponding to the $ i $-th cardinality constraint. 
+		Here we provide the third set of constraints of $ Q $. 
+		\begin{equation}
+		D_q:= (\neg \noise_q \rightarrow ( y_q \leftrightarrow \bigwedge_{i=1}^{k} ({\mathbf{X}_q} \circ {\mathbf{B}_i \ge \card })));    W(D_q) = \infty
+		\label{eq:constraint_three}	
+		\end{equation}
+		Every hard clause $D_q$  can be interpreted as follows. If $\noise_q$ is assigned to $ 0 $ (i.e. $ q $-th sample is not considered as noise) then ${y}_q = \Rule(\X_q) $.  The operator ``$\circ $'' is defined in Sect. \ref{sec:preliminaries}.  
+		
+		%		We are not showing in details how $ D_i $ can be encoded into CNF forms using standard procedure. We refer \cite{MM18} for detailed description.
+		
+		
+	\end{enumerate}
+	Finally, the set of constraints $Q$  constructed by {{\Framework}} is defined as follows:
+	\begin{equation*}
+	\label{eq:constraint-imli}
+	Q_i :=  \bigwedge_{j=1, i = 1}^{j=m,l=k} V^i_j \wedge \bigwedge_{q=1}^{n} N_q \wedge \bigwedge_{q=1}^{n} D_q
+	\end{equation*} 
+	
+	Next, we extract $\Rule$ from the solution of $Q$ as follows. 
+	\begin{construction}
+		Let $\sigma^* = \MaxSAT(Q,W)$, then $x_j \in {\clause(\Rule,i)}$ iff $\sigma^*(b_{j}^i) = 1$.
+	\end{construction}
+	
+	
+	\subsection{CNF Encoding of MaxSAT Constraints $ Q $}
+	A MaxSAT query consists of CNF clauses with associated weight for each clause. Here we discuss the CNF encodings of $ Q $. The constraints $ V^i_j $ and $ N_q $ are unit clauses and do not require further processing.
+	
+	We consider a function $ \CNF(\dots) $ which takes a cardinality constraint as input and outputs a CNF formula. We assume that an off the self PB-Encoder (pseudo-boolean encoder) can implement  $ \CNF $, and we skip the inner knowledge of  $ \CNF $ of converting any pseudo-boolean constraint into a CNF formula since it is beyond the scope of this paper. 
+	
+	Now we present the CNF encoding of $ D_q $. 
+	Recall that, $ y_q $ is input to our framework.  if $ y_q=1 $, $ D_q $ can be encoded as follows.
+	\[ \neg \xi_q \rightarrow \bigwedge_{i=1}^{k} ({\mathbf{X}_q} \circ {\mathbf{B}_i \ge \card }) \Rightarrow  \xi_q \vee \bigwedge_{i=1}^{k} ({\mathbf{X}_q} \circ {\mathbf{B}_i \ge \card }) \]
+	 Here we apply the formula $ a \rightarrow b \Rightarrow \neg a \vee b $.   Therefore, we call $ \CNF $ $ k $ times for each  $ {\mathbf{X}_q} \circ {\mathbf{B}_i \ge \card } $ as input and let $ F_1, \dots, F_k $ be the output CNF formulas for each input. Now $ \xi_q \vee (\bigwedge_{i=1}^k  F_i) \Rightarrow \xi_q \vee   \hat{F}  $ by applying associative law. We further apply 
+	 distributive law on  ($ \xi_q \vee \hat{F})  $ to get CNF clauses.
+	 When $ y_q = 0 $, $ D_q $ is encoded as follows 
+	  \[ 
+	  \begin{split}
+	  \neg \xi_q \rightarrow \neg (\bigwedge_{i=1}^{k} ({\mathbf{X}_q} \circ {\mathbf{B}_i \ge \card })) 
+	  &\Rightarrow \neg \xi_q \rightarrow \bigvee_{i=1}^{k} ({\mathbf{X}_q} \circ {\mathbf{B}_i < \card })\\
+	   &\Rightarrow  \xi_q \vee \bigvee_{i=1}^{k} ({\mathbf{X}_q} \circ {\mathbf{B}_i < \card })
+	  \end{split}
+	   \]
+	   We again call $ \CNF $ for each $ {\mathbf{X}_q} \circ {\mathbf{B}_i < \card } $ as input  and  let $ F_1, \dots, F_k $ be the  output CNF formulas. Now $ \xi_q \vee ( \bigvee_{i=1}^k F_i) $ can be encoded into CNF by applying Tseytin transformation. We introduce $ k $ additional boolean variables  $ \xi_{q,1}, \dots, \xi_{q,k}   $  and apply the following transformation. 
+	   \[ 
+	   \begin{split}
+	   &\quad\;\; \xi_q \vee ( \bigvee_{i=1}^k F_i)\\
+	   &\Rightarrow (\xi_q \vee (\bigvee_{i=1}^k \xi_{q,i})) \wedge (\bigwedge_{i=1}^k \xi_{q,i} \rightarrow F_i) \\
+	   &\Rightarrow (\xi_q \vee (\bigvee_{i=1}^k \xi_{q,i})) \wedge (\bigwedge_{i=1}^k \neg \xi_{q,i} \vee F_i) 
+	   \end{split} \]
+	

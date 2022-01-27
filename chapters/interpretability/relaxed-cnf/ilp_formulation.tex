@@ -1,0 +1,202 @@
+\section{{\crr}: Classification Rules in Relaxed Logical Form}
+\label{interpretability_crr_sec:ilp}
+In this section, we describe the main contribution of our work, {\crr}, a  framework for learning   relaxed-CNF rules.  {\crr}  converts the learning problem into  an ILP-based formulation,  learns the optimal assignment of variables and constructs rule $ \Rule $ based on the assignment. We organize the rest of this section as follows.
+We  discuss the decision variables in Section ~\ref{interpretability_crr_sec:variables},  the constraints and the linear programming relaxation in Section~\ref{interpretability_crr_sec:ilp_query}, the incremental learning in Section~\ref{interpretability_crr_sec:inc_ilp}, feature discretization in Section~\ref{interpretability_crr_sec:discretization}, and adaptation of {\crr} for learning other classification rules in Section~\ref{interpretability_crr_sec:other_rules}.
+% We conclude this section by describing how {\crr} can be adjusted to learn interpretable rules in other logical forms in Section~\ref{interpretability_crr_sec:other_format}.
+
+%Given an instance space $ \{ \mathbf{X}, \mathbf{y} \} $ and  model parameters $ \noclause,\card_c,\card_l$, and  $\lambda $, {{\crr}} constructs an ILP query $ Q $  and invokes an off the shelf ILP solver to compute the underlying rule $ \Rule $.
+
+
+
+\subsection{Description of Variables}
+\label{interpretability_crr_sec:variables}
+{\crr} considers two types of  \emph{decision} variables: (i) feature variables and (ii) noise (classification error) variables.
+Since  feature $ x_j $ can be present or not present  in each of  the  $ \noclause $ clauses, {\crr} considers $ \noclause $   variables, each denoted by $ b^i_j  $  corresponding to   feature $ x_j $  to denote its participation  in the $ i $-th clause, i.e, $ b^i_j=\mathbb{1}[j\text{- th feature is selected in }i\text{-th clause}]  $.  The $ q $-th sample in the training dataset, however, can be misclassified by $ \Rule $.  Therefore, {\crr}  introduces  a noise variable $ \noise_q \in \{0,1\}  $  corresponding to the $ q $-th sample, so that the assignment of $ \noise_q  $ can be interpreted whether $ \X_q $ is misclassified by $ \Rule $ or not, i.e., $ \noise_q=\mathbb{1}[q\text{-th sample is misclassified}] $.  Hence, the key idea of {{\crr}} for learning $ \Rule $ is to define an ILP query over $k \cdot m + n$  decision variables, denoted by $\{ b_{1}^{1}, b_{2}^{1}, \dots ,b_{m}^{1}, \dots ,b_{m}^{\noclause}, \noise_1, \dots ,\noise_n\}$.   In this context, we define $\B_i = \{b^i_{j} \mid j= 1,\dots,m\}$ as a \emph{vector of   feature variables} corresponding to the $ i $-th clause.
+
+
+\subsection{Construction of ILP Query}
+\label{interpretability_crr_sec:ilp_query}
+We first discuss the objective function of the  ILP query $ Q $ for learning  a $ k $-clause relaxed-CNF rule  $ \Rule $. The objective function takes care of  both the rule-sparsity and the prediction accuracy of $ \Rule $. Since {\crr} prefers a sparser rule  with as few literals as possible, we construct the objective function by preferring  $ b^i_j $ to be  $ 0 $. Moreover, to encourage $ \Rule $ to predict  the training samples accurately, we penalize the number of variables $ \noise_q $ that are different from $ 0 $. In this context, we utilize  the   parameter $ \lambda $ to trade off between sparsity and accuracy.  Therefore,  the objective function of the ILP query $ Q $ is to minimize the normalized sum of all  noise variables $ \noise_q $  weighed  by the data-fidelity parameter $ \lambda $ and feature variables $ b^i_j $ weighed by $ 1-\lambda $ (Eq.~\ref{interpretability_crr_eq:ilp_obj}).
+
+We formulate the constraints of the ILP query $ Q $ as follows. Initially, we define the range of the decision variables and   add constraints accordingly (Eq.~\ref{interpretability_crr_eq:ilp_range} and ~\ref{interpretability_crr_eq:ilp_range_2}).  For each sample, at first, we  add constraints to mimic the behavior of hard-OR of literals in a clause, and then we add constraints to apply  soft-AND of clauses in a formula. 
+
+We first consider the case when  the $ q $-th  sample  has positive class label (Eq.~\ref{interpretability_crr_eq:ilp_pos}). 
+$ \X_q\circ \B_i \ge \card_l $ resembles the hard-OR operation of literals in a clause.  We introduce   $ k $ \emph{auxiliary} $ 0 $-$ 1 $ variables $ \{\xi_{q,1}, \dots, \xi_{q,k}\} $  to check whether at least $ \card_c $ clauses are satisfied, i.e., $ \noise_{q,i}=\mathbb{1}[i\text{-th clause is dissatisfied for }q\text{-th sample}] $, which let us impose the operation of soft-AND over clauses.    We then add a constraint to make sure that at most $ k-\eta_{c} $ clauses are allowed to be dissatisfied, otherwise the noise variable $ \noise_q $  is assigned to $ 1 $, i.e., the $ q $-th sample is detected as aw noise.  
+ 
+
+
+
+A negative labeled sample has to dissatisfy  more than $ k-\card_c $ clauses in $ \Rule $ so that the sample is predicted as $ 0 $, which is equivalent to satisfying  more than $ k-\card_c$ constraints $ \X_q\circ \B_i < \eta_l  $. As mentioned earlier, we  introduce $ 0 $-$ 1 $ variable $ \noise_{q,i} $ to specify if the constraint $ \X_q\circ \B_i < \eta_l  $ is dissatisfied or not and  restrict the count of dissatisfied clauses $ \sum_{i=1}^k\xi_{q,i} $ to be less than $ \card_c $. 
+
+In the following, we present the ILP query $ Q $.
+
+
+%\vspace{-15pt}
+\begin{subequations}
+	\label{interpretability_crr_eq:ilp}
+ \begin{align} 	
+% 	\begin{split}
+ 	&\min   \frac{\lambda}{n} \sum_{q=1}^n \xi_q + \frac{1-\lambda}{k\cdot m}\sum_{i=1}^k\sum_{j=1}^m b_j^i \label{interpretability_crr_eq:ilp_obj} \\
+ 	&\text{such that,} \notag \\
+ 	&b_j^i \in \{0,1\},  i = 1,\dots,k,  j = 1,\dots,m \label{interpretability_crr_eq:ilp_range}\\
+ 	& \xi_q \in \{0,1\},q = 1,\dots,n  \label{interpretability_crr_eq:ilp_range_2}\\
+ 	&\text{if }  \forall q \in \{1,\dots,n\},\text{ if }  y_q=1, \label{interpretability_crr_eq:ilp_pos}\\
+ 	&\qquad \X_q\circ \B_i+ m\xi_{q,i} \ge \eta_{l},  i = 1,\dots,k  \label{interpretability_crr_eq:ilp_ela_l_pos}\\
+ 	& \qquad   k\xi_q + k-\eta_c \ge \sum_{i=1}^k \xi_{q,i} \notag \\ &\qquad \xi_{q,i} \in \{0,1\},  i = 1,\dots,k \notag\\
+ 	&\text{if } \forall q \in \{1,\dots,n\}, y_q=0, \label{interpretability_crr_eq:ilp_neg}\\
+ 	&\qquad \X_q\circ \B_i < \eta_{l} + m  \xi_{q,i},  i = 1,\dots,k \label{interpretability_crr_eq:ilp_ela_l_neg}\\
+ 	&\qquad  k\xi_q  + \eta_{c} > \sum_{i=1}^k\xi_{q,i} \notag\\ &\qquad \xi_{q,i} \in \{0,1\},  i = 1,\dots,k \notag
+% 	\end{split}
+\end{align}
+\end{subequations}
+%\vspace{-15pt}
+
+In the following, we show the complexity of the ILP query in terms of the number of variables and constraints. 
+
+\begin{proposition}
+	Given a training dataset with $ n $ samples and $ m $ binary features, the ILP query $ Q $ for learning a binary classification rule in relaxed-CNF has $ k\cdot m + n $ decision variables, $ k\cdot n $ auxiliary variables, and  $ k\cdot m + n\cdot (k+3)  $ integer constraints. 
+\end{proposition}
+
+An ILP solver takes  query  $ Q $ as input and returns the optimal assignment $ \sigma^* $of the variables.
+We extract relaxed-CNF rule $\Rule$ from the solution  as follows. 
+
+
+\begin{construction}
+	\label{interpretability_crr_cons:rule}
+	Let $\sigma^* = \ILP(Q)$, then $x_j \in {\clause(\Rule,i)}$ iff $\sigma^*(b_{j}^i) = 1$.
+\end{construction}
+
+%\textbf{Hardness of the ILP problem:}The ILP query in Eq.~\ref{interpretability_crr_eq:ilp} has integer constraints, and the problem is NP-hard. We prove this by reducing the presented ILP query to learn a sparse single clause CNF rule, that is consistent with the training dataset (does not make any classification error) by specifying $ k=1, \eta_{c}=1, \eta_l=1, \text{ and } \lambda=1$ in Eq.~\ref{interpretability_crr_eq:ilp}.  In this context, Malioutov et al.~\cite{MV2013} has demonstrated that learning a sparse single clause CNF rule consistent on the training dataset  is a combinatorial problem in NP-hard by showing connections between compressed sensing and sparse signal recovery~\cite{natarajan1995sparse}. 
+
+
+
+
+
+\textbf{Learning thresholds $ \eta_l $ and $ \eta_c $:}
+Given the training dataset $ (\mathbf{X}, \mathbf{y})$ and data-fidelity parameter $ \lambda $, one could learn the optimum value of the thresholds $ \card_{c} $ and $ \card_l $ of the desired rule $ \Rule $  by specifying their range as constraints in the ILP query $ Q $ in Eq.~\ref{interpretability_crr_eq:ilp}. More precisely, we need to add two integer constraints  $ \card_c  \in \{0,\dots,k\}$ and $ \card_l \in \{0,\dots,m\} $ in the above query and then learn their values from the solution.  
+
+A more generalized version to CNF rules would be to learn different thresholds on literals for different clauses, i.e., $ \eta_{l,i} $ for the $ i $-th clause. This facilitates to capture the complex decision boundaries, while still producing rule-based decisions. 
+In our ILP formulation, it is straight-forward to consider such generalization where we put constraints $ \eta_{l,i} \in \{0,\dots,m\}, i=1,\dots, k $ and replace
+ $ \eta_l $ with $ \eta_{l,i} $ in Eq.~\ref{interpretability_crr_eq:ilp_ela_l_pos} and~\ref{interpretability_crr_eq:ilp_ela_l_neg}. 
+
+%\[
+%\begin{split}
+%	& \eta_c \in [1,k]\\
+%	& \eta_l \in [1,m] \\
+%	& \sum_{j=1}^m b_i^j \ge \eta_l, \forall i \in [1,k] \\ 
+%\end{split}
+%\]
+
+
+\textbf{Relaxing the ILP problem:}
+\label{interpretability_crr_sec:relaxation}
+The ILP query $ Q $ has binary integer constraints and the solution of this integer program is computationally intractable. 
+A common approach that efficiently finds an approximate solution to such a problem extends to relax the integer constraints,  solves the LP-relaxed (linear programming relaxation) problem, and then rounds the non-integer variables to get an integer solution as in~\cite{MV2013}. 
+In our case, we cannot relax all integer constraints because it may violate the structure of relaxed-CNF rules. Specifically, $ \eta_c $ and $ \eta_l $ (or $ \eta_{l,i} $) must be integers in the construction of relaxed-CNF rules, and $ \noise_{q,i} $ needs to be an integer to precisely calculate the noise variable $ \noise_q $.  However,  we can relax feature variable $ b^i_j $ and noise variable $ \noise_q $ and solve the corresponding MILP  problem.  To construct the MILP problem, we replace Eq.~\ref{interpretability_crr_eq:ilp_range} with $ 0 \le b^i_j \le 1 $ and Eq.~\ref{interpretability_crr_eq:ilp_range_2} with $ 0 \le \noise_q \le 1 $, and the rest of the constraints in $ Q $ remain the same.  If non-zero $ b^i_j $ is found in the solution, we set it to $ 1 $ and then construct the rule according to Construction~\ref{interpretability_crr_cons:rule}.
+
+
+
+%{\color{red} WRite about learning DNF rule}
+
+
+
+	
+
+
+
+%\vspace{-5pt}
+\subsection{Incremental Mini-batch Learning}
+\label{interpretability_crr_sec:inc_ilp}
+
+In Section~\ref{interpretability_crr_sec:ilp_query}, we  present an ILP formulation for learning relaxed-CNF rules and then discussed the relaxation to the integer constraints in the MILP formulation to make the approach computationally tractable. However, not all integer constraints in the formulation can be relaxed, as discussed  in Section~\ref{interpretability_crr_sec:relaxation}. Thus we require an improved learning technique to achieve scalability. We now describe a mini-batch learning approach to {\crr}, that learns relaxed-CNF rule $ \Rule $ incrementally from a set of mini-batches while solving a modified MILP query for each mini-batch.
+
+
+
+In incremental mini-batch learning, the learning process repeats for a fixed number of iterations. In each iteration, we randomly select an equal number of samples from the full training set and generate a mini-batch with less number of samples.  We then construct a MILP query on the current mini-batch with a modified objective function. This objective function simultaneously penalizes the prediction errors
+on the current mini-batch and the change in the rules learned in consecutive batches.  
+In the following, we discuss the modified objective function and the  MILP formulation.
+
+
+
+
+
+
+% The number of constraints in the ILP query  is linear with the number of training samples, which results in poor scalability  for larger datasets.  Hence, we propose an incremental learning technique via a mini-batch training methodology \cite{GM19}.  In this context, we define $ \Rule_p $ to be the rule learned for the $ p $-th batch. The key idea of incremental learning is to  divide the training dataset sequentially into a fixed number  of mini-batches $ \tau $, learn rule for each batch one after another such that  $ \Rule_p $  depends not only on the training samples in the $ p $-th batch but also regularizes itself with the  rule $ \Rule_{p-1} $ learned for the  $ (p-1) $-th batch.  To this end, we use notation $ (\X^p,\mathbf{y}^p)$  to refer to the training data for the $ p $-th batch. We assume that $ \forall p \in \{1,\dots,\tau\}, |\X^p|=n_\tau $. We propose  the following modifications in the ILP-based formulation for incrementally learning relaxed-CNF rules.
+
+
+
+
+Let $ (\X,\mathbf{y})$ be a training dataset with $ n $ samples and $ m $ binary features and $ \tau $ be the number of iterations in the learning process. In the $ p $-th iteration, we randomly sample a mini-batch $ (\X_p,\mathbf{y}_p)$ with equal number $ n_p $ of  samples and $ n_p \le n, p=1,\dots, \tau $. Note that all mini-batches have the same  binary features $ \mathbf{x} =\{x_1, \dots, x_m\} $ as in the  training set and thus share the same feature variables $ b_j^i $ in the MILP query. Therefore, we devise an objective function that prefers to keep the  assignment of $ b_j^i $ learned in the $ (p-1) $-th iteration while minimizing the prediction error on  the current mini-batch $ (\X_p,\mathbf{y}_p)$. To this end, each $ b_j^i $ is assigned $ 0 $ initially in the learning process.  This technique  enables us to update the learned rule in terms of the update in  assignment of feature variables $ b_j^i $ over mini-batches. 
+
+
+Let  $ Q_p $ be the MILP query for the $ p $-th mini-batch for learning the $ k $-clause relaxed-CNF rule $ \Rule_p $. Thus, $ \Rule_0 $ is an empty rule.
+We consider an indicator function $ I(\cdot): b^i_j \rightarrow \{1,-1\} $, that takes a feature variable $ b^i_j $ as input and outputs $ -1 $  if $ b^i_j $ is assigned $ 1 $ in the solution of $ Q_{p-1} $ (i.e., feature $ x_j $ is selected in the $ i $-th clause of   $ \Rule_{p-1} $), otherwise outputs 1.
+
+%\vspace{-8pt}
+\[
+I(b^i_j)=
+\begin{cases}
+-1 \quad \text{if }  x_j \in \clause(\Rule_{p-1},i)
+\\
+1 \quad \text{otherwise}
+\end{cases}
+\]
+%\vspace{-8pt}
+
+We now discuss the modified objective function where we multiply $ I(b^i_j) $ with $ b^i_j $ differently  from the objective function in Eq.~\ref{interpretability_crr_eq:ilp_obj}.
+
+%\vspace{-10pt}
+\begin{equation}
+\label{interpretability_crr_eq:ilp_inc}
+	\begin{split}
+	&\min  \frac{\lambda}{n} \sum_{q=1}^{n_p} \xi_q  +  \frac{1-\lambda}{k\cdot m} \sum_{i=1}^k\sum_{j=1}^m b_j^i \cdot I(b^i_j) \\
+	\end{split}
+\end{equation}
+%\vspace{-10pt}
+In the objective function, the first term penalizes the prediction error of samples in the current mini-batch and the second term penalizes when $ b_j^i $ is assigned differently than its previous  assignment. Note that the total prediction error is normalized by dividing by $ n $, which is the size of the full training dataset. This normalization is useful as it assists in updating $ \Rule_p $ while also considering the relative size of the mini-batch. Intuitively, if the size $ n_p $ of the mini-batch  is close to the size $ n $
+of the training set, more priority is given to the prediction accuracy and vice versa. The constraints in the  query $ Q_p $ are similar to the constraints in Eq.~\ref{interpretability_crr_eq:ilp}.  
+Finally, the prediction rule  $ \Rule $ is  $ \Rule_\tau $ that is learned for the last mini-batch. 
+
+
+
+
+%The core idea of our incremental mini-batch learning is motivated by~\cite{GM19}. However, our approach is  different from~\cite{GM19} in two ways:  the generation of mini-batches and the design of the objective function.  The incremental approach in~\cite{GM19} adopts a sequential partitioning of the training set to  learn a CNF rule incrementally, and  the generated rule highly depends  on the order/position of samples in the training set. However, in this paper, we randomly sample mini-batches to avoid such a dependency on the order of samples. Additionally, we consider a normalized objective function with an added flexibility in updating rules by considering the size of the mini-batch, which~\cite{GM19} does not consider. 
+
+\begin{proposition}
+	At each iteration, the MILP query in the incremental mini-batch learning approach has $ k\cdot m + n_p \cdot (k+3) $  constraints, where $ n_p $  is the size of the mini-batch. 
+\end{proposition}
+
+\textbf{Learning thresholds $ \eta_l $ and $ \eta_c $:} In the incremental learning, the objective function in Eq~\ref{interpretability_crr_eq:ilp_inc} does not impose any constraint on the thresholds. In fact, the thresholds are learned in each iteration by solving the corresponding MILP query and we  consider their final values in the last iteration.  
+
+
+
+
+
+\subsection{Learning with Non-binary Features}
+\label{interpretability_crr_sec:discretization}
+Since our problem formulation requires input instances to have binary features, datasets with categorical and continuous features  require a preprocessing stage. Initially, for all continuous features, we apply entropy-based discretization~\cite{fayyad1993multi} to infer the most appropriate number of categories/intervals by recursively splitting the domain of each continuous feature to minimize the class-entropy of the given dataset.\footnote{A simple quantile-based discretization also works, but it requires an extra parameter (i.e., the number of quantiles).}  For example, let $ x_c \in [a,b] $ be a continuous feature, and  entropy-based discretization splits the domain $ [a,b] $ into three intervals with two split points $ \{a',b'\} $, where $ a<a'<b'<b $.  Therefore, the result intervals are $ { x_c < a'} $, $ {a' \le x_c < b'} $, and $ { x_c  \ge b'} $.
+
+After applying entropy-based discretization on continuous features,  the dataset  contains only categorical features, that can be converted to binary features using one-hot encoding as in \cite{ghosh19incremental,LKCL2019}. In this encoding, a Boolean vector is introduced with cardinality equal to the number of distinct categories. Let a categorical feature have three  categories `red',`green', and `yellow'. In one-hot encoding, samples with category-value `red',`green', and `yellow' would be converted into binary features while taking values $ 100 $, $ 010 $, and $ 001 $, respectively. 
+
+
+\subsection{Learning Rules in Other Logical Forms}
+\label{interpretability_crr_sec:other_rules}
+While {\crr} learns  classification rules in relaxed-CNF form, we can leverage this framework for learning classification rules in other logical forms, for example, CNF,  DNF, and decision sets. To learn a CNF rule one can set  $ \card_l=1 $ and $ \card_c=k $. Moreover,  to learn a DNF rule,  one would first complement the class label of all samples, then learn a CNF rule by setting the parameters as described and finally negate the learned rule. We note that the literature on decision sets also fits into our formulation, because decision sets can be represented by DNF formulas. As a future work, we are investigating whether related formulations could be used to address other learning paradigms such as decision lists.
+
+%We can extend this formulation for learning decision sets, a popular rule-based interpretable representation of the decision function~\cite{ignatiev2018sat,lakkaraju2016interpretable}. A decision set is an unordered set of ``if-then'' clauses where each clause is a conjunction of literals and  is associated with a class label. In the restricted setting, a decision set is a DNF rule because each clause in DNF is a conjunction of literals and predicts class $ 1 $ when the clause becomes true. As a future work, we remove this restriction and leverage the presented formulation for learning decision sets.
+
+%Decision lists are slightly different from decision sets, and one would think of decision lists as ``if-then-elseif-$ \dots $else'' rule~\cite{R1987}. \red{Can we comment on learning decision lists? Is learning decision sets sufficient in our context as a future work?}
+
+
+
+%\begin{proof} (Theorem~\ref{interpretability_crr_thm:succinctness})
+%	\label{interpretability_crr_proof:succinctness}
+%	Let $ F= \bigwedge_i C_i $  be a CNF formula of $ {m \choose{m-\eta+1}} $  clauses where each clause $ C_i $ is distinct and has $ m-\eta+1 $ literals of $ C $. $ F $ is an equivalent CNF formula of clause $ (C,\eta) $ if $ \sigma \models (C,\eta) \Leftrightarrow  \sigma \models F $. 
+%	
+%	We will first prove $ \sigma \models (C,\eta) \Rightarrow \sigma \models F $.  
+%	Since $ \sigma \models (C,\eta) $, at least $ \eta $ literals in $ C $ are  true  and let $ T $ be the set of those $ \eta $ literals. Therefore, according to pigeon hole theorem we cannot construct any $ C_i $ with $ m-\eta+1 $ literals such that $ T \cap C_i = \emptyset $. Hence, at least $ 1 $ literal in $ C_i $ is also in $ T $. Therefore, $ \sigma \models (C_i,\eta) \Rightarrow \sigma \models F$.
+%	
+%	We prove $ \sigma \models F \Rightarrow \sigma \models (C,\eta) $ using a proof by contradiction. Let assume $  \sigma \models F $ and  $ \sigma \not \models (C,\eta) $. Hence at least $ m-\eta+1 $ literals in $ C $ must be $ false $. Then there exists a clause $ C_{i'}  $ that consists of these $ m-\eta+1 $ literals. But $ F = \bigwedge_i C_i $ must include  $ C_{i'}  $ and $ \sigma \models  C_{i'} $, which is a contradiction. Hence $ \sigma \models F \Rightarrow \sigma \models (C,\eta) $. Therefore, $ F $ is an equivalent CNF formula of $ (C,\eta) $. 
+%	
+%	We now prove that $ F $ is a compact encoding. Suppose $ F $ excludes clause $ C_{i'} $ but includes all other clauses as well as clauses with greater than $ m-\eta+1 $ variables. We  set the variables in $ C_{i'} $ as  false  and every other variables  true. Then $ F $ is satisfiable. But $ (C_{i'},\eta) $ is not satisfiable because each literal in $ C_{i'} $ is $ false $. Therefore, $ F $ must include all $ {m \choose{m-\eta+1}} $ clauses and the total literal count in $ F $ is $ (m-\eta +1) {m \choose{m-\eta+1}}  $. When $ \eta=1 $, $ (m-\eta+1){m\choose{m-\eta+1}} = m $, and when $ \eta > 1 $, $ (m-\eta+1){m\choose{m-\eta+1}} > m $, thus showing the gap in succinctness. 
+%\end{proof}

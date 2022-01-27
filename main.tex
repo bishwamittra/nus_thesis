@@ -60,6 +60,7 @@ font=footnotesize % or small or scriptsize
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{example}{Example}[section]
 \newtheorem{corollary}{Corollary}
+\newtheorem{construction}[theorem]{Construction}
 
 
 
@@ -112,6 +113,25 @@ font=footnotesize % or small or scriptsize
 			\definecolor{collision}{rgb}{0.2,1,0.3}
 			\definecolor{existential}{rgb}{0.9,0.9, 0.1}
 			
+
+% Interpretability
+%		Relaxed CNF
+			\newcommand{\Rule}{\ensuremath{{\mathcal{R}}}}
+			\newcommand{\weight}[1]{\ensuremath{W \! \left( #1 \right)}}
+			\newcommand{\X}{{\mathbf{X}}}
+			\newcommand{\MaxSAT}{\ensuremath{\mathsf{MaxSAT}}}
+			\newcommand{\noise}{\xi}
+			\newcommand{\card}{\eta}
+			\newcommand{\noclause}{k}
+			\newcommand{\crr}{\ensuremath{\mathsf{CRR}}}
+			\newcommand{\CNF}{\ensuremath{\mathsf{Card2CNF}}}
+			\newcommand{\B}{\mathbf{b}}
+			\newcommand{\clause}{\ensuremath{\mathsf{clause}}}
+			\newcommand{\MLIC}{\ensuremath{\mathsf{MLIC}}}
+			\newcommand{\IMLI}{\ensuremath{\mathsf{IMLI}}}
+			\newcommand{\ILP}{\ensuremath{\mathsf{ILP}}}
+
+			
 			
 			
 			
@@ -128,6 +148,8 @@ font=footnotesize % or small or scriptsize
 	
 	\input{chapters/introduction.tex}
 	
+	
+	
 %	Fairness
 %		Justicia
 			\chapter{Justicia: A Stochastic SAT Approach to Formally Verify Fairness}
@@ -141,7 +163,7 @@ font=footnotesize % or small or scriptsize
 				
 				
 %		FVGM
-		\chapter{Algorithmic Fairness Verification with Graphical Models}
+			\chapter{Algorithmic Fairness Verification with Graphical Models}
 				\input{chapters/fairness/fvgm/abstract}
 				\input{chapters/fairness/fvgm/introduction}
 				\input{chapters/fairness/fvgm/background}
@@ -150,6 +172,21 @@ font=footnotesize % or small or scriptsize
 				\input{chapters/fairness/fvgm/evaluations}
 				\input{chapters/fairness/fvgm/applications}
 				\input{chapters/fairness/fvgm/conclusion}
+				
+% Interpretability
+%		Relaxed CNF
+			\chapter{Classification Rules in Relaxed Logical Form}
+				\input{chapters/interpretability/relaxed-cnf/abstract.tex}
+				\input{chapters/interpretability/relaxed-cnf/introduction.tex}
+				\input{chapters/interpretability/relaxed-cnf/related_work.tex}
+				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
+				\input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
+				\input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
+				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
+				\input{chapters/interpretability/relaxed-cnf/experiment.tex}
+				\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
+				
+
 				
 				
 			

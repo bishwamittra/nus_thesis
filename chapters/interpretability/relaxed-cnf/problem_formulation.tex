@@ -1,0 +1,35 @@
+%\vspace{-2pt}
+\section{Problem Formulation}
+\label{interpretability_crr_sec:problem}
+We now present the formal definition of the problem. Given  (i) an instance space   $ (\mathbf{X}, \mathbf{y})$, where $ \mathbf{X} \in \{0,1\}^{n\times m} $ is the feature matrix with $ m $ binary features and $ n $ samples,\footnote{$\mathbf{X}$ contains both the features and their complements as columns as in~\cite{MV2013}.} and $ \mathbf{y} \in \{0,1\}^n $ is the class label vector, (ii) {a positive integer $ \noclause $ indicating the number of clauses in the desired rule}, (iii)  an integer threshold on literals $ \card_{l} \in  \{0,\dots,m\} $ indicating  the  minimum number of literals required to be true  to satisfy a clause, (iv)  an  integer threshold on clauses $ \card_{c} \in  \{0,\dots,k\} $ indicating the minimum number of clauses required to be  true  to satisfy a formula, and  (v) the data-fidelity  parameter $ \lambda \in [0,1]$, we  learn  a classification rule $ \Rule $, that is expressed as a $ k $ clause relaxed-CNF formula. 
+
+% \[\hat{y}=\Rule(\mathbf{x})=I[\sum_{x_i\in\Rule, \Rule \subseteq \mathbf{x} } x_i \ge k]\]
+
+Our goal is to find rules that balance two 
+goals:   being accurate while also sparse to avoid over-fitting.  
+To this end, we seek to minimize the total number of literals in all clauses, which motivates us to  find $ \Rule  $ with minimum  $ |\Rule| $. In particular, suppose $ \Rule $ classifies all samples correctly, i.e., $ \forall i, y_i=\Rule(\mathbf{X}_i) $. Among all the rules that classify all samples correctly,  we choose the sparsest  such $ \Rule $: 
+
+
+%\vspace{-10pt}
+\[
+\min\limits_{\mathcal{R}} |\mathcal{R}|\text{ such that }\forall i, y_i=\mathcal{R}(\mathbf{X}_i)
+\]
+%\vspace{-10pt}
+
+% $ |\mathcal{R}|=\sum_{i=1}^k |C_i (\Rule)| $ is the  total number of literals appearing in $ \mathcal{R} $. 
+
+
+In practical classification tasks, perfect classification is very unusual. Hence, we need to balance rule-sparsity with prediction error.  Let $ \mathcal{E}_\mathcal{R} $   be  the set of samples which are misclassified  by $ \mathcal{R} $, i.e., $\mathcal{E}_\mathcal{R}=\{\mathbf{X}_i | y_i \ne \mathcal{R}(\mathbf{X}_i) \}$. Hence we aim to find $ \mathcal{R} $ as follows:\footnote{In our formulation, it is  straightforward to add class-conditional weights  (e.g. to penalize  false-alarms more than mis-detects), and to allow instance weights (per sample).}
+
+%\vspace{-12pt}
+\[
+\min\limits_{\mathcal{R}} \;  \frac{\lambda}{n}|\mathcal{E}_\mathcal{R}| + \frac{1-\lambda}{k\cdot m} |\mathcal{R}|  \text{ such that }\forall \mathbf{X}_i \in \mathcal{E}_\mathcal{R} ,y_i \ne \mathcal{R}(\mathbf{X}_i) .
+\]
+%\vspace{-13pt}
+
+Each term in the  objective function is normalized in $ [0,1] $. 
+The data-fidelity parameter $ \lambda \in [0,1] $  serves to balance
+the trade-off between prediction accuracy and sparsity. Higher 
+values of $ \lambda $ produce lower prediction errors by sacrificing the sparsity 
+of $ \Rule $, and vice versa. It can be viewed as an inverse of the regularization 
+parameter. 

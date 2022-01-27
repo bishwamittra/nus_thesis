@@ -1,0 +1,15 @@
+\section{Incremental Approach for Efficient Learning }
+In this section, we describe an efficient incremental approach for learning $ M $ of $ N $ rule. We have described a MaxSAT based optimal rule learning technique in Section ~\ref{sec:maxsat}. The size of the  MaxSAT query  (number of clause) in that technique is polynomial with the number of training samples, which results in poor scalability  for larger dataset.  Hence we propose an incremental learning technique via a partition based training methodology \cite{GM19}. In this context, we define $ \Rule_p $ to be the rule learned for the $ p $-th partition. The key idea of incremental learning is to  divide the training dataset into a fixed number of partitions, learn rule for each partition in a  linear order such that  $ \Rule_p $  depends on both the training samples in the $ p $-th partition and  on the  rule $ \Rule_{p-1} $ learned for the  $ (p-1) $-th partition.   We propose  the following modifications in the MaxSAT constraints $ Q $ for learning $ M $ of $ N $ rule in an incremental fashion.
+
+\subsection{MaxSAT Constraints for Incremental Learning}
+Let us consider that we want to learn rule $ \Rule_p $ for the $ p $-th partition and we have access to  $ \Rule_{p-1} $.  We want $ \Rule_p $ to not only generalize for the $ p $-th partition but also be consistent with $ \Rule_{p-1} $. Hence  we construct $ V_i^j $ as follows. If $ x_j \in \clause(\Rule_{p-1},i)  $ , we  deviate from the default behavior of falsifying $ b_j^i $ by adding a constraint to keep the corresponding literal \emph{true} in the optimal assignment. Otherwise we construct a soft clause to falsify $ b_j^i $. 
+\[
+V^i_j:=
+\begin{cases}
+b_j^i \quad \text{if }  x_j \in \clause(\Rule_{p-1},i)
+\\
+\neg b_j^i\quad \text{otherwise}
+\end{cases}; \quad W(V_j^i)=1
+\]
+
+The second (Eq. ~\ref{eq:constraint_two}) and the third (Eq. ~\ref{eq:constraint_three}) constraint of $ Q $ do not require any modification in the  incremental approach of learning. 

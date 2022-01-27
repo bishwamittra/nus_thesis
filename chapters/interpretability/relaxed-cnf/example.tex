@@ -1,0 +1,76 @@
+
+
+
+\section{Illustrative Example}
+\label{sec:example}
+
+In this section, we provide a toy example to illustrate  a relaxed-CNF rule which we learn for  Breast Cancer Wisconsin Diagnostic Data Set (WDBC\footnote{\url{https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)}}). The dataset is used to predict whether the cancer is benign or malignant based on the characteristics of an image of  a tumor cell.  {\Framework} generates the following rule for detecting malignant cancer. 
+%\vspace{-10pt}
+
+%\begin{comment}
+\[
+\begin{split}
+&[ (  \text{ smoothness }\ge 0.089  + \text{ standard error of area  }\ge 53.78 \\
+& + \text{ largest radius }\ge 18.225   )\ge 2  ] +\\
+&[   (98.76\le \text{ perimeter } < 114.8  +  \text{ largest smoothness }\ge 0.136 \\
+& + 105.95 \le \text{ largest perimeter }  < 117.45     )\ge 2  ]  \ge 1 \end{split}
+\]
+%\end{comment}
+
+The generated rule has two clauses, each clause consisting of three characteristics of the image of a tumor cell. In this rule, a clause is satisfied if two out of three characteristics match for a test sample. Finally, the rule predicts ``malignant'' cancer if at least one clause is satisfied. The size of this rule is $ 3+3=6 $.  If each clause in this rule is encoded into CNF,  standard encoding technique~\cite{steinke2014pblib} would generate more than one CNF clauses, resulting in higher rule-size. Therefore,   relaxed-CNF rules possesse higher expressibility than  CNF rules. 
+We believe that this type of rule is very intuitive and helpful to human experts in decision making.  
+	
+
+
+\begin{comment}
+{\scriptsize
+	\begin{table}[]
+		\setlength{\tabcolsep}{5pt}
+		
+		%		%\vspace{-6 pt}
+		\begin{center}
+			\begin{tabular}{|l | l| }
+				%%				\newcommand{\softand}{\ensuremath{\mathsf{soft-AND}}}
+				\hline
+				
+				\multicolumn{2}{|c|}{ $  \Rule = \ensuremath{\mathsf{softAND}}(\{\text{Test } 1 , \text{Test 
+					} 2 \}, 1 $) }  \\
+				\hline
+				\multicolumn{2}{c}{ }  \\
+				\hline
+				\multicolumn{1}{|c|}{ Test $ 1 =  \ensuremath{\mathsf{hardOR}} (\cdot ,2 )$} & check \\
+				\hline
+				$\text{perimeter }> 700.66  $ & \\
+				\hline
+				$\text{standard error of perimeter }> 91.31 $ & \\
+				\hline
+				$\text{largest radius }> 23.58   $& \\
+				\hline
+				$\text{largest texture }> 115.9   $& \\
+				\hline
+				$\text{largest  concave portions of contour }> 0.15    $& \\
+				\hline 
+				
+				\multicolumn{2}{c}{\multirow{1}{*}{ }} \\
+				%				\multicolumn{2}{c}{}\\
+				\hline
+				\multicolumn{1}{|c|}{ Test $ 2 =  \ensuremath{\mathsf{hardOR}} (\cdot ,2 )$}&  check \\
+				\hline
+				$ \text{area }> 0.1 $ & \\
+				\hline 
+				$ \text{largest radius }> 33.65   $ & \\
+				\hline
+				$ \text{largest perimeter }> 781.18  $&  \\
+				\hline 
+				
+			\end{tabular}
+		\end{center}
+		%\vspace{-10 pt}
+		\caption{Example of relaxed-CNF rules for WDBC dataset.  \ensuremath{\mathsf{hardOR}} takes  a   clause and  $ \eta_l $ as input   and returns $ 1 $  when at least $ \eta_l $ literals are  $ 1 $. \ensuremath{\mathsf{softAND}} takes   a formula and  $ \eta_c $ as input and returns $ 1 $  when at least $ \eta_c $ clauses are  $ 1 $.  Informally,   a test is diagnosed as positive if at least two properties of breast tissue are matched. The patient has malignant cancer if she/he is diagnosed positive in at least one test, otherwise she/he has benign cancer.}
+		\label{tab:illustration}
+%		\vspace{-40 pt}
+	\end{table}
+}
+
+\end{comment}
+

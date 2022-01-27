@@ -1,0 +1,49 @@
+\section{Preliminaries}
+\label{sec:preliminaries}
+
+ We use capital  boldface letters such as $\mathbf{X}$ to denote matrices while lower boldface letters $\mathbf{y}$ are reserved for vectors/sets. For a matrix $\mathbf{X}$, $\mathbf{X}_i$  represents the $ i $-th row of $\mathbf{X}$ while for a vector/set $\mathbf{y}$, $y_i$ represents the $ i $-th element of $\mathbf{y}$. 
+% For a vector/set $ \mathbf{u} $ we  use $ |\mathbf{u}| $ to denote the number of elements in $ \mathbf{u} $.
+
+% introduce cardinality constraint in this part
+
+Let $F$ be a Boolean formula and  $\mathbf{b} = \{b_1,b_2,\dots ,b_m \}$ be the set of variables appearing in $F$. A literal $ l_i $ is a variable ($b_i$) or its complement ($\neg b_i$).  A \emph{satisfying assignment} or a \emph{witness} of $F$ is an assignment of variables in $\mathbf{b}$ that makes $F$ evaluate to $ 1 $.  If $\sigma$ is an assignment of variables and $b_i \in \mathbf{b}$, we use $\sigma(b_i) : b_i \rightarrow \{0,1\}$ to denote the value assigned to $b_i$ in $\sigma$. $F$ is in Conjunctive Normal Form (CNF) if $F :=  \bigwedge_i C_i$, where each clause $C_i :=  \bigvee_j l_j $ is represented as disjunction of literals. 
+
+
+%We use $|C_i|$ to denote the number of literals in $C_i$.  
+A \emph{pseudo-boolean constraint} over literals is defined as $ \sum_i a_i\cdot l_i \ge \card; a_i,\card \in \mathbb{R} $.  The special case $ \sum_i l_i \ge \card $ is denoted as a \emph{cardinality constraint}. In the  case of cardinality constraint, $ \card $ is called a  cardinality constant and $ \card \in \mathbb{Z} ^+$. 
+%A pseudo-boolean constraint can be encoded into a CNF formula by applying the state of the art encoding technique. 
+Therefore, a cardinality constraint is a variant of general  CNF clause. 
+ Specifically,  a cardinality constraint is satisfied if at least $ \card $ literals in that clause are assigned to $ 1 $, which is different from a CNF clause where $ \card=1 $ is applied.
+ 
+  
+We define an operator $ \circ $ between  two vectors $\mathbf{u}$ and $\mathbf{v}$ over propositional variables or constants (e.g.,  $ 0 $, $ 1 $) as follows;    $\mathbf{u} \circ \mathbf{v} = \sum_{i} (u_{i} \wedge v_{i})$, where $u_{i}$ and $v_{i}$ denote a variable/constant  at the $i$-th index of $\mathbf{u}$ and $\mathbf{v}$ respectively. In this context, note that the operation $\wedge$ between a variable and a constant follows the standard interpretation, i.e. $0 \wedge b = 0$ and $1 \wedge b = b$. 
+
+
+
+We consider a standard binary classification problem, where we are given a collection of 
+training samples $\{ \mathbf{X}_i, y_i \}$. Each vector $\mathbf{X}_i \in \mathcal{X}$ contains the valuation of the features $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$ for sample $i$, and $y_i \in \{0,1\}$ is the binary label for sample $i$.
+A classifier {\Rule} is a mapping that takes in a feature vector $\mathbf{x}$ and return a class $\hat{y}$, i.e. $\hat{y} = \Rule(\mathbf{x})$. The goal is not 
+only to design $\Rule$ to approximate our training set, but also to generalize to unseen samples arising from the same distribution. 
+We focus on classifiers that can be expressed compactly in CNF, particularly \emph{conjunction of cardinality constraint}. {We use $\clause(\Rule,i)$ to denote the $i$-th clause of $\Rule$}. {Furthermore, we use $|\Rule|$ to denote the rule-size of classifier $ \Rule $ that is the sum of the count of literals in all the clauses, i.e. $|\Rule| = \Sigma_i |\clause(\Rule,i)|$}. 
+
+%In our context, we define $ \Rule $ to be a set of important features which we aim to identify and $ \Rule \subseteq \mathbf{x} $. We use the notation $ |\Rule| $ to denote the count of features in $ \Rule $.For example, let $ \mathbf{x}=\{x_1,x_2,x_3,x_4\} $ and we learn  $ \Rule=\{x_1,x_3,x_4\} $. Therefore $ |\Rule|=3 $. 
+
+
+
+%We define two rules  $ \Rule_1 $ and $ \Rule_2 $ to be  equivalent  if $ \forall i,\Rule_1(\X_i)=\Rule_2(\X_i) $. 
+
+
+
+
+%We denote the set of all witnesses of $F$ by {\satisfying{F}}.
+
+
+
+In this work, we focus on the weighted variant of CNF wherein a weight function is defined over clauses. For a clause $C_i$ and 
+weight function {\weight{\cdot}}, we use {\weight{C_i}} to denote the weight of clause $C_i$. We say that a clause $C_i$ is hard if $\weight{C_i} = \infty$, otherwise $C_i$ is called a soft clause.  To avoid notational clutter, we overload {\weight{\cdot}} to denote the weight of an assignment or clause, depending on the context. We define weight of an assignment $\sigma$ as the sum of weight of clauses that $\sigma$ does not satisfy. Formally, $\weight{\sigma} = \Sigma_{i | \sigma \not\models C_i} \weight{C_i}$.
+
+Given $F$ and weight function $\weight{\cdot}$, the problem of {MaxSAT} is to find an assignment $\sigma^*$ that has the minimum weight, i.e.  $\sigma^* = \MaxSAT(F,W)$ if $\forall \sigma \neq \sigma^*, \weight{\sigma*} \leq \weight{\sigma}$. Our formulation will have positive clause weights, hence MaxSAT corresponds to satisfying as many clauses as possible, and picking the strongest clauses among the unsatisfied ones. 
+%Note that the above formulation is different from the typical definition of {\MaxSAT} but the difference is only syntactic. 
+Borrowing terminology of community focused on developing {MaxSAT} solvers, we are solving a partial weighted {MaxSAT} instance wherein we mark all the clauses with $\infty$ weight as hard and clauses with other positive value less than $ \infty $ weight as soft  and ask for a solution that optimizes the partial weighted {MaxSAT} formula.  The knowledge of encoding a  cardinality constraint into CNF clauses, the  inner working of {MaxSAT} solvers,  and  the encoding of our representation into weighted {MaxSAT} is not required for this paper.   
+
+

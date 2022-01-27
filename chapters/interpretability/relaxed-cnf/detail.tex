@@ -1,0 +1,66 @@
+%\cite{emadlearning}
+
+
+
+\section{Description}
+The current version of MaxSat based prediction rule facilitates both \textbf{and} and \textbf{or} type prediction rule over the  input features. \textbf{And} (\textbf{or}) type prediction rule is a similar representation of DNF (CNF) clauses. We consider that each clause has $ n $ literals and there are $ c $ such clauses in the prediction rule. \textbf{And} (\textbf{or}) type rule requires that  all  of $ n $ (at least $ 1 $ of $ n $) literals in  at least $ 1 $ of  $ c $ (all of $ c $)  clauses have to be satisfied for the prediction rule to predict \textit{true}. For simplification of understanding we assume binary class data (class label is  \textit{true} or \textit{false}) in this context. A significant benefit of SAT based prediction rule is that we can easily convert an \textbf{and} type rule to \textbf{or} type rule in the model designing phase and underlying SAT solver  works independently.
+	
+	A relaxed but more domain specific extension of current MaxSAT based \textbf{or} type prediction rule is designing $ m $ of $ n $ rule where satisfying at least $ m $  out of $ n $ literals  in each of $ c $ clauses predicts \textit{true}. This type of rule has various real life applications such as clinical prediction and checklist etc. In the following part we will formally represent our problem setting and solution method.
+	
+		%We can also design similar extension of \textbf{and} type rule where at most $ m $ out of $ n $ literals of any $ 1 $ of $ c $ clauses need to be satisfied for predicting \textit{true}. 
+	
+	\paragraph{Problem Formulation:} Throughout the paper we consider $true =1 $ and $ false=0 $ interchangeably. Let us assume tuple $ (X_i,y_i)$ is the  $ i^{th} $ sample where $ X_i=[x_1^i,x_2^i,....,x_n^i] $ is a feature vector with  $ n $ features  $( |X_i|=n )$ and $ y_i \in \{0,1\}$ is corresponding class label. We specify there are $ s $ samples i.e., $ 1 \le i\le s $.  For simplicity we assume that $ X_i $ is a binary vector i.e., $\forall j,  x_j^i \in \{0,1\}  $ and $ 1\le j \le n $.  Any type of feature like numerical, real valued or categorical can be converted to binary feature through discretization.  
+	
+	We take $ m $ as input for this  problem setting. The intuition behind selecting $ m $
+	is application specific. For example, suppose a doctor wants to keep record of possible breast cancer patients. He has come up with $ 5 $ different tests and knows that if any patient has been diagnosed as infected in at least $ 3 $ tests, he is predicted as \textit{malignant} cancer otherwise  \textit{benign}. In  this case $ m=3 $. 
+	
+	We assume the prediction rule has $ c $ clauses and each clause has $ n $ literals. We call each literal as a column variable $ b $ as it  corresponds to a binary column in the feature matrix. For $ c $ clause prediction rule we consider total $ c $ column variables against a single feature column. $ \{b_1^1, b_2^1,...., b_n^1,b_1^2,....,b_n^2,....,b_n^c \} $ is the set of column variables.  Our prediction model returns an assignment (\textit{true} or \textit{false}) of each variable $ b_j^k $ where $ 1\le j \le n $ and $ 1 \le k \le c $. A \textit{true} assignment of $ b_j^k $ signifies that $ j^{th} $ feature is an essential factor of our prediction rule. Whereas a  \textit{false}  assignment of $ b_j^k $ says that $ j^{th} $ feature does not take part in prediction.   
+	
+	Our goal is to learn the assignment of each column variable from given sample space and each sample contributes in learning this assignment. For ease of representation we define a  vector $ B_k=[b_1^k, b_2^k,...., b_n^k] $  consisting of all column variables of $ k^{th} $ clause $ (1 \le k \le c) $. We define the operator $ \boldsymbol{\vee} $ over two binary vector in a special way for this problem setting. $ X_i \boldsymbol{\vee} B_k= (x_1^i \wedge b_1^k) + (x_2^i \wedge b_2^k) + .... +(x_n^i \wedge b_n^k)$. Here $ \wedge $ is logical \textit{and} operator i.e., $ 0 \wedge b_j^k=0 $ and $  1 \wedge b_j^k=b_j^k $.  Intuitively we can see that for $ i^{th} $ sample if $ j^{th} $ feature is $ 1 $, it ignites all the column variables $   b_j^k  (1\le k \le c) $ associated with this feature so that $ b_j^k $ can possibly be assigned \textit{true} after model returns the final assignment. However after we get final assignment of each column variable, $ X_i \boldsymbol{\vee} B_k $ returns a numerical value between $ 0 $ and $ n $ and we  predict $ i^{th} $ sample as \textit{true} if $ \forall k, (X_i \boldsymbol{\vee} B_k) \ge m $ and \textit{false} otherwise.
+	
+	Now we will formally define our prediction function $ \hat{y_i} $  for $ i^{th} $ sample as follows.
+	\[
+	\hat{y}=
+	\begin{cases}
+		\text{ 1 } & \quad\text{if }\forall k, ( X_i \vee B_k ) \ge m  \text{ where }  1\le k \le c\\
+		\text{ 0 } &\quad\text{otherwise}\\
+	\end{cases}		
+	\]
+	
+	SAT based framework can keep track of accuracy and other performance measures simultaneously in the learning phase. Hence we introduce a noise variable $ \eta_i $ corresponding to $ i^{th} $ sample. A $ true $ assignment of $ \eta_i $ signifies that $ i^{th} $ sample is misclassified by our generated prediction rule.  So we will falsify as many noise variables as possible. Moreover an interpretable machine learning model encourages a shorter prediction rule. So we target at falsifying as many column variable $ b_j^k $ as possible while ensuring higher prediction accuracy. Here we see an optimization problem regarding boolean variables and constraints. 
+	
+%	MaxSAT facilitates optimizing weighted clauses in CNF forms. 
+	
+	We aim to represent our model according to MaxSAT setting. MaxSAT is an optimization of satisfiability problem where maximum number of clauses are aimed to be satisfied. MaxSAT is more difficult than SAT problem. However this optimization version is very useful and acts as a bridge between a satisfiability problem and an optimization problem. Weighted MaxSAT considers weight on each clause and it maximizes (minimizes) the sum of weight of satisfiable  (unsatisfiable) clauses. Two types of clauses are considered in MaxSAT setting- hard clause and soft clause. The hard clauses are  considered to be satisfied first and then the soft clauses are considered. This two different types of weight facilitates  putting priority over clauses. However each clause in CNF form is a disjunction of literals. But our problem setting ($ m $ of $ n $ rule) is not a direct form of disjunction of variables or literals rather a   pseudo-boolean  constraints. We will discuss later about how pseudo-boolean constraints can be converted to CNF form efficiently using existing encoder.
+	%Our final prediction rule will be following.
+	%\[		
+	%\]
+	
+	\paragraph{Constraints}
+	We define the following constraints.
+	
+	\begin{equation}
+	V_j^k:=\neg b_{j}^k\qquad W(V_j^k)=1
+	\label{eq:sparse_constraint}
+	\end{equation}
+	\begin{equation}
+	S_i:=\neg \eta_i\qquad W(S_i)=\lambda
+	\label{eq:noise_reduce}
+	\end{equation}
+	\begin{equation}
+	D_i:=\neg \eta_i \rightarrow (y_i \leftrightarrow \hat{y}_i) \qquad W(D_i)=\infty
+	\label{eq:classifier_prediction}
+	\end{equation}
+	
+%	Here ~\ref{eq:classifier_prediction}  is a hard constraint and  ~\ref{eq:sparse_constraint},~\ref{eq:noise_reduce} are soft constraints. 
+	Finally the set of constraints $ Q^c $ set by our approach is defined as follows.
+	\[
+	Q^c:=\bigwedge_{j=1,k=1}^{j=n,k=c} V_j^k \bigwedge_{i=1}^{i=s} S_i \bigwedge_{i=1}^{i=s} D_i
+	\]
+	
+	\paragraph{Description of constraints:} 
+	Here $ W(.) $ is a weight function over clauses. We put a weight of $ 1 $ to the column variables for gaining a sparse representation of prediction rule. Moreover we put $ \lambda $ as weight of noise variables where $ \lambda $ is regularization factor. Higher value of $ \lambda $ ensures less number of prediction error and vice versa. $ D_i $ is considered as hard clause in this setting. $ D_i $ can be interpreted in this way. If  $ i^{th} $ sample is not treated as noise, 
+	prediction function $ \hat{y_i} $ should match sample class label $ y_i $. 
+	
+	\paragraph{CNF Encoding of constraints:} **
+	
