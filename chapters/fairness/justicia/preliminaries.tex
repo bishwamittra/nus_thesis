@@ -1,121 +1,93 @@
 \section{Background: Fairness and SSAT}
 \label{fairness_justicia_sec:preliminaries}
+
 In this section, we define different fairness metrics for a supervised learning problem. Following that, we discuss Stochastic Boolean Satisfiability (SSAT) problem.
 
 \subsection{Fairness Metrics for Machine Learning}\label{fairness_justicia_sec:fairness}
-Let us represent a dataset $D$ as a collection of triples $(X, A, Y)$ sampled from an underlying data generating distribution $\mathcal{D} $.
-$X \triangleq \lbrace \nonsensitive_1, \ldots, \nonsensitive_m\rbrace \in \mathbb{R}^m $ is the set of non-protected (or non-sensitive) attributes.
-$A \triangleq \lbrace A_1, \ldots, A_n\rbrace$ is the set of categorical protected attributes.
-$Y$ is the binary label (or class) of $(X, A)$. 
-A compound protected attribute $\mathbf{a} = \{a_1, \ldots, a_n\}$ is a valuation to all $A_i$'s and represents a \textit{compound protected} group. For example, $A = \{\textrm{race}, \textrm{sex}\}$, where $\textrm{race} \in \{\textrm{Asian}, \textrm{Colour}, \textrm{White}\}$ and  $\textrm{sex} \in \{\textrm{female},  \textrm{male}\}$. 
-Thus, $\mathbf{a} =  \{\textrm{Colour}, \textrm{female}\}$ is a compound protected group. 
-We define $\alg \triangleq \Pr(\hat{Y}|X, A)$ to be a binary classifier trained from samples in the distribution $\mathcal{D} $. 
-Here, $\hat{Y}$ is the predicted label (or class) of the corresponding data.
 
-As we illustrated in Example~\ref{fairness_justicia_example:intro}, a classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\hat{Y} = Y$, may discriminate certain compound protected groups over others~\cite{chouldechova2020snapshot}.
-Now, we describe two family of fairness metrics that compute bias induced by a classifier and are later verified by {\justicia}.
 
-\begin{comment}
-$ X $ is the set of non-protected attributes. Each non-protected attribute $ x_i \in X $ takes the valuation as real numbers or categories. 
-We consider a multi-protected attributes setting where $ A $ is the set of protected (or sensitive) attributes. Each protected attribute $ a_i \in A $ is a categorical attribute with at least two categories.  
-$ y $ is the binary class label of the data sample. 
-
-Based on the valuation of the protected attributes, the samples are  tagged as being in different protected groups, i.e., 
-the privileged group(s)  and the unprivileged group(s). For instance, let the dataset contain two protected attributes:  race and gender. The attribute race can be white, black or Asian and the attribute gender can be male or female. For simplicity, we assume that the protected group white-male is the most privileged group and all other protected groups (attribute combinations) refer to unprivileged groups with black-female being the most unprivileged group. Generally the dataset contains bias that results in the discrimination between the privileged and unprivileged groups. In this paper, we do not require the knowledge of privileged and unprivileged groups beforehand. We instead ask for the set $ A $ of protected attributes from which we derive privileged and unprivileged groups. 
-\end{comment}
+We consider\footnote{{We represent sets/vectors by bold letters, and the corresponding distributions by calligraphic letters. We express random variables in uppercase, and an assignment of a random variable in lowercase.}} a dataset $ \mathbf{D} $ as a collection of triples $ (\nonsensitive, \sensitive, Y) $ generated from an underlying distribution $\mathcal{D}$. $ \nonsensitive \triangleq \{X_1, \dots, X_{\numnonsensitive}\} $ are non-sensitive features whereas $ \sensitive \triangleq \{A_1, \dots, A_{\numsensitive}\} $ are categorical sensitive features.  $Y \in \{0,1\}$ is the binary label (or class) of $(\nonsensitive,\sensitive)$. Each non-sensitive feature $ X_i$ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each sensitive feature $ A_j \in \{0, \dots, N_j\}  $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. We use $ (\mathbf{x}, \mathbf{a}) $ to denote the feature-values of  $ (\nonsensitive, \sensitive) $.  For sensitive features, a valuation vector $ \mathbf{a} = [a_1, .., a_{m_2}] $ is called a \textit{compound sensitive group}. For example, consider $ \sensitive = $ \{race, sex\} where race $ \in $ \{Asian, Color, White\} and sex $ \in $ \{female, male\}. Thus $ \mathbf{a} = $ [Asian, female]  is a compound sensitive group. 
+We represent a binary classifier trained on the dataset $\mathbf{D}$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \hat{Y} $. Here, $\hat{Y} \in \{0,1\}$ is the predicted class of $ (\nonsensitive, \sensitive) $.
 
 
 
-\begin{comment}
-We now consider a more specific setting where the samples are divided into privileged and unprivileged groups based on the valuation of $ a $, i.e, when $ a=1 $, the sample is included into a privileged group and vice versa. 
-\end{comment}
+As we illustrated in Example~\ref{fairness_justicia_example:intro}, a classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\hat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions verified by {\justicia}: group fairness and causal fairness. \red{In each definition, the fairness metric relies on computing the conditional Positive Predictive Value (PPV) of the classifier, denoted by $ \Pr[\hat{Y} = 1 | \mathsf{C}] $, where different fairness metrics are constituted based on the conditional $ \mathsf{C} $.}
 
 
-\subsubsection{Independence Metrics of Fairness.} 
-The \textit{independence (or calibration) metrics} of fairness state that the output of the classifier should be independent of the compound protected group.
-A notion of independence is referred to \textit{group fairness} that specifies an \textit{equal positive predictive value (PPV) across all compound protected groups} for an algorithm $\alg$, i.e., $\Pr[\hat{Y} = 1 | A = \mathbf{a}, \alg] = \Pr [\hat{Y} =1 | A = \mathbf{b}, \alg], \forall \mathbf{a}, \mathbf{b} \in A$.
-Since satisfying group fairness exactly is hard, relaxations of group fairness, such as \textit{disparate impact} and \textit{statistical parity}~\cite{dwork2012fairness,feldman2015certifying}, are proposed. 
+\subsubsection{Group Fairness.} Group fairness is categorized into three families: independence, separation and sufficiency, of which {\justicia} verifies independence and separation metrics. 
+The independence metrics state that the predicition of the classifier should be independent of compound sensitive groups. Formally, independence notion specifies an equal PPV across all sensitive groups for a classifier $\alg$, i.e., $\Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]  =  \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}'] , \forall \mathbf{a}, \mathbf{a}' \in \sensitive$.
+Since satisfying independence exactly is hard, relaxations of independence fairness metrics, such as \textit{disparate impact} and \textit{statistical parity}~\cite{dwork2012fairness,feldman2015certifying}, are proposed. 
 
 \textit{Disparate impact} (DI)~\cite{feldman2015certifying} measures the ratio of PPVs between the most favored group and least favored group, and prescribe it to be close to $1$. Formally, a classifier satisfies $(1 - \epsilon)$-disparate impact if, for $\epsilon \in [0,1] $,
 \[
-	\min_{\mathbf{a} \in A} \Pr[\hat{Y} =1 | \mathbf{a}, \alg]  \ge (1 - \epsilon) \max_{\mathbf{b} \in A} \Pr[\hat{Y} =1 | \mathbf{b}, \alg].
+\min_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]  \ge (1 - \epsilon) \max_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}].
 \]
-Another popular relaxation of group fairness, \textit{statistical parity} (SP) measures the difference of PPV among the compound groups, and prescribe this to be near zero. Formally, an algorithm satisfies $\epsilon$-statistical parity if, for $\epsilon \in [0,1] $, 
+Another popular relaxation of independence metrics  is \textit{statistical parity} (SP) that measures the maximum difference of PPVs among sensitive groups, and prescribe this to be near zero. Formally, an algorithm satisfies $\epsilon$-statistical parity if, for $\epsilon \in [0,1] $, 
 \[
-\max_{\mathbf{a}, \mathbf{b} \in A}|\Pr[\hat{Y} =1 | \mathbf{a}, \alg] - \Pr [\hat{Y} = 1| \mathbf{b}, \alg]| \le \epsilon.
+\max_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr [\hat{Y} = 1| \mathbf{A} = \mathbf{a}] \le \epsilon.
 \]
-For both disparate impact and statistical parity, lower value of $\epsilon$ indicates higher group fairness of the classifier $\alg$. 
+For both disparate impact and statistical parity, lower value of $\epsilon$ indicates higher group fairness of the classifier. 
 
 
-\begin{comment}These two metrics of fairness has a disadvantage that a fully accurate classifier with different base rates (i.e., the proportion of actual positive prediction) in different protected groups may be considered unfair. As a result, similar individuals from different protected groups may be treated differently in order to achieve group fairness{\textemdash} such treatment is prohibited by law in some cases. 
-\end{comment}
-
-\subsubsection{Separation Metrics of Fairness.}
-In the \textit{separation (or classification parity)} notion of fairness, the predicted label $\hat{Y}$ of a classifier $\alg$ is independent of the sensitive attributes $A$ given the actual class labels $Y$. In case of binary classifiers, a popular separation metric is \textit{equalized odds} (EO)~\cite{hardt2016equality} that computes the difference of false positive rates (FPR) and the difference of true positive rates (TPR) among all compound protected groups. 
-Lower value of equalized odds indicates better fairness.
-A classifier $\alg$ satisfies $\epsilon$-equalized odds if, for all compound protected groups $\mathbf{a}, \mathbf{b} \in A$,
-\begin{equation}
-\begin{split}
-|\Pr[\hat{Y} =1 | A = \mathbf{a}, Y= 0  ] - \Pr [\hat{Y} = 1| A = \mathbf{b}, Y = 0]| &\le \epsilon, \\ 
-|\Pr[\hat{Y} =1 | A = \mathbf{a}, Y= 1  ] - \Pr [\hat{Y} = 1| A = \mathbf{b}, Y = 1]| &\le \epsilon.\notag
-\end{split}
-\end{equation}
+In the \textit{separation (or classification parity)} notion of fairness, the predicted label $\hat{Y}$ of a classifier is independent of the sensitive features $\sensitive$ given the class labels $Y$. In case of binary classifiers, a popular separation metric is \textit{equalized odds} (EO)~\cite{hardt2016equality} that computes the maximum difference of false positive rates \red{(FPR)} and true positive rates \red{(TPR)} conditioned on sensitive groups.  Lower value of equalized odds indicates better fairness. A classifier satisfies $\epsilon$-equalized odds when the following conditions hold.
+\begin{align*}
+	&\max_{\mathbf{a}} \Pr[\hat{Y} =1 |\mathbf{A}= \mathbf{a}, Y= 0  ] - 	\min_{\mathbf{a}} \Pr [\hat{Y} = 1|\mathbf{A}= \mathbf{a}, Y = 0] \le \epsilon\\
+	&\max_{\mathbf{a}}\Pr[\hat{Y} =1 |\mathbf{A}= \mathbf{a}, Y= 1  ] - 	\min_{\mathbf{a}}  \Pr [\hat{Y} = 1|\mathbf{A}= \mathbf{a}, Y = 1] \le \epsilon
+\end{align*}
 
 
 
-%\begin{comment}
-%In contrast to disparate impact and statistical parity difference metrics, a fully accurate classifier will necessarily satisfy the two constraints in equalized odds measure. 
+\subsubsection{Path-specific Causal Fairness.}
+Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\hat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.  For $ \epsilon \in [0,1] $,  path-specific causal fairness is defined as 
+\[
+\max_{\mathbf{a}} \Pr[\hat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] -  \min_{\mathbf{a}} \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}, \mediator ] \le \epsilon.
+\]
 
-%\textbf{Group fairness.}  Group fairness requires the probability for an individual to be assigned the favorable outcome to be equal across the privileged  and unprivileged groups. Throughout the manuscript, by favorable outcome we refer to the predictor $ \hat{y} = 1 $ in  the standard binary classification setting. Now group fairness is formally defined in the following. 
-%
-%\[
-%\Pr(\hat{y} =1 | a =1  ) = \Pr (\hat{y} = 1| a = 0)
-%\]
-%
-%By abusing notations, we use the following shorthand. 
-%
-%\[
-%\Pr_1(\hat{y} =1) = \Pr_0(\hat{y} = 1)
-%\]
-%
-%
-%
-%
-%In practice, the above definition can be relaxed. Thus we define the notion of $ \epsilon $-\textit{group fairness} in the following. 
-%\[
-% |\Pr_1(\hat{y} =1) - \Pr_0(\hat{y} = 1) |< \epsilon
-%\]
-%
-%\end{comment}
+Therefore, PCF constrains that $ \hat{Y} $ is not directly dependent of $ \sensitive $ while $ \sensitive $ may indirectly affects $ \hat{Y} $ only through $ \mediator $. PCF is a variation of counterfactual fairness and causal fairness without mediator features~\cite{bastani2019probabilistic}. 
 
-In this paper, we formulate verifying the aforementioned independence and separation metrics of fairness as stochastic Boolean satisfiability (SSAT) problem, which we define next. 
+
+
+
+\begin{example}
+	Following~\cite{bastani2019probabilistic}, we consider a classifier that decides the hiring of employees based on three features: gender (sensitive), years of experience (non-sensitive), and college-participation (mediator). It is practical to consider that gender $ \in $ \{male, female\} can affect the college-participation of individuals, and all three features are determining factors for the hiring process. Let `male' be the most favored group by the classifier, for instance. Path-specific causal fairness (PCF) ensures that a female candidate should be given a job offer with similar probability as a male candidate (by constraining $ \epsilon \approx 0 $). She,  however,  went to (participated in) college as if she were a male candidate while other non-mediator features such as  `years of experience' are the same.  Therefore, PCF measures the effect of gender on job offer, but ignores the effect of gender on whether candidates went to college.
+\end{example}	
+
+
+
+
+
 
 \subsection{Stochastic Boolean Satisfiability (SSAT)}\label{fairness_justicia_sec:ssat}
 Let $\mathbf{B}  = \{\bool_1, \dots, \bool_m\}  $ be a set of Boolean variables. A \textit{literal} is a variable $ \bool_i $ or its complement $ \neg \bool_i $. 
 A propositional formula $\phi$ defined over $\mathbf{B}$ is in \textit{Conjunctive Normal Form (CNF)} if $\phi$   is  a conjunction of clauses and each clause is a disjunction of literals. 
 %\red{DNF (disjunctive normal form) is the  complement of CNF where  the formula is a disjunction of clauses and each clause is  a conjunction of literals.} 
-Let $ \sigma $ be an assignment to the  variables $ \bool_i \in \mathbf{B} $  such that $ \sigma(\bool_i) \in \{1, 0\} $ where $ 1 $ is logical TRUE and $ 0 $ is logical FALSE. The propositional  \textit{satisfiability} problem (SAT)~\cite{biere2009handbook} finds an assignment $ \sigma $ to all $ \bool_i \in  \mathbf{B} $ such that the formula $ \phi $ is evaluated to be $1$. 
-In contrast to the SAT problem, the \textit{Stochastic Boolean Satisfiability} (SSAT) problem~\cite{littman2001stochastic} is concerned with the  probability of the satisfaction of the formula $\phi$. 
+Let $ \sigma $ be an assignment to the  variables $ \bool_i \in \mathbf{B} $  such that $ \sigma(\bool_i) \in \{1, 0\} $. The propositional  \textit{satisfiability} problem (SAT) finds an assignment $ \sigma $ to all $ \bool_i \in  \mathbf{B} $ such that the formula $ \phi $ is evaluated to be $1$ (equivalently, true). 
+In contrast to the SAT problem, the \textit{Stochastic Boolean Satisfiability} (SSAT) problem~\cite{littman2001stochastic} is computes the  probability of the satisfaction of the formula $\phi$ defined on \textit{quantified} Boolean variables. 
 An SSAT formula is of the form
 \begin{equation}\label{fairness_justicia_eq:ssat}
 \Phi = Q_1\bool_1, \dots, Q_m \bool_m,\; \phi, 
 \end{equation}
-where $ Q_i \in \{\exists, \forall, \R^{p_i}\} $ is either of the existential ($\exists$), universal ($\forall$), or randomized ($\R^{p_i}$) quantifiers over the Boolean variable $\bool_i$ and $\phi$ is a quantifier-free CNF formula. In the SSAT formula $ \Phi $, the quantifier part $ Q_1\bool_1, \dots, Q_m \bool_m $ is known as the \textit{prefix} of the formula $ \phi $. In case of randomized quantification $ \R^{p_i} $, $ p_i \in [0,1] $ is the probability of $ \bool_i $ being assigned to $ 1 $. Given an SSAT formula $ \Phi $, let $ \bool $ be the outermost variable in the prefix. The satisfying probability of $ \Phi $ can be computed by the following \textit{rules}:
+where $ Q_i \in \{\exists, \forall, \R^{p_i}\} $ is either of the existential ($\exists$), universal ($\forall$), or randomized ($\R^{p_i}$) quantifiers on $\bool_i$ and $\phi$ is a quantifier-free CNF formula. In case of a randomized quantifier $ \R^{p_i} $, $ p_i \in [0,1] $ is the probability of $ \bool_i $ being assigned to $ 1 $. In the SSAT formula $ \Phi $, the quantifier part $ Q_1\bool_1, \dots, Q_m \bool_m $ is known as the \textit{prefix} of the formula $ \phi $.  Let $ \bool $ be the outermost variable in the prefix. The semantics of SSAT formulas are defined recursively in the following.
 \begin{enumerate}
-	\item $ \Pr[\text{TRUE}] = 1 $,  $ \Pr[\text{FALSE}] = 0 $, 
+	\item $ \Pr[\text{true}] = 1 $,  $ \Pr[\text{false}] = 0 $, 
 	\item $ \Pr [\Phi] = \max_{\bool} \{\Pr[\Phi|_{\bool}], \Pr[\Phi|_{\neg \bool}]\}$ if $ \bool $ is existentially quantified ($ \exists $), 
 	\item $ \Pr [\Phi] = \min_{\bool} \{\Pr[\Phi|_{\bool}], \Pr[\Phi|_{\neg \bool}]\} $ if $ \bool $ is universally quantified ($ \forall $), 
-	\item $ \Pr [\Phi] = p\Pr[\Phi|_{\bool}] + (1-p) \Pr[\Phi|_{\neg \bool}] $ if $ \bool $ is randomized quantified ($\R^{p}$) with probability $p$ of being $\text{TRUE}$,
+	\item $ \Pr [\Phi] = p\Pr[\Phi|_{\bool}] + (1-p) \Pr[\Phi|_{\neg \bool}] $ if $ \bool $ is randomized quantified ($\R^{p}$) with probability $p$ of being $\text{true}$,
 \end{enumerate}
-where $ \Phi|_{\bool} $ and $ \Phi|_{\neg \bool} $ denote the SSAT formulas derived by eliminating the outermost quantifier of $ \bool $  by substituting the value of $ \bool $ in the formula $ \phi $ with $ 1 $ and $ 0 $ respectively. In this paper, we focus on two specific types of SSAT formulas:  \textit{random-exist} (RE) SSAT and \textit{exist-random} (ER) SSAT. In the ER-SSAT (resp.\ RE-SSAT) formula, all existentially (resp.\ randomized) quantified variables are followed by randomized (resp.\ existentially) quantified variables in the prefix.
-\begin{lemma}{~\cite{littman2001stochastic}}
-	\label{fairness_justicia_thm:complexity}
-	Solving the ER-SSAT and RE-SSAT problems are $\mathrm{NP}^{\mathrm{PP}}$ hard.
-\end{lemma}
-
-The problem of SSAT and its variants have been pursued by theoreticians and practitioners alike for over three decades~\cite{majercik2005dc,fremont2017maximum,huang2006combining}. We refer the reader to~\cite{lee2017solving,lee2018solving} for detailed survey. It is worth remarking that the past decade has witnessed a significant performance improvements thanks to close integration of techniques from SAT solving with advances in weighted model counting~\cite{sang2004combining,chakraborty2013scalable,chakraborty2014distribution}. 
+where $ \Phi|_{\bool} $ and $ \Phi|_{\neg \bool} $ denote the SSAT formulas derived by eliminating the outermost quantifier of $ \bool $  by substituting the value of $ \bool $ in the formula $ \phi $ with $ 1 $ and $ 0 $, respectively. In this paper, we focus on two specific types of SSAT formulas:  \textit{random-exist} (RE) SSAT and \textit{exist-random} (ER) SSAT. In the ER-SSAT (resp.\ RE-SSAT) formula, all existentially (resp.\ randomized) quantified variables are followed by randomized (resp.\ existentially) quantified variables in the prefix.
 
 
+\begin{remark}
+	ER-SSAT problem is $\mathrm{NP}^{\mathrm{PP}}$-hard whereas RE-SSAT problem is $\mathrm{PP}^{\mathrm{NP}}$-complete~\cite{littman2001stochastic}.
+\end{remark}
+
+
+
+The problem of SSAT and its variants have been pursued by theoreticians and practitioners for over three decades~\cite{majercik2005dc,fremont2017maximum,huang2006combining}. We refer the reader to~\cite{lee2017solving,lee2018solving} for detailed survey. It is worth remarking that the past decade has witnessed a significant performance improvements of SSAT solving, thanks to the close integration of techniques from SAT solving with advances in weighted model counting~\cite{sang2004combining,chakraborty2013scalable,chakraborty2014distribution}. 
+
+
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
 
 
 
@@ -128,7 +100,7 @@ The problem of SSAT and its variants have been pursued by theoreticians and prac
 \begin{comment}
 	The Stochastic Boolean Satisfiability problem (SSAT) allows existential ($ \exists $) and randomized ($ \R $) quantifiers over the Boolean variables and evaluates the probability of satisfaction of the CNF formula.  Based on the order of quantified variables, an SSAT instance can be either a random-exists (\textbf{RE}) SSAT  formula or an exist-random (\textbf{ER}) SSAT formula.  
 	
-	Let $ \phi(E,R) $ be a CNF formula over Boolean variables $ E \cup R $ where each $ e_i \in E $ is an exist quantified variable and each $ r_j \in R $ is a randomized quantified variable.  For each $ r_j $, $ p_j = \Pr(\sigma(r_j) = 1) $ denotes the probability of $ r_j $ assigning to TRUE. Now an \textbf{RE}-SSAT formula is defined as 
+	Let $ \phi(E,R) $ be a CNF formula over Boolean variables $ E \cup R $ where each $ e_i \in E $ is an exist quantified variable and each $ r_j \in R $ is a randomized quantified variable.  For each $ r_j $, $ p_j = \Pr(\sigma(r_j) = 1) $ denotes the probability of $ r_j $ assigning to true. Now an \textbf{RE}-SSAT formula is defined as 
 	
 	\[
 	\R^{p_1} r_1, \dots, \R^{p_m} r_m, \exists e_1, \dots, \exists e_n \; \phi (E,R)
