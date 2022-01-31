@@ -9,7 +9,7 @@ Let us consider an example (Figure~\ref{fairness_justicia_fig:fair_example}) of 
 Typically, incomes of individuals increase as their ages increase while their fitness deteriorates.
 We assume relation of income and fitness depends on the age as per the Normal distributions in Figure~\ref{fairness_justicia_fig:fair_example}.
 Now, if we train a decision tree~\cite{narodytska2018learning} on these fitness and income indicators to decide the eligibility of an individual to get a health insurance, we observe that the `optimal' decision tree (ref. Figure~\ref{fairness_justicia_fig:fair_example}) selects a person above and below $40$ years with probabilities $0.18$ and $0.72$ respectively.
-This simple example demonstrates that even if an ML algorithm does not explicitly learn to differentiate on the basis of a sensitive attribute, it discriminates different age groups due to the utilitarian sense of accuracy that it tries to optimize.
+This simple example demonstrates that even if an ML algorithm does not explicitly learn to differentiate on the basis of a sensitive feature, it discriminates different age groups due to the utilitarian sense of accuracy that it tries to optimize.
 \end{example}
 
 \begin{figure}[t!]
@@ -62,7 +62,7 @@ Independence metrics, such as demographic parity, statistical parity, and group 
 Separation metrics, such as equalized odds, define an algorithm to be fair if the probability of getting the same outcomes for different groups are same~\cite{hardt2016equality}.
 Sufficiency metrics, such as counterfactual fairness, constrain the probability of outcomes to be independent of individual's sensitive data given their identical non-sensitive data~\cite{kusner2017counterfactual}. %,wu2019counterfactual
 
-In Figure~\ref{fairness_justicia_fig:fair_example}, independence is satisfied if the probability of getting insurance is same for both the age groups. Separation is satisfied if the number of `actually' (ground-truth) ineligible and eligible people getting the insurance are same. Sufficiency is satisfied if the eligibility is independent of their age given their attributes are the same.
+In Figure~\ref{fairness_justicia_fig:fair_example}, independence is satisfied if the probability of getting insurance is same for both the age groups. Separation is satisfied if the number of `actually' (ground-truth) ineligible and eligible people getting the insurance are same. Sufficiency is satisfied if the eligibility is independent of their age given their features are the same.
 Thus, we see that the metrics of fairness can be contradictory and complimentary depending on the application and the data~\cite{corbett2018measure}.
 Different algorithms have also been devised to ensure one or multiple of the fairness definitions.
 These algorithms try to rectify and mitigate the bias in the data and thus in the prediction-model in three ways: \textit{pre-processing} the data~\cite{kamiran2012data,zemel2013learning,calmon2017optimized}, \textit{in-processing} the algorithm~\cite{zhang2018mitigating}, and \textit{post-processing} the outcomes~\cite{kamiran2012decision,hardt2016equality}.
@@ -72,9 +72,9 @@ These algorithms try to rectify and mitigate the bias in the data and thus in th
 In order to verify fairness as a model property on a dataset, verifiers like \textit{FairSquare}~\cite{albarghouthi2017fairsquare} and \textit{VeriFair}~\cite{bastani2019probabilistic} have been proposed. 
 %FairSquare verifies demographic parity and individual fairness as a numerical integration problem for a specific program semantics.
 %VeriFair translates fairness metrics to an enumeration problem of a specified Boolean syntax.
-%These papers operate for a specific Boolean sensitive attribute.
-These verifiers are referred to as {\em distributional verifiers} owing to the fact that their inputs are a probability  distribution of the attributes in the dataset and a model of a suitable form, and their objective is to verify fairness w.r.t. the distribution and the model.
-Though FairSquare and VeriFair are robust and have asymptotic convergence guarantees, we observe that they scale up poorly with the size of inputs and also do not generalize to non-Boolean and compound sensitive attributes.
+%These papers operate for a specific Boolean sensitive feature.
+These verifiers are referred to as {\em distributional verifiers} owing to the fact that their inputs are a probability  distribution of the features in the dataset and a model of a suitable form, and their objective is to verify fairness w.r.t. the distribution and the model.
+Though FairSquare and VeriFair are robust and have asymptotic convergence guarantees, we observe that they scale up poorly with the size of inputs and also do not generalize to non-Boolean and compound sensitive features.
 In contrast to the distributional verifiers, another line of work, referred to as sample-based verifiers, has focused on the design of testing methodologies  on a given fixed data sample~\cite{galhotra2017fairness,aif360-oct-2018}. 
 Since sample-based verifiers are dataset-specific, they generally do not provide robustness over the distribution.
 
@@ -90,14 +90,14 @@ Furthermore, our choice of SSAT as a target formulation is motivated by the rece
 
 
 %We formulate SSAT encodings of the fairness verification problems and two methods to evaluate them in order to verify independence and separation metrics for any supervised learning algorithm using a unified scheme.
-%Our encodings not only allow us to compute for non-Boolean and compound sensitive attributes but also to scale significantly better than existing formal verifiers. 
+%Our encodings not only allow us to compute for non-Boolean and compound sensitive features but also to scale significantly better than existing formal verifiers. 
 %We perform experimental analysis for multiple fairness metrics, datasets, and algorithms to instantiate the efficiency and effectiveness of our approach.
 
 Our contributions are summarised below:
 \begin{itemize}
 	\item We propose a unified SSAT-based approach, {\justicia}, to verify independence and separation metrics of fairness for different datasets and classification algorithms.
 	%\item \blue{{\justicia} measures fairness metrics for pre-, in-, and post-processing algorithms with respect to the data  generating distribution}.
-	\item Unlike previously proposed formal distributional verifiers, namely FairSquare and VeriFair, {\justicia} verifies fairness for compound and non-Boolean sensitive attributes.%, and also \red{separation metrics}.
+	\item Unlike previously proposed formal distributional verifiers, namely FairSquare and VeriFair, {\justicia} verifies fairness for compound and non-Boolean sensitive features.%, and also \red{separation metrics}.
 	\item Our experiments validate that our method is more accurate and scalable than the distributional verifiers, such as FairSquare and VeriFair, and more robust than the sample-based empirical verifiers, such as AIF360.
 	\item We prove a finite-sample error bound on our estimated fairness metrics which is stronger than the existing asymptotic guarantees.
 \end{itemize}
@@ -108,5 +108,5 @@ It is worth remarking that significant advances in AI bear testimony to the righ
 With this growing set of algorithms and definitions, it has become important to measure and verify fairness and bias of different algorithms and datasets. 
 One popular approach is to use specific test dataset to compute the related statistical quantities and to certify fairness for that specific test dataset.
 AIF360~\cite{aif360-oct-2018} provides a unified framework to implement multiple algorithms and to measure their fairness depending on such test datasets.
-Though this method of verification works for a specified datasets, such verifiers do not explain how much a fairness measure depends on which sensitive attribute and is not robust to the selection of test dataset and its size.
+Though this method of verification works for a specified datasets, such verifiers do not explain how much a fairness measure depends on which sensitive feature and is not robust to the selection of test dataset and its size.
 \fi
