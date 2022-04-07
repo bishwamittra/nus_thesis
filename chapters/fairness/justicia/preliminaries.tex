@@ -10,25 +10,27 @@ We consider\footnote{{We represent sets/vectors by bold letters, and the corresp
 We represent a binary classifier trained on the dataset $\mathbf{D}$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \hat{Y} $. Here, $\hat{Y} \in \{0,1\}$ is the predicted class of $ (\nonsensitive, \sensitive) $.
 
 
+\red{\red{PPV}}\change{PPV to PP, better to not use short form}
 
-As we illustrated in Example~\ref{fairness_justicia_example:intro}, a classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\hat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions verified by {\justicia}: group fairness and causal fairness. To this end, we use $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ provided the distribution of features $ \mathcal{D} $. More specifically,  {\justicia} verifies fairness metrics where $ f(\alg, \mathcal{D}) $ depends on the conditional Positive Predictive Value (PPV) of the classifier, denoted by $ \Pr[\hat{Y} = 1 | \mathsf{C}] $. Henceforth, each fairness metric is identified by the particular choice of the conditional $ \mathsf{C} $, as discussed next.
+
+As we illustrated in Example~\ref{fairness_justicia_example:intro}, a classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\hat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions verified by {\justicia}: group fairness and causal fairness. To this end, we use $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ provided the distribution of features $ \mathcal{D} $. More specifically,  {\justicia} verifies fairness metrics where $ f(\alg, \mathcal{D}) $ depends on the conditional probability of positive prediction of the classifier, denoted by $ \Pr[\hat{Y} = 1 | \mathsf{C}] $. Henceforth, each fairness metric is identified by the particular choice of the conditional $ \mathsf{C} $, as discussed next.
 
 \subsubsection{Group Fairness.} Group fairness is categorized into three families: independence, separation and sufficiency, of which {\justicia} verifies independence and separation metrics. 
-The independence metrics state that the predicition of the classifier should be independent of compound sensitive groups. Formally, independence notion specifies an equal PPV across all sensitive groups for a classifier, i.e., $\Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]  =  \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}'] , \forall \mathbf{a}, \mathbf{a}' \in \sensitive$.
+The independence metrics state that the predicition of the classifier should be independent of compound sensitive groups. Formally, independence notion specifies an equal probability of positive prediction across all sensitive groups for a classifier, i.e., $\Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]  =  \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}'] , \forall \mathbf{a}, \mathbf{a}' \in \sensitive$.
 Since satisfying independence exactly is hard, relaxations of independence fairness metrics, such as \textit{disparate impact} and \textit{statistical parity}, are proposed in the literature~\cite{dwork2012fairness,feldman2015certifying}.
 
-\textit{Disparate impact} (DI) measures the ratio of PPVs between the most favored group and least favored group, and prescribe it to be close to $1$~\cite{feldman2015certifying}.  Formally, the disparate impact of a classifier is 
+\textit{Disparate impact} (DI) measures the ratio of probability of positive predictions between the most favored group and least favored group, and prescribe it to be close to $1$~\cite{feldman2015certifying}.  Formally, the disparate impact of a classifier is 
 \[
 f_{\mathsf{DI}}(\alg, \mathcal{D}) \triangleq \frac{\min_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]}{\max_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]},
 \]
 where the subscript of $ f $ denotes the corresponding fairness metric.
 
-Another popular relaxation of independence metrics  is \textit{statistical parity} (SP) that measures the maximum difference of PPVs among sensitive groups, and prescribe this quantity to be near zero. Thus, the statistical parity of  a classifier is 
+Another popular relaxation of independence metrics  is \textit{statistical parity} (SP) that measures the maximum difference of probability of positive predictions among sensitive groups, and prescribe this quantity to be near zero. Thus, the statistical parity of  a classifier is 
 \[ f_{\mathsf{SP}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}]. \]
 
 
 
-In the \textit{separation (or classification parity)} notion of fairness, the predicted label $\hat{Y}$ of a classifier is independent of the sensitive features $\sensitive$ given the class labels $Y$. In case of binary classifiers, a popular separation metric is \textit{equalized odds} (EO)~\cite{hardt2016equality} that computes the maximum difference of false positive rates \red{(FPR)} and true positive rates \red{(TPR)} conditioned on sensitive groups. Formally,  for $ Y \in \{0,1\} $,  the equalized odds of a classifier is defined as 
+In the \textit{separation (or classification parity)} notion of fairness, the predicted label $\hat{Y}$ of a classifier is independent of the sensitive features $\sensitive$ given the class labels $Y$. In case of binary classifiers, a popular separation metric is \textit{equalized odds} (EO)~\cite{hardt2016equality} that computes the maximum difference of conditional false positive rates \red{(FPR)} and conditional true positive rates \red{(TPR)} with respect to sensitive groups. Formally,  for $ Y \in \{0,1\} $,  the equalized odds of a classifier is defined as 
 \begin{align*}
 f_{\mathsf{EO}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0] - \min_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0], \\
 &\max_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1] - \min_{\mathbf{a}}\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1]). 
@@ -36,24 +38,24 @@ f_{\mathsf{EO}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[\hat{Y
 
 
 \subsubsection{Path-specific Causal Fairness.}
-Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\hat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.   To this end, the path-specific causal fairness of a classifier is \[
+Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\hat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.   To this end, the path-specific causal fairness, abbreviated as PCF, of a classifier is \[
  f_{\mathsf{PCF}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\hat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] - \min_{\mathbf{a}} \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}, \mediator ].
 \]
 
 
 
-Therefore, PCF constrains that $ \hat{Y} $ is not directly dependent of $ \sensitive $ while $ \sensitive $ may indirectly affects $ \hat{Y} $ only through $ \mediator $. PCF is a variation of counterfactual fairness and causal fairness without mediator features~\cite{bastani2019probabilistic}. 
+Therefore, path-specific cause fairness constrains that the prediction $ \hat{Y} $ is not directly dependent of sensitive features $ \sensitive $ while $ \sensitive $ may indirectly affects $ \hat{Y} $ only through mediator features $ \mediator $. Hence, path-specific causal fairness is a variation of counterfactual fairness and causal fairness without mediator features~\cite{bastani2019probabilistic}. 
 
 
 
 
 \begin{example}
-	Following~\cite{bastani2019probabilistic}, we consider a classifier that decides the hiring of employees based on three features: gender (sensitive), years of experience (non-sensitive), and college-participation (mediator). It is practical to consider that gender $ \in $ \{male, female\} can affect the college-participation of individuals, and all three features are determining factors for the hiring process. Let `male' be the most favored group by the classifier, for instance. Path-specific causal fairness (PCF) ensures that a female candidate should be given a job offer with similar probability as a male candidate (by constraining $ \epsilon \approx 0 $). She,  however,  went to (participated in) college as if she were a male candidate while other non-mediator features such as  `years of experience' are the same.  Therefore, PCF measures the effect of gender on job offer, but ignores the effect of gender on whether candidates went to college.
+	Following~\cite{bastani2019probabilistic}, we consider a classifier that decides the hiring of employees based on three features: gender (sensitive), years of experience (non-sensitive), and college-participation (mediator). It is practical to consider that gender $ \in $ \{male, female\} can affect the college-participation of individuals, and all three features are determining factors for the hiring process. Let `male' be the most favored group by the classifier, for instance. Path-specific causal fairness ensures that a female candidate should be given a job offer with similar probability as a male candidate (by constraining $ \epsilon \approx 0 $). She,  however,  went to (participated in) college as if she were a male candidate while other non-mediator features such as  `years of experience' are the same.  Therefore, path-specific causal fairness measures the effect of gender on job offer, but ignores the effect of gender on whether candidates went to college.
 \end{example}	
 
 
 
-\paragraph{Fairness Certification.} We certify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, which quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, or path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier satisfies $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
+\paragraph{Fairness Certification.} We certify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, that quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, or path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier achieves $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
 
 
 
@@ -77,7 +79,7 @@ where $ Q_i \in \{\exists, \forall, \R^{p_i}\} $ is either of the existential ($
 	\item $ \Pr [\Phi] = \min_{\bool} \{\Pr[\Phi|_{\bool}], \Pr[\Phi|_{\neg \bool}]\} $ if $ \bool $ is universally quantified ($ \forall $), 
 	\item $ \Pr [\Phi] = p\Pr[\Phi|_{\bool}] + (1-p) \Pr[\Phi|_{\neg \bool}] $ if $ \bool $ is randomized quantified ($\R^{p}$) with probability $p$ of being $\text{true}$,
 \end{enumerate}
-where $ \Phi|_{\bool} $ and $ \Phi|_{\neg \bool} $ denote the SSAT formulas derived by eliminating the outermost quantifier of $ \bool $  by substituting the value of $ \bool $ in the formula $ \phi $ with $ 1 $ and $ 0 $, respectively. In this paper, we focus on two specific types of SSAT formulas:  \textit{random-exist} (RE) SSAT and \textit{exist-random} (ER) SSAT. In the ER-SSAT (resp.\ RE-SSAT) formula, all existentially (resp.\ randomized) quantified variables are followed by randomized (resp.\ existentially) quantified variables in the prefix.
+where $ \Phi|_{\bool} $ and $ \Phi|_{\neg \bool} $ denote the SSAT formulas derived by eliminating the outermost quantifier of $ \bool $  by substituting the value of $ \bool $ in the CNF $ \phi $ with $ 1 $ and $ 0 $, respectively. In this paper, we focus on two specific types of SSAT formulas:  \textit{random-exist} (RE) SSAT and \textit{exist-random} (ER) SSAT. In the ER-SSAT (resp.\ RE-SSAT) formula, all existentially (resp.\ randomized) quantified variables are followed by randomized (resp.\ existentially) quantified variables in the prefix.
 
 
 \begin{remark}
@@ -86,7 +88,7 @@ where $ \Phi|_{\bool} $ and $ \Phi|_{\neg \bool} $ denote the SSAT formulas deri
 
 
 
-The problem of SSAT and its variants have been pursued by theoreticians and practitioners for over three decades~\cite{majercik2005dc,fremont2017maximum,huang2006combining}. We refer the reader to~\cite{lee2017solving,lee2018solving} for detailed survey. It is worth remarking that the past decade has witnessed a significant performance improvements of SSAT solving, thanks to the close integration of techniques from SAT solving with advances in weighted model counting~\cite{sang2004combining,chakraborty2013scalable,chakraborty2014distribution}. 
+The problem of SSAT and its variants have been pursued by theoreticians and practitioners for over three decades~\cite{majercik2005dc,fremont2017maximum,huang2006combining}. We refer the reader to~\cite{lee2017solving,lee2018solving} for a detailed survey. It is worth remarking that the past decade has witnessed a significant performance improvements of SSAT solving, thanks to the close integration of techniques from SAT solving with advances in weighted model counting~\cite{sang2004combining,chakraborty2013scalable,chakraborty2014distribution}. 
 
 
 
