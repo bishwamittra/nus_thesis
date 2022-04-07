@@ -14,26 +14,26 @@
 
  	\begin{enumerate}[leftmargin=*]
  		\itemsep0em 
- 		\item \textit{Disparate impact} (DI): A classifier  satisfies $(1 - \epsilon)$-disparate impact if for $\epsilon \in [0,1] $,
+ 		\item \textit{Disparate Impact} (DI): A classifier  satisfies $(1 - \epsilon)$-disparate impact if for $\epsilon \in [0,1] $,
  		$
- 		\min_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]  \ge (1 - \epsilon) \max_{\mathbf{a}'} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}'].
+ 		\min_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]  \ge (1 - \epsilon) \max_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}].
  		$
  		\item \textit{Statistical Parity} (SP): A classifier satisfies $\epsilon$-statistical parity if for $\epsilon \in [0,1] $, 
  		$
- 		\max_{\mathbf{a}, \mathbf{a}'}|\Pr[\hat{Y} =1 | \mathbf{A} = \mathbf{a}] - \Pr [\hat{Y} = 1| \mathbf{A} = \mathbf{a}']| \le \epsilon.
+ 		\max_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}] - \min_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}] \le \epsilon.
  		$
  		\item \textit{Equalized Odds} (EO): 	A classifier satisfies $\epsilon$-equalized odds if for $\epsilon \in [0,1] $,
- 		$ \max_{\mathbf{a}, \mathbf{a}'} |\Pr[\hat{Y} =1 |\mathbf{A}= \mathbf{a}, Y= 0  ] - \Pr [\hat{Y} = 1|\mathbf{A}= \mathbf{a}', Y = 0]| \le \epsilon, $ and $
- 		\max_{\mathbf{a}, \mathbf{a}'}|\Pr[\hat{Y} =1 |\mathbf{A}= \mathbf{a}, Y= 1  ] - \Pr [\hat{Y} = 1|\mathbf{A}= \mathbf{a}', Y = 1]| \le \epsilon.
+ 		$ \max_{\mathbf{a}}\Pr[\hat{Y} =1 |\mathbf{A}= \mathbf{a}, Y= 0  ] - \min_{\mathbf{a}}\Pr [\hat{Y} = 1|\mathbf{A}= \mathbf{a}, Y = 0] \le \epsilon, $ and $
+ 		\max_{\mathbf{a}}\Pr[\hat{Y} =1 |\mathbf{A}= \mathbf{a}, Y= 1  ] - \min_{\mathbf{a}}\Pr [\hat{Y} = 1|\mathbf{A}= \mathbf{a}, Y = 1] \le \epsilon.
  		$
  		\item \textit{Path-specific Causal Fairness} (PCF): 
  		Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\hat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.  For $ \epsilon \in [0,1] $,  path-specific causal fairness is defined as 
  		$
- 		\max_{\mathbf{a}, \mathbf{a}'} |\Pr[\hat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] - \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}', \mediator ]| \le \epsilon
+ 		\max_{\mathbf{a}}\Pr[\hat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] - \min_{\mathbf{a}}\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}, \mediator ] \le \epsilon
  		$.
  	\end{enumerate}
 
- 	  For all of the above metrics, lower value of $\epsilon$ indicates higher fairness demonstrated by the classifier $\mathcal{M}$. Following the observation of~\cite{ghosh2020justicia},  computing all of the aforementioned fairness metrics is equivalent to computing the maximum and minimum of the \textit{Positive Predictive Value} (PPV) of the classifier, denoted as $\Pr[\hat{Y}=1|\mathbf{A} =\mathbf{a}]$, for all compound sensitive groups $\mathbf{a}$ from $ \sensitive $. Thus, in Section~\ref{fairness_fvgm_sec:fvgm}, we focus on computing the maximum and minimum PPVs and then extend it to assess corresponding fairness metrics. We call the group for which PPV is maximum (minimum) as the \textit{most (least) favored group}.
+ 	  For all of the above metrics, lower value of $\epsilon$ indicates higher fairness demonstrated by the classifier $\mathcal{M}$. Following the observation of~\cite{ghosh2020justicia},  computing all of the aforementioned fairness metrics is equivalent to computing the maximum and minimum of the \textit{Positive Predictive Value} (PPV) of the classifier, denoted as $\Pr[\hat{Y}=1|\mathbf{A} =\mathbf{a}]$, for all compound sensitive groups $\mathbf{a}$ from $ \sensitive $. Thus, in Section~\ref{fvgm_sec:fvgm}, we focus on computing the maximum and minimum PPVs and then extend it to assess corresponding fairness metrics. We call the group for which PPV is maximum (minimum) as the \textit{most (least) favored group}.
  
 % 	\textit{Disparate impact} (DI)~\cite{feldman2015certifying} measures the ratio of PPVs between the most favored group and least favored group, and prescribe it to be close to $1$. Formally, 
 % 	Another popular relaxation of independence metrics  is \textit{statistical parity} (SP) that measures the difference of PPV among sensitive groups, and prescribe this to be near zero. Formally, an algorithm satisfies $\epsilon$-statistical parity if, for $\epsilon \in [0,1] $, 
@@ -62,18 +62,20 @@
 % 
 
 	\textbf{Stochastic Subset Sum Problem ({\stochastic}).} 
-	Let $ \mathbf{B} \triangleq \{B_i\}_{i=1}^{|\mathbf{B}|}$ be a set of Boolean variables and $ w_i \in \mathbb{Z} $ be the weight of $ B_i $. Given a constraint of the form  $\sum_{i = 1}^ {|\mathbf{B}|} w_i B_i = \tau $, for a constant $ \tau \in \mathbb{Z} $, the subset-sum problem seeks to compute $\mathbf{b} \in \{0,1\}^{|\mathbf{B}|}$ such that the constraint evaluates to true when $\mathbf{B}$ is substituted with $\mathbf{b}$. Subset sum problem is known to be a $ \mathrm{NP} $-complete problem and well-studied in theoretical computer science~\cite{kleinberg2006algorithm}. The \textit{counting} version of the subset-sum problem counts all $ \mathbf{b} $'s for which the above constraint holds; and this problem belongs to the complexity class $ \mathrm{\#P} $. In this paper, we consider the counting problem for the constraint $\sum_{i = 1}^ {|\mathbf{B}|} w_i B_i \ge \tau $ where variables $ B_i $'s are stochastic. More precisely, we define a \textit{stochastic subset-sum} problem, namely {\stochastic}, that computes $ \Pr[\sum_{i = 1}^ {|\mathbf{B}|} w_iB_i \ge \tau] $.    Details of {\stochastic} are in Section~\ref{fairness_fvgm_sec:stochastic_sum_set_sum}.
+	Let $ \mathbf{B} \triangleq \{B_i\}_{i=1}^{|\mathbf{B}|}$ be a set of Boolean variables and $ w_i \in \mathbb{Z} $ be the weight of $ B_i $. Given a constraint of the form  $\sum_{i = 1}^ {|\mathbf{B}|} w_i B_i = \tau $, for a constant threshold $ \tau \in \mathbb{Z} $, the subset-sum problem seeks to compute an assignment $\mathbf{b} \in \{0,1\}^{|\mathbf{B}|}$ such that the constraint evaluates to true when $\mathbf{B}$ is substituted with $\mathbf{b}$. Subset sum problem is known to be a $ \mathrm{NP} $-complete problem and well-studied in theoretical computer science~\cite{kleinberg2006algorithm}. The \textit{counting} version of the subset-sum problem counts all $ \mathbf{b} $'s for which the above constraint holds; and this problem belongs to the complexity class $ \mathrm{\#P} $. In this paper, we consider the counting problem for the constraint $\sum_{i = 1}^ {|\mathbf{B}|} w_i B_i \ge \tau $ where variables $ B_i $'s are stochastic. More precisely, we define a \textit{stochastic subset-sum} problem, namely {\stochastic}, that computes $ \Pr[\sum_{i = 1}^ {|\mathbf{B}|} w_iB_i \ge \tau] $.    Details of {\stochastic} are in Section~\ref{fvgm_sec:stochastic_sum_set_sum}.
 	
 	
 		
 	\textbf{Bayesian Network.}
-	In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and specifically a \textit{Bayesian network}~\cite{pearl1985bayesian,chavira2008probabilistic}, encodes the dependencies and conditional independence between a set of random variables. In this paper, we leverage an access to a Bayesian network on $(\nonsensitive, \sensitive)$ that represents the joint distribution on them. 
-	A Bayesian network is denoted by a pair $ (\graph, \theta)$, where $ \graph \triangleq (\mathbf{V}, \mathbf{E}) $ is a Directed Acyclic Graph (DAG), and $\theta$ is a set of parameters that encodes the conditional probabilities induced by the joint distribution under investigation. Each vertex $V_i \in \mathbf{V}$ corresponds to a random variable. Edges $ \mathbf{E} \in \mathbf{V} \times \mathbf{V} $ imply conditional dependencies among variables. For each variable $ V_i \in \mathbf{V} $, let $ \parent(V_i) \subseteq \mathbf{V} \setminus \{V_i\} $ denote the set of parents of $ V_i $. Given $\parent(V_i)$ and parameters $\theta$, $ V_i $ is independent of its other non-descendant variables in $\graph$. Thus, for the assignment $ v_i $ of $ V_i $ and $ \mathbf{u} $ of $ \parent(V_i) $, the aforementioned semantics of a Bayesian network encodes the joint distribution of $\mathbf{V}$ as:
+	In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and specifically a \textit{Bayesian network}~\cite{pearl1985bayesian,chavira2008probabilistic}, encodes the dependencies and conditional independence between a set of random variables. In this paper, we leverage an access to a Bayesian network on $ \nonsensitive \cup \sensitive $ that represents the joint distribution on them. 	A Bayesian network is denoted by a pair $ (\graph, \theta)$, where $ \graph \triangleq (\mathbf{V}, \mathbf{E}) $ is a DAG (Directed Acyclic Graph), and $\theta$ is a set of parameters encoding the conditional probabilities induced by the joint distribution under investigation. Each vertex $V_i \in \mathbf{V}$ corresponds to a random variable. Edges $ \mathbf{E} \in \mathbf{V} \times \mathbf{V} $ imply conditional dependencies among variables. For each variable $ V_i \in \mathbf{V} $, let $ \parent(V_i) \subseteq \mathbf{V} \setminus \{V_i\} $ denote the set of parents of $ V_i $. Given $\parent(V_i)$ and parameters $\theta$, $ V_i $ is independent of its other non-descendant variables in $\graph$. Thus, for the assignment $ v_i $ of $ V_i $ and $ \mathbf{u} $ of $ \parent(V_i) $, the aforementioned semantics of a Bayesian network encodes the joint distribution of $\mathbf{V}$ as:
 	
-	\begin{align}
-	\Pr[V_1=v_1, \dots, V_{|\mathbf{V}|}=v_{|\mathbf{V}|}] = \prod_{i=1}^{|\mathbf{V}|} \Pr[V_i = v_i | \parent(V_i) = \mathbf{u}; \theta].
-	\label{fairness_fvgm_eq:BN}
-	\end{align}
+	\begin{equation}
+		\begin{split}
+				\Pr[V_1=v_1, \dots, &V_{|\mathbf{V}|}=v_{|\mathbf{V}|}] = \\ 
+			&\prod_{i=1}^{|\mathbf{V}|} \Pr[V_i = v_i | \parent(V_i) = \mathbf{u}; \theta].
+		\end{split}
+	\label{fvgm_eq:BN}
+	\end{equation}
 
 	\iffalse	
 	$ \factors $ contains a factor $ \factor $ representing a function over the  assignment or valuation of  $ \{V_i\} \cup \parent(V_i)  $. Let $ v $ and $ \mathbf{u} $ denote an assignment of $ V_i $ and $ \parent(V_i) $, respectively. 	Formally a factor $ \factor(V_i = v, \parent(V_i) = \mathbf{u}) \triangleq  \Pr[V_i = v | \parent(V_i) = \mathbf{u}] $ denotes the conditional probability of $ V_i = v $ given $ \parent(V_i) = \mathbf{u} $. Avoiding notation clutter, we drop $ v $ and $ \mathbf{u} $ and use $ \factor(V_i, \parent(V_i)) \triangleq  \Pr[V_i| \parent(V_i)] $, when it is clear from the context.

@@ -35,9 +35,9 @@
 			\path (T10) edge [left] node {$\neg S$}  (T12);
 			\end{tikzpicture}
 		}
-\label{fairness_fvgm_fig:example_dp}}
-\hspace*{-0.5cm}
-\subfloat[Probabilities computed with Bayesian network.]
+\label{fvgm_fig:example_dp}}
+%\hspace*{-0.5cm}
+\subfloat[Probabilities computed with a Bayesian network.]
 {  
 %		\centering
 		\scalebox{0.75}{
@@ -98,9 +98,9 @@
 			\path (P) edge [->] node [left=0.1cm] {\parbox{01.2cm}{Bayesian\\network}}(Q);
 		\end{tikzpicture}
 	}
-	\label{fairness_fvgm_fig:example_BN}
+	\label{fvgm_fig:example_BN}
 }
 
-\caption{\footnotesize Search tree representation of {\stochastic} for computing the maximum PPV of the classifier on variables $ \mathbf{B} =  \{P,Q,R,S\} $ with weights $ \{1,1,1,-1\} $ and threshold $ \tau = 2 $ . Each node is labeled by $ (i,\tau') $, where $ i $ is the index of $ \mathbf{B} $ and $ \tau' $ is the residual threshold. The tree is explored using Depth-First Search (DFS) starting with left child. Within a node, the value in the bottom denotes $ \mathsf{dp}(i, \tau') $ that is solved recursively based on sub-problems $ \mathsf{dp}(i+1, \cdot) $ in child nodes. 	Yellow nodes denote \textit{existential} variables and all other nodes are  \textit{random} variables. Additionally, a green node denotes a collision, in which case a previously computed $ \mathsf{dp} $ solution is returned. Leaf nodes (gray) are computed based on terminating conditions in Eq.~\ref{fairness_fvgm_eq:dp_terminus}. In Figure~\ref{fairness_fvgm_fig:example_BN},  nodes with double circles, such as $ \{(1,2), (2,1), (2,2)\} $,  are enumerated exponentially to compute conditional probabilities from the Bayesian network.}
-\label{fairness_fvgm_fig:example_tree_exploration}
+\caption{Search tree representation of {\stochastic} for computing the maximum PPV of the classifier on variables $ \mathbf{B} =  \{P,Q,R,S\} $ with weights $ \{1,1,1,-1\} $ and threshold $ \tau = 2 $ . Each node is labeled by $ (i,\tau') $, where $ i $ is the index of $ \mathbf{B} $ and $ \tau' $ is the residual threshold. The tree is explored using Depth-First Search (DFS) starting with left child. Within a node, the value in the bottom denotes $ \mathsf{dp}(i, \tau') $ that is solved recursively based on sub-problems $ \mathsf{dp}(i+1, \cdot) $ in child nodes. 	Yellow nodes denote \textit{existential} variables and all other nodes are  \textit{random} variables. Additionally, a green node denotes a collision, in which case a previously computed $ \mathsf{dp} $ solution is returned. Leaf nodes (gray) are computed based on terminating conditions in Eq.~\ref{fvgm_eq:dp_terminus}. In Figure~\ref{fvgm_fig:example_BN},  nodes with double circles, such as $ \{(1,2), (2,1), (2,2)\} $,  are enumerated exponentially to compute conditional probabilities from the Bayesian network.}
+\label{fvgm_fig:example_tree_exploration}
 \end{figure*}

@@ -2,6 +2,10 @@
 In this paper, we propose {\fvgm}, an efficient fairness verification framework for linear classifiers based on a novel stochastic subset-sum problem. {\fvgm} encodes a graphical model of feature-correlations, represented as a Bayesian Network, and computes multiple group and causal fairness metrics accurately. We experimentally demonstrate that {\fvgm} is not only more accurate and scalable than the existing verifiers but also applicable in practical fairness tasks, such as verifying fairness attacks and enhancing algorithms, and computing the fairness influence functions. 
 As a future work, we aim to design fairness-enhancing algorithms certified by fairness verifiers, such as {\fvgm}. %We also investigate a principled approach to detect the sources of bias by computing fairness influence functions (FIF). 
 Since {\fvgm} serves as an accurate and scalable fairness verifier for linear classifiers, it will be interesting to design such verifiers for other ML models.
+%Though the proposed solution with a Bayesian network has exponential worst-case complexity, it would be interesting to develop a pseudo-polynomial approximation in the future. 
 
 
-
+\iffalse
+\section*{Acknowledgments}
+This work was supported in part by National Research Foundation, Singapore under its NRF Fellowship Programme [NRF-NRFFAI1-2019-0004 ] and AI Singapore Programme [AISG-RP-2018-005],  and NUS ODPRT Grant [R-252-000-685-13]. The computational work for this paper was performed on resources of Max Planck Institute for Software Systems, Germany and the National Supercomputing Centre, Singapore (\url{https://www.nscc.sg}).
+\fi
