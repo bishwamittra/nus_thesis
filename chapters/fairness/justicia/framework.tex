@@ -21,30 +21,30 @@ In our contribution, we reduce the verification problem to solving appropriately
 
 \subsection{Enumeration Approach  using RE-SSAT encoding}
 \label{fairness_justicia_sec:enumeration_ssat}
-In order to estimate $ f(\alg, \mathcal{D}) $ in the enumeration approach, the key idea  is to compute the conditional PPV of the classifier, $\Pr[\hat{Y} = 1 | A = \mathbf{a}]$, for the compound sensitive group $\sensitive = \mathbf{a}$ based on an appropriately designed SSAT formula.  For simplicity, we  initially make assumptions on the classifier $ \alg $ and discuss practical relaxations later in this section.  We first assume $\alg$ to be represented as a CNF formula, denoted by $\phi_{\hat{Y}}$, such that the prediction $ \hat{Y} = 1 $ when $ \phi_{\hat{Y}}$ is satisfied and  $\hat{Y} =0$ otherwise. Additionally, all features $ \nonsensitive \cup \sensitive $ are assumed to be Boolean variables.  Finally, we consider independence probability assumption of non-sensitive features on sensitive features such that $p_i \triangleq \Pr[X_i = 1] $ is the independent probability of the non-sensitive feature $ X_i $. 
+In order to estimate $ f(\alg, \mathcal{D}) $ in the enumeration approach, the key idea  is to compute the conditional PPV of the classifier, $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$, for the compound sensitive group $\sensitive = \mathbf{a}$ based on an appropriately designed SSAT formula.  For simplicity, we  initially make assumptions on the classifier $ \alg $ and discuss practical relaxations later in this section.  We first assume $\alg$ to be represented as a CNF formula, denoted by $\phi_{\hat{Y}}$, such that the prediction $ \hat{Y} = 1 $ when $ \phi_{\hat{Y}}$ is satisfied and  $\hat{Y} =0$ otherwise. Additionally, all features $ \nonsensitive \cup \sensitive $ are assumed to be Boolean variables.  Finally, we consider independence probability assumption of non-sensitive features on sensitive features, where $p_i \triangleq \Pr[X_i = 1] $ is the independent probability of the non-sensitive feature $ X_i $. 
 
 
 \noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
 
-Now, we define an RE-SSAT formula $\Phi_{\mathbf{a}}$ to compute the conditional probability $\Pr[\hat{Y} = 1 | A = \mathbf{a}]$. In the prefix of $ \Phi_{\mathbf{a}} $,  all non-sensitive Boolean features in $X$ are assigned randomized quantification and they are followed by the sensitive Boolean features in $ A $ with existential quantification. The CNF formula $ \phi $ in $ \Phi_{\mathbf{a}} $ is constructed such that $ \phi $ encodes the event inside the target probability $ \Pr[\hat{Y} = 1 | A = \mathbf{a}] $. In order to encode the conditional $ A = \mathbf{a} $, we take the conjunction of the Boolean variables in $ A $ that symbolically specifies the compound sensitive group $ \mathbf{a} $. For example, we represent two sensitive features: race $ \in $ \{White, Colour\} and sex $ \in $ \{male, female\} by the Boolean variables $ R $ and $ S $  respectively. Hence, the compound groups $\{\textrm{White}, \textrm{male}\}$ and $\{\textrm{Colour}, \textrm{female}\}$ are represented by $ R \wedge S $ and $ \neg R \wedge \neg S $, respectively. Thus, the RE-SSAT formula for computing the probability  $ \Pr[\hat{Y} = 1 | A = \mathbf{a}] $ is
+Now, we define an RE-SSAT formula $\Phi_{\mathbf{a}}$ to compute the conditional probability $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$. In the prefix of $ \Phi_{\mathbf{a}} $,  all non-sensitive features $ \nonsensitive $ are assigned randomized quantifiers and they are followed by sensitive features $ \sensitive $ with existential quantifiers.  In addition, the CNF formula $ \phi $ in the SSAT formula $ \Phi_{\mathbf{a}} $ is constructed such that $ \phi $ encodes the event inside the target probability $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $. In order to specify the sensitive group $ \sensitive = \mathbf{a} $, we take the conjunction of the Boolean variables in $ \sensitive $ that symbolically specifies the compound sensitive group $ \sensitive = \mathbf{a} $. For example, let us consider two sensitive features: race $ \in $ \{White, Colour\} and sex $ \in $ \{male, female\} by Boolean variables $ R $ and $ S $,  respectively. Hence, the compound groups $ [\textrm{White}, \textrm{male}] $ and $[\textrm{Colour}, \textrm{female}]$ are represented by $ R \wedge S $ and $ \neg R \wedge \neg S $, respectively. Thus, the RE-SSAT formula for computing the probability  $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $ is
 \begin{equation}	\label{fairness_justicia_eq:re}
 \begin{split}
-	\Phi_{\mathbf{a}} := \underbrace{\R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m}_{\text{non-sensitive features}},  &\underbrace{\exists \sensitive_1,\dots, \exists \sensitive_n}_{\text{sensitive features}},
-\phi_{\hat{Y}} \wedge (A=\mathbf{a}).\notag
+	\Phi_{\mathbf{a}} := \underbrace{\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}}_{\text{non-sensitive features}},  &\underbrace{\exists A_1,\dots, \exists A_{\numsensitive}}_{\text{sensitive features}},
+\phi_{\hat{Y}} \wedge (\sensitive =\mathbf{a}).\notag
 \end{split}
 \end{equation}
-In $ \Phi_{\mathbf{a}} $, the existentially quantified variables $ \sensitive_1, \dots, \sensitive_n $ are assigned values  according  to the constraint $ A=\mathbf{a} $. \footnote{An RE-SSAT formula becomes an R-SSAT formula when the assignment to the existential variables are fixed.} Therefore, by solving the SSAT formula $ \Phi_{\mathbf{a}} $,  the SSAT solver finds the probability $ \Pr[\Phi_{\mathbf{a}}] $ for the sensitive group $ A=\mathbf{a} $ given the random values of $ \nonsensitive_1, \dots, \nonsensitive_m $, which is the PPV of the sensitive group $\mathbf{a} $ for the distribution $ \mathcal{D} $ and algorithm $\alg$. 
+In the RE-SSAT formula $ \Phi_{\mathbf{a}} $, existentially quantified variables  $ \{A_1, \dots, A_{\numsensitive}\} $ are assigned values  according  to the constraint $ \sensitive =\mathbf{a} $. \footnote{An RE-SSAT formula becomes an R-SSAT formula when the assignment to the existential variables are fixed.} Next,  an SSAT solver computes the probability $ \Pr[\Phi_{\mathbf{a}}] $ by considering the random values of $ \{X_1, \dots, X_{\numnonsensitive}\} $ while fixing the assignment of $ \{A_1, \dots, A_{\numsensitive\}} $. Therefore, $ \Pr[\Phi_{\mathbf{a}}] $ equals the conditional PPV of the classifier, $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $, for the sensitive group $ \sensitive = \mathbf{a} $. 
 
-For simplicity, we have described computing the PPV of each compound sensitive group without considering the correlation between the sensitive and non-sensitive features. In reality, correlation exists between the sensitive and non-sensitive features. Thus, the non-sensitive features may have different conditional distributions for different sensitive groups. We incorporate these conditional distributions in RE-SSAT encoding by evaluating the conditional probability $ p_i = \Pr[\nonsensitive_i =\text{TRUE}| A=\mathbf{a}] $ instead of the independent probability $\Pr[\nonsensitive_i =\text{TRUE}]$ for any $\nonsensitive_i\in \nonsensitive$. We illustrate this method in Example~\ref{fairness_justicia_example:re_ssat}.
+For simplicity, we have described the computation of conditional PPVs without considering the correlation among sensitive and non-sensitive features. In reality, correlation exists among sensitive and non-sensitive features. Thus, non-sensitive features may have different conditional distributions for different sensitive groups. We incorporate these conditional distributions in this RE-SSAT encoding by providing the conditional probability $ p_i = \Pr[X_i = 1| \sensitive =\mathbf{a}] $ instead of the independent probability $\Pr[X_i = 1]$ for each $X_i\in \nonsensitive$. We illustrate this method in Example~\ref{fairness_justicia_example:re_ssat}.
 %This relaxes the independence requirement.
 
 \begin{example}[RE-SSAT encoding]
 	\label{fairness_justicia_example:re_ssat}
-	Here, we illustrate the RE-SSAT formula for calculating the PPV for the sensitive group `age $ \ge 40 $' in the decision tree of Figure~\ref{fairness_justicia_fig:fair_example}. We assign three Boolean variables $ F,I,J $ for the three nodes in the tree such that the literal $ F,I,J $ denote `fitness $ \ge 0.61 $', `income $ \ge 0.29 $', and `income $ \ge 0.69 $', respectively. We consider another Boolean variable $A$  where the literal $ A $ represents the sensitive group `age $ \ge 40 $'. Thus, the CNF formula  for the decision tree is $ (\neg F \vee I) \wedge (F \vee J) $. From the distribution in Figure~\ref{fairness_justicia_fig:fair_example}, we get $ \Pr[F] = 0.41, \Pr[I] = 0.93 $, and $ \Pr[J] = 0.09 $. Given this information, we calculate the PPV for the sensitive group `age $ \ge 40 $' by solving the RE-SSAT formula:
+	Here, we illustrate the RE-SSAT formula for calculating the PPV for the sensitive group `age $ \ge 40 $' in the decision tree of Figure~\ref{fairness_justicia_fig:fair_example}. We assign three Boolean variables $ F,I,J $ for the three nodes in the tree such that the literal $ F,I,J $ denote `fitness $ \ge 0.61 $', `income $ \ge 0.29 $', and `income $ \ge 0.69 $', respectively. We consider another Boolean variable $A$  where the literal $ \sensitive $ represents the sensitive group `age $ \ge 40 $'. Thus, the CNF formula  for the decision tree is $ (\neg F \vee I) \wedge (F \vee J) $. From the distribution in Figure~\ref{fairness_justicia_fig:fair_example}, we get $ \Pr[F] = 0.41, \Pr[I] = 0.93 $, and $ \Pr[J] = 0.09 $. Given this information, we calculate the PPV for the sensitive group `age $ \ge 40 $' by solving the RE-SSAT formula:
 	\begin{equation}
 	\Phi_A := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge A.\notag
 	\end{equation}
-	From the solution to this SSAT formula, we get $ \Pr[\Phi_A] = 0.43 $. Similarly, to calculate the PPV for the group `age $ < 40 $', we replace the unit (single-literal) clause $ A $ with $ \neg A $ in the CNF in $ \Phi_A $ and construct another SSAT formula $ \Phi_{\neg A} $ where $ \Pr[\Phi_{\neg A}] = 0.43 $. 
+	From the solution to this SSAT formula, we get $ \Pr[\Phi_A] = 0.43 $. Similarly, to calculate the PPV for the group `age $ < 40 $', we replace the unit (single-literal) clause $ \sensitive $ with $ \neg A $ in the CNF in $ \Phi_A $ and construct another SSAT formula $ \Phi_{\neg A} $ where $ \Pr[\Phi_{\neg A}] = 0.43 $. 
 	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of $A$ and $\neg A$, both age groups demonstrate equal PPV as the sensitive feature is not explicitly present in the classifier. 
 	However, there is an implicit bias in the data distribution for different sensitive groups and the classifier unintentionally learns it. 
 	To capture this implicit bias, we calculate the conditional probabilities  $ \Pr[F|A] = 0.01, \Pr[I|A] = 0.99 $, and $ \Pr[J|A] = 0.18 $ from the distribution. Using the conditional probabilities in  $\Phi_A $, we find that $ \Pr[\Phi_A] = 0.18 $ for `age $ \ge 40 $'. For `age $ < 40 $',  we similarly obtain $ \Pr[F|\neg A] = 0.82, \Pr[I|\neg A] = 0.88 $, and $ \Pr[J|\neg A] = 0.01 $, and thus  $ \Pr[\Phi_{\neg A}] = 0.72 $. 
@@ -52,7 +52,7 @@ For simplicity, we have described computing the PPV of each compound sensitive g
 \end{example}
 
 \subsubsection{Measuring Fairness Metrics.}
-As we compute the probability $\Pr[\hat{Y} = 1 | A = \mathbf{a}]$ by solving the SSAT formula $ \Phi_\mathbf{a} $, we  use $ \Pr[\Phi_\mathbf{a}] $ to measure different fairness metrics. 
+As we compute the probability $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$ by solving the SSAT formula $ \Phi_\mathbf{a} $, we  use $ \Pr[\Phi_\mathbf{a}] $ to measure different fairness metrics. 
 For that, we compute $ \Pr[\Phi_\mathbf{a}] $ for all compound groups $\mathbf{a} \in A$ that requires solving exponential (with $n$) number of SSAT instances. 
 We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\ref{fairness_justicia_algo:enum}  (Line~\ref{fairness_justicia_algo:justicia_enum_begin}--\ref{fairness_justicia_algo:justicia_enum_end}).
 
@@ -64,11 +64,11 @@ We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\re
 		\Function{{\justiciaenum}}{$ X,A,\hat{Y} $}
 		\label{fairness_justicia_algo:justicia_enum_begin}
 		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y} = 1) $
-		%\State $ p_{i} = \mathsf{CalculateProb}(\nonsensitive_i), \forall \nonsensitive_i \in X $
+		%\State $ p_{i} = \mathsf{CalculateProb}(X_i), \forall X_i \in X $
 		\ForAll{$\mathbf{a} \in A$ }
-		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(\nonsensitive_i | \mathbf{a}), \forall \nonsensitive_i \in X $
-		\State $ \phi := \phi_{\hat{Y}} \wedge (A=\mathbf{a}) $
-		\State $  \Phi_\mathbf{a} := \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m, \exists \sensitive_1,\dots, \exists \sensitive_n,  \phi $
+		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(X_i | \mathbf{a}), \forall X_i \in X $
+		\State $ \phi := \phi_{\hat{Y}} \wedge (\sensitive =\mathbf{a}) $
+		\State $  \Phi_\mathbf{a} := \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \exists A_1,\dots, \exists A_{\numsensitive},  \phi $
 		\State $ \Pr[\Phi_\mathbf{a}]  \leftarrow \mathsf{SSAT}(\Phi_\mathbf{a}) $ \Comment{returns a probability}
 		\EndFor
 		\State \Return $ \max_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}], \min_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] $
@@ -80,9 +80,9 @@ We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\re
 		\Function{{\justicialearn}}{$ X,A,\hat{Y} $}
 		\label{fairness_justicia_algo:justicia_learn_begin}
 		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y}  = 1) $
-		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(\nonsensitive_i), \forall \nonsensitive_i \in X $
-		\State $  \Phi_\mathbf{ER} := \exists \sensitive_1,\dots, \exists \sensitive_n, \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m, \phi_{\hat{Y}} $
-		\State $  \Phi'_\mathbf{ER} := \exists \sensitive_1,\dots, \exists \sensitive_n, \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m, \neg \phi_{\hat{Y}} $
+		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(X_i), \forall X_i \in X $
+		\State $  \Phi_\mathbf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \phi_{\hat{Y}} $
+		\State $  \Phi'_\mathbf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \neg \phi_{\hat{Y}} $
 		\State \Return $ \mathsf{SSAT}(\Phi_\mathbf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathbf{ER}) $
 		\label{fairness_justicia_algo:justicia_learn_end}
 		\EndFunction
@@ -94,7 +94,7 @@ We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\re
 We calculate the ratio of the minimum and the maximum probabilities according to the definition of disparate impact. 
 We compute statistical parity by taking the difference between the maximum and the minimum probabilities of all $ \Pr[\Phi_{\mathbf{a}}] $.
 Moreover, to measure equalized odds, we compute two SSAT instances for each compound group with modified values of $ p_i $. 
-Specifically, to compute TPR, we use the conditional probability $ p_i = \Pr[\nonsensitive_i|Y=1] $ on samples with class label $ Y = 1 $ and take the difference between the maximum and the minimum probabilities of all compound groups. In addition, to compute FPR, we use the conditional probability $ p_i = \Pr[\nonsensitive_i|Y=0] $ on samples with $ Y = 0 $ and take the difference similarly.
+Specifically, to compute TPR, we use the conditional probability $ p_i = \Pr[X_i|Y=1] $ on samples with class label $ Y = 1 $ and take the difference between the maximum and the minimum probabilities of all compound groups. In addition, to compute FPR, we use the conditional probability $ p_i = \Pr[X_i|Y=0] $ on samples with $ Y = 0 $ and take the difference similarly.
 Thus, {\justiciaenum} allows us to compute different fairness metrics using a unified algorithmic framework.
 
 
@@ -110,33 +110,33 @@ In ER-SSAT formula, the probability of satisfying $ \Phi $ is the \textit{maximu
 In this paper, we leverage this property to compute the most favored group with the highest PPV. 
 We consider the following ER-SSAT formula. 
 \begin{equation}
-\Phi_{\mathsf{ER}} := \exists \sensitive_1,\dots, \exists \sensitive_n,
- \R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m,   \; \phi_{\hat{Y}}.
+\Phi_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
+ \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \phi_{\hat{Y}}.
  \label{fairness_justicia_eq:er}
 \end{equation}
 %In the prefix of the ER-SSAT formula $ \Phi_{\mathsf{ER}} $, the sensitive variables are  existentially quantified and they are followed by randomized quantified non-sensitive variables, which is in reverse order  in Eq.~\eqref{fairness_justicia_eq:re}. 
-The CNF formula $\phi_{\hat{Y}}$ is the CNF translation  of the classifier $ \hat{Y} = 1 $ without any specification of the compound sensitive group.  Therefore, as we solve $ \Phi_{\mathsf{ER}} $, we find the assignment to the existentially quantified variables $ A_1 = a^{\max}_1, \dots,A_n = a^{\max}_n $ for which the satisfying probability $ \Pr[\Phi_{\mathsf{ER}}] $ is maximum. 
-Thus, we compute  the most favored group $ \mathbf{a}_{\mathsf{fav}} \triangleq \{ a^{\max}_1, \dots, a^{\max}_n \}$ achieving the highest PPV. 
-%Since an assignment to $\{\sensitive_1, \dots, \sensitive_n\}$ uniquely denotes a compound sensitive group, say $ \mathbf{a}_{\mathsf{fav}} \in A $, we find the most favored group $ \mathbf{a}_{\mathsf{fav}} $ for which $ \Pr[\Phi_{\mathsf{ER}}] $ achieves the highest PPV. 
+The CNF formula $\phi_{\hat{Y}}$ is the CNF translation  of the classifier $ \hat{Y} = 1 $ without any specification of the compound sensitive group.  Therefore, as we solve $ \Phi_{\mathsf{ER}} $, we find the assignment to the existentially quantified variables $ A_1 = a^{\max}_1, \dots,A_{\numsensitive} = a^{\max}_{\numsensitive} $ for which the satisfying probability $ \Pr[\Phi_{\mathsf{ER}}] $ is maximum. 
+Thus, we compute  the most favored group $ \mathbf{a}_{\mathsf{fav}} \triangleq \{ a^{\max}_1, \dots, a^{\max}_{\numsensitive} \}$ achieving the highest PPV. 
+%Since an assignment to $\{A_1, \dots, A_{\numsensitive}\}$ uniquely denotes a compound sensitive group, say $ \mathbf{a}_{\mathsf{fav}} \in A $, we find the most favored group $ \mathbf{a}_{\mathsf{fav}} $ for which $ \Pr[\Phi_{\mathsf{ER}}] $ achieves the highest PPV. 
 
 
 \subsubsection{Learning the Least Favored Group.}
-In order to learn the least favored group in terms of PPV, we  compute the \textit{minimum} satisfying probability of the classifier $ \phi_{\hat{Y}} $ given the random values of the non-sensitive variables $ \nonsensitive_1, \dots, \nonsensitive_m $. In order to do so, we have to solve a `universal-random' (UR) SSAT formula (Eq.~\eqref{fairness_justicia_eq:ar}) with  universal quantification over the sensitive variables and randomized quantification over the non-sensitive variables (by Rule 3, Sec.~\ref{fairness_justicia_sec:ssat}).
+In order to learn the least favored group in terms of PPV, we  compute the \textit{minimum} satisfying probability of the classifier $ \phi_{\hat{Y}} $ given the random values of the non-sensitive variables $ X_1, \dots, X_{\numnonsensitive} $. In order to do so, we have to solve a `universal-random' (UR) SSAT formula (Eq.~\eqref{fairness_justicia_eq:ar}) with  universal quantification over the sensitive variables and randomized quantification over the non-sensitive variables (by Rule 3, Sec.~\ref{fairness_justicia_sec:ssat}).
 \begin{equation}
-\Phi_{\mathsf{UR}} := \forall \sensitive_1,\dots, \forall \sensitive_n,
-\R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m,   \; \phi_{\hat{Y}}.
+\Phi_{\mathsf{UR}} := \forall A_1,\dots, \forall A_{\numsensitive},
+\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \phi_{\hat{Y}}.
 \label{fairness_justicia_eq:ar}
 \end{equation}
 A UR-SSAT formula returns the minimum satisfying probability of $ \phi $ over the universally quantified variables in contrast to the ER-SSAT formula that returns the maximum satisfying  probability over the existentially quantified variables.  
 Due to practical issues to solve UR-SSAT formula, in this paper, we leverage the \textit{duality} between UR-SSAT (Eq.~\eqref{fairness_justicia_eq:ar}) and ER-SSAT formulas (Eq.~\eqref{fairness_justicia_eq:er_complement}) 
 \begin{equation}
-\Phi'_{\mathsf{ER}} := \exists \sensitive_1,\dots, \exists \sensitive_n,
-\R^{p_{1}}\nonsensitive_1, \dots, \R^{p_{m}}\nonsensitive_m,   \; \neg \phi_{\hat{Y}}.
+\Phi'_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
+\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \neg \phi_{\hat{Y}}.
 \label{fairness_justicia_eq:er_complement}
 \end{equation}
 %\begin{equation}
-%\Phi'_{\mathsf{ER}} = \underbrace{\exists a_1,\dots, \exists a_n}_{\text{sensitive features}},
-%\underbrace{\R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m}_{\text{non-sensitive features}},   \; \underbrace{\neg \phi_{\hat{Y}} }_{\phi}.
+%\Phi'_{\mathsf{ER}} = \underbrace{\exists a_1,\dots, \exists a_{\numsensitive}}_{\text{sensitive features}},
+%\underbrace{\R^{p_{1}}x_1, \dots, \R^{p_{\numnonsensitive}}x_{\numnonsensitive}}_{\text{non-sensitive features}},   \; \underbrace{\neg \phi_{\hat{Y}} }_{\phi}.
 %\label{fairness_justicia_eq:er_complement}
 %\end{equation}
 and solve the UR-SSAT formula on the CNF $ \phi $ using the ER-SSAT formula on the complemented CNF $ \neg \phi $~\cite{littman2001stochastic}. Lemma~\ref{fairness_justicia_thm:dual} encodes this duality.
@@ -144,7 +144,7 @@ and solve the UR-SSAT formula on the CNF $ \phi $ using the ER-SSAT formula on t
 \begin{lemma}\label{fairness_justicia_thm:dual}
 Given Eq.~\eqref{fairness_justicia_eq:ar} and~\eqref{fairness_justicia_eq:er_complement},	$ \Pr[\Phi_{\mathsf{UR}}] = 1 - \Pr[\Phi'_{\mathsf{ER}}]  $.
 \end{lemma}
-As we solve $\Phi'_{\mathsf{ER}}$, we obtain the assignment to the sensitive features $\mathbf{a}_{\mathsf{unfav}} \triangleq \{a^{min}_1, \dots, a^{min}_n\}$ that maximizes $\Phi'_{\mathsf{ER}}$. 
+As we solve $\Phi'_{\mathsf{ER}}$, we obtain the assignment to the sensitive features $\mathbf{a}_{\mathsf{unfav}} \triangleq \{a^{min}_1, \dots, a^{min}_{\numsensitive}\}$ that maximizes $\Phi'_{\mathsf{ER}}$. 
 If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, according to Lemma~\ref{fairness_justicia_thm:dual}, $ 1 - p $ is the minimum satisfying probability of $ \Phi_{\mathsf{UR}} $,  which is the PPV of the least favored group $ \mathbf{a}_{\mathsf{unfav}}$. We present the algorithm for this learning approach, namely {\justicialearn} in Algorithm~\ref{fairness_justicia_algo:enum} (Line~\ref{fairness_justicia_algo:justicia_learn_begin}--\ref{fairness_justicia_algo:justicia_learn_end}).
 
 \iffalse
@@ -155,8 +155,8 @@ If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, accor
 		\Function{{\justicialearn}}{$ X,A,\hat{Y} $}
 		\State $ \phi_{\hat{Y}} = \mathsf{CNF}(\hat{Y}  = 1) $
 		\State $ p_{i} = \mathsf{CalculateProb}(x_i), \forall x_i \in X $
-		\State $  \Phi_\mathbf{ER} = \exists a_1,\dots, \exists a_n, \R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m. \; \phi_{\hat{Y}} $
-		\State $  \Phi'_\mathbf{ER} = \exists a_1,\dots, \exists a_n, \R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m. \; \neg \phi_{\hat{Y}} $
+		\State $  \Phi_\mathbf{ER} = \exists a_1,\dots, \exists a_{\numsensitive}, \R^{p_{1}}x_1, \dots, \R^{p_{\numnonsensitive}}x_{\numnonsensitive}. \; \phi_{\hat{Y}} $
+		\State $  \Phi'_\mathbf{ER} = \exists a_1,\dots, \exists a_{\numsensitive}, \R^{p_{1}}x_1, \dots, \R^{p_{\numnonsensitive}}x_{\numnonsensitive}. \; \neg \phi_{\hat{Y}} $
 		\State \Return $ \mathsf{SSAT}(\Phi_\mathbf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathbf{ER}) $
 		\EndFunction
 	\end{algorithmic}
@@ -209,7 +209,7 @@ We use the PPVs of the most and least favored groups to compute different fairne
 %		\State $ \phi_{\hat{Y}} = \mathsf{CNF}(\hat{Y}  = 1) $
 %		\ForAll{$\mathbf{a} \in A$ }
 %		\State $ p_{i} = \mathsf{\blue{calculateCondProb}}(x_i, \mathbf{a}), \forall x_i \in X $
-%		\State $  \Phi_\mathbf{a} = \R^{p_{1}}x_1, \dots, \R^{p_{m}}x_m, \exists \sensitive_1,\dots, \exists \sensitive_n. \; \phi_{\hat{Y}} \wedge \mathsf{CNF}(A=\mathbf{a}) $
+%		\State $  \Phi_\mathbf{a} = \R^{p_{1}}x_1, \dots, \R^{p_{\numnonsensitive}}x_{\numnonsensitive}, \exists A_1,\dots, \exists A_{\numsensitive}. \; \phi_{\hat{Y}} \wedge \mathsf{CNF}(\sensitive =\mathbf{a}) $
 %		\State $ \Pr[\Phi_\mathbf{a}]  = \ma
 %thsf{SSAT}(\Phi_\mathbf{a}) $
 %		\EndFor
