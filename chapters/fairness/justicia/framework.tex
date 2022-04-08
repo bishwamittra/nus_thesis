@@ -57,42 +57,40 @@ For simplicity, we have described the computation of conditional probability $ \
 	In the later case with correlations among sensitive and non-sensitive features, the RE-SSAT encoding detects the discrimination of the classifier among different sensitive groups, where the classifier is more biased towards the younger group with age $ < 40 $ than the elderly group with age $ \ge 40 $.
 	
 	
-	\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
+
 	
 	
 %	An astute reader would observe that $I$ and $J$ are not independent. Following~\cite{chavira2008probabilistic}, we can simply capture relationship between the variables using constraints and if needed, auxiliary variables. In this case, it suffices to add the the constraint $J \rightarrow I$. 
 \end{example}
 
 \subsubsection{Measuring Fairness Metrics.}
-As we compute the probability $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$ by solving the SSAT formula $ \Phi_\mathbf{a} $, we  use $ \Pr[\Phi_\mathbf{a}] $ to measure different fairness metrics. 
-For that, we compute $ \Pr[\Phi_\mathbf{a}] $ for all compound groups $\mathbf{a} \in A$ that requires solving exponential (with $n$) number of SSAT instances. 
-We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\ref{fairness_justicia_algo:enum}  (Line~\ref{fairness_justicia_algo:justicia_enum_begin}--\ref{fairness_justicia_algo:justicia_enum_end}).
+As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $ by solving the SSAT formula $ \Phi_\mathbf{a} $, we  use $ \Pr[\Phi_\mathbf{a}] $ to measure different fairness metrics. To this end, we compute $ \Pr[\Phi_\mathbf{a}] $ for all compound groups $\mathbf{a} \in A$ by solving an exponential number (with $ \numsensitive $) of SSAT formulas. We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\ref{fairness_justicia_algo:enum}  (Line~\ref{fairness_justicia_algo:justicia_enum_begin}--\ref{fairness_justicia_algo:justicia_enum_end}).
 
 \begin{algorithm}[t!]
 	\caption{\justicia: SSAT-based Fairness Verifier}
 	\label{fairness_justicia_algo:enum}
 	\footnotesize
 	\begin{algorithmic}[1]
-		\Function{{\justiciaenum}}{$ X,A,\hat{Y} $}
+		\Function{{\justiciaenum}}{$ \nonsensitive, \sensitive,\hat{Y} $}
 		\label{fairness_justicia_algo:justicia_enum_begin}
 		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y} = 1) $
 		%\State $ p_{i} = \mathsf{CalculateProb}(X_i), \forall X_i \in X $
-		\ForAll{$\mathbf{a} \in A$ }
-		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(X_i | \mathbf{a}), \forall X_i \in X $
+		\ForAll{$\mathbf{a} \in \sensitive$ }
+		\State $ p_{i} \leftarrow \Pr[X_i = 1|\sensitive = \mathbf{a}], \forall X_i \in \nonsensitive $
 		\State $ \phi := \phi_{\hat{Y}} \wedge (\sensitive =\mathbf{a}) $
 		\State $  \Phi_\mathbf{a} := \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \exists A_1,\dots, \exists A_{\numsensitive},  \phi $
 		\State $ \Pr[\Phi_\mathbf{a}]  \leftarrow \mathsf{SSAT}(\Phi_\mathbf{a}) $ \Comment{returns a probability}
 		\EndFor
-		\State \Return $ \max_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}], \min_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] $
+		\State \Return $ \max_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}], \min_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $
 		\label{fairness_justicia_algo:justicia_enum_end}
 		\EndFunction
 		
 		
 		
-		\Function{{\justicialearn}}{$ X,A,\hat{Y} $}
+		\Function{{\justicialearn}}{$ \nonsensitive, \sensitive,\hat{Y} $}
 		\label{fairness_justicia_algo:justicia_learn_begin}
 		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y}  = 1) $
-		\State $ p_{i} \leftarrow \mathsf{CalculateProb}(X_i), \forall X_i \in X $
+		\State $ p_{i} \leftarrow \Pr[X_i=1], \forall X_i \in \nonsensitive $
 		\State $  \Phi_\mathbf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \phi_{\hat{Y}} $
 		\State $  \Phi'_\mathbf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \neg \phi_{\hat{Y}} $
 		\State \Return $ \mathsf{SSAT}(\Phi_\mathbf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathbf{ER}) $
@@ -103,14 +101,18 @@ We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\re
 \end{algorithm}
 
 
-We calculate the ratio of the minimum and the maximum probabilities according to the definition of disparate impact. 
-We compute statistical parity by taking the difference between the maximum and the minimum probabilities of all $ \Pr[\Phi_{\mathbf{a}}] $.
-Moreover, to measure equalized odds, we compute two SSAT instances for each compound group with modified values of $ p_i $. 
-Specifically, to compute TPR, we use the conditional probability $ p_i = \Pr[X_i|Y=1] $ on samples with class label $ Y = 1 $ and take the difference between the maximum and the minimum probabilities of all compound groups. In addition, to compute FPR, we use the conditional probability $ p_i = \Pr[X_i|Y=0] $ on samples with $ Y = 0 $ and take the difference similarly.
-Thus, {\justiciaenum} allows us to compute different fairness metrics using a unified algorithmic framework.
+To measure the disparate impact of a classifier, we calculate the ratio between the minimum and the maximum conditional probability of positive prediction of the classifier, which are  $ \min_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $ and $ \max_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $, respectively. We compute statistical parity by taking the difference between $ \max_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $ and $ \min_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $. 
 
 
-\subsection{\red{Learning Fairness with ER-SSAT Encoding}}
+Moreover, to compute equalized odds, we call {\justicia} twice, one for the distribution $ \mathcal{D} $ conditioned on $ Y = 1  $ and another for $ Y = 0 $. In both calls, we compute $ \max_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}, Y = y ]  - \min_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}, Y = y ] $ for $ y \in \{0,1\} $ and take the  maximum difference as the value of equalized odds. 
+For measuring path-specific causal fairness, we compute  $ \max_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}, \mathbf{Z}] $ and  $ \min_{ \mathbf{a}} \Pr[\hat{Y} =1, \mathbf{Z}| \sensitive = \mathbf{a} , \mathbf{Z}] $ by conditioning the distribution $ \mathcal{D} $ by mediator features $ \mathbf{Z} $ and take their difference. Thus, {\justiciaenum} allows us to compute different group and causal fairness metrics using a unified algorithmic framework.
+
+
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
+
+
+\subsection{\red{Inference Approach with ER-SSAT Encoding}}
 \label{fairness_justicia_sec:learn_ssat}
 In most practical problems, there can be exponentially many compound groups based on the different combinations of valuation to the sensitive features. 
 Therefore, the enumeration approach may suffer from scalability issues. 
