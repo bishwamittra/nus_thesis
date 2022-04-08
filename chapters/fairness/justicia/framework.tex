@@ -1,6 +1,6 @@
 \section{{\justicia}: An SSAT-based Fairness Verifier}
 \label{fairness_justicia_sec:framework}
-In this section, we present the primary contribution of this chapter, {\justicia}, which is an SSAT-based framework for verifying group and causal fairness metrics. Given a binary classifier $\alg$, a probability distribution over features $(\nonsensitive,\sensitive,Y) \sim \mathcal{D} $, and a target fairness definition, our goal is to estimate the fairness $ f(\alg, \mathcal{D}) $ of the classifier $ \alg $ given the distribution $ \mathcal{D} $ according to the fairness definition. Additionally, if a fairness threshold $ \epsilon \in [0,1] $ is provided, {\justicia} verifies whether the classifier is $ \epsilon $-fair by comparing $ f $ with $ \epsilon $. In {\justicia}, we focus on classifiers that can be represented as a CNF formula defined over a set of Boolean variables. Additionally, for each variable, we query the distribution $ \mathcal{D} $ to derive the marginal probability of assigning to $ 1 $. In this section, we discuss two equivalent approaches for fairness verification based on SSAT-based encodings: enumeration approach and inferring approach. In both approaches, we verify fairness with the presence of compound sensitive groups.  We then provide a theoretical analysis for a high-probability error bound on the fairness metric and conclude with an extension of {\justicia} in practical settings.
+In this section, we present the primary contribution of this chapter, {\justicia}, which is an SSAT-based framework for verifying group and causal fairness metrics. Given a binary classifier $\alg$, a probability distribution over features $(\nonsensitive,\sensitive,Y) \sim \mathcal{D} $, and a target fairness metric $ f(\alg, \mathcal{D}) $, our goal is to estimate the fairness $ f(\alg, \mathcal{D}) $ of the classifier $ \alg $ given the distribution $ \mathcal{D} $ according to the fairness definition. Additionally, if a fairness threshold $ \epsilon \in [0,1] $ is provided, {\justicia} verifies whether the classifier is $ \epsilon $-fair by comparing $ f $ with $ \epsilon $. In {\justicia}, we focus on classifiers that can be represented as a CNF formula defined over a set of Boolean variables. Additionally, for each variable, we query the distribution $ \mathcal{D} $ to derive the marginal probability of the variable to be assigned to $ 1 $. In this section, we discuss two equivalent approaches for fairness verification based on SSAT-based encodings: enumeration approach and \red{inferring} approach. In both approaches, we verify fairness with the presence of compound sensitive groups.  We then provide a theoretical analysis for a high-probability error bound on the fairness metric and conclude with an extension of {\justicia} in practical settings.
 
 
 
@@ -21,10 +21,9 @@ In our contribution, we reduce the verification problem to solving appropriately
 
 \subsection{Enumeration Approach  using RE-SSAT encoding}
 \label{fairness_justicia_sec:enumeration_ssat}
-In order to estimate $ f(\alg, \mathcal{D}) $ in the enumeration approach, the key idea  is to compute the conditional PPV of the classifier, $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$, for the compound sensitive group $\sensitive = \mathbf{a}$ based on an appropriately designed SSAT formula.  For simplicity, we  initially make assumptions on the classifier $ \alg $ and discuss practical relaxations later in this section.  We first assume $\alg$ to be represented as a CNF formula, denoted by $\phi_{\hat{Y}}$, such that the prediction $ \hat{Y} = 1 $ when $ \phi_{\hat{Y}}$ is satisfied and  $\hat{Y} =0$ otherwise. Additionally, all features $ \nonsensitive \cup \sensitive $ are assumed to be Boolean variables.  Finally, we consider independence probability assumption of non-sensitive features on sensitive features, where $p_i \triangleq \Pr[X_i = 1] $ is the independent probability of the non-sensitive feature $ X_i $. 
+In order to estimate $ f(\alg, \mathcal{D}) $ in the enumeration approach, the key idea  is to compute the conditional probability of positive prediction of the classifier, $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$, for the compound sensitive group $\sensitive = \mathbf{a}$ by solving an appropriately designed SSAT formula.  For simplicity, we  initially make assumptions on the classifier $ \alg $ and discuss practical relaxations later in this section.  We first assume $\alg$ to be represented as a CNF formula, denoted by $\phi_{\hat{Y}}$, such that the prediction $ \hat{Y} = 1 $ when $ \phi_{\hat{Y}}$ is satisfied and  $\hat{Y} =0$ otherwise. Additionally, all features $ \nonsensitive \cup \sensitive $ are assumed to be Boolean variables.  Finally, we consider independence probability assumption of non-sensitive features $ \nonsensitive $, where $p_i \triangleq \Pr[X_i = 1] $ is the independent probability of $ X_i $. 
 
 
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
 
 Now, we define an RE-SSAT formula $\Phi_{\mathbf{a}}$ to compute the conditional probability $\Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}]$. In the prefix of $ \Phi_{\mathbf{a}} $,  all non-sensitive features $ \nonsensitive $ are assigned randomized quantifiers and they are followed by sensitive features $ \sensitive $ with existential quantifiers.  In addition, the CNF formula $ \phi $ in the SSAT formula $ \Phi_{\mathbf{a}} $ is constructed such that $ \phi $ encodes the event inside the target probability $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $. In order to specify the sensitive group $ \sensitive = \mathbf{a} $, we take the conjunction of the Boolean variables in $ \sensitive $ that symbolically specifies the compound sensitive group $ \sensitive = \mathbf{a} $. For example, let us consider two sensitive features: race $ \in $ \{White, Colour\} and sex $ \in $ \{male, female\} by Boolean variables $ R $ and $ S $,  respectively. Hence, the compound groups $ [\textrm{White}, \textrm{male}] $ and $[\textrm{Colour}, \textrm{female}]$ are represented by $ R \wedge S $ and $ \neg R \wedge \neg S $, respectively. Thus, the RE-SSAT formula for computing the probability  $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $ is
 \begin{equation}	\label{fairness_justicia_eq:re}
@@ -33,22 +32,35 @@ Now, we define an RE-SSAT formula $\Phi_{\mathbf{a}}$ to compute the conditional
 \phi_{\hat{Y}} \wedge (\sensitive =\mathbf{a}).\notag
 \end{split}
 \end{equation}
-In the RE-SSAT formula $ \Phi_{\mathbf{a}} $, existentially quantified variables  $ \{A_1, \dots, A_{\numsensitive}\} $ are assigned values  according  to the constraint $ \sensitive =\mathbf{a} $. \footnote{An RE-SSAT formula becomes an R-SSAT formula when the assignment to the existential variables are fixed.} Next,  an SSAT solver computes the probability $ \Pr[\Phi_{\mathbf{a}}] $ by considering the random values of $ \{X_1, \dots, X_{\numnonsensitive}\} $ while fixing the assignment of $ \{A_1, \dots, A_{\numsensitive\}} $. Therefore, $ \Pr[\Phi_{\mathbf{a}}] $ equals the conditional PPV of the classifier, $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $, for the sensitive group $ \sensitive = \mathbf{a} $. 
+In the RE-SSAT formula $ \Phi_{\mathbf{a}} $, existentially quantified variables  $ \{A_1, \dots, A_{\numsensitive}\} $ are assigned values  according  to the constraint $ \sensitive =\mathbf{a} $. \footnote{An RE-SSAT formula becomes an R-SSAT formula when the assignment to the existential variables are fixed.} Next,  an SSAT solver computes the probability $ \Pr[\Phi_{\mathbf{a}}] $ by considering the random values of $ \{X_1, \dots, X_{\numnonsensitive}\} $ while fixing the assignment of $ \{A_1, \dots, A_{\numsensitive}\} $. Therefore, $ \Pr[\Phi_{\mathbf{a}}] $ equals the conditional probability of positive prediction of the classifier, $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $, for the sensitive group $ \sensitive = \mathbf{a} $. 
 
-For simplicity, we have described the computation of conditional PPVs without considering the correlation among sensitive and non-sensitive features. In reality, correlation exists among sensitive and non-sensitive features. Thus, non-sensitive features may have different conditional distributions for different sensitive groups. We incorporate these conditional distributions in this RE-SSAT encoding by providing the conditional probability $ p_i = \Pr[X_i = 1| \sensitive =\mathbf{a}] $ instead of the independent probability $\Pr[X_i = 1]$ for each $X_i\in \nonsensitive$. We illustrate this method in Example~\ref{fairness_justicia_example:re_ssat}.
+For simplicity, we have described the computation of conditional probability $ \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $ without considering the correlation among sensitive and non-sensitive features. In reality, correlation exists among these features. As a result, non-sensitive features may have different conditional distributions for different sensitive groups. For a non-sensitive feature $ X_i $, we incorporate its conditional probability in the RE-SSAT encoding by setting $ p_i = \Pr[X_i = 1| \sensitive =\mathbf{a}] $ instead of the independent probability $\Pr[X_i = 1]$. Next, we illustrate this enumeration approach in Example~\ref{fairness_justicia_example:re_ssat}.
 %This relaxes the independence requirement.
 
 \begin{example}[RE-SSAT encoding]
 	\label{fairness_justicia_example:re_ssat}
-	Here, we illustrate the RE-SSAT formula for calculating the PPV for the sensitive group `age $ \ge 40 $' in the decision tree of Figure~\ref{fairness_justicia_fig:fair_example}. We assign three Boolean variables $ F,I,J $ for the three nodes in the tree such that the literal $ F,I,J $ denote `fitness $ \ge 0.61 $', `income $ \ge 0.29 $', and `income $ \ge 0.69 $', respectively. We consider another Boolean variable $A$  where the literal $ \sensitive $ represents the sensitive group `age $ \ge 40 $'. Thus, the CNF formula  for the decision tree is $ (\neg F \vee I) \wedge (F \vee J) $. From the distribution in Figure~\ref{fairness_justicia_fig:fair_example}, we get $ \Pr[F] = 0.41, \Pr[I] = 0.93 $, and $ \Pr[J] = 0.09 $. Given this information, we calculate the PPV for the sensitive group `age $ \ge 40 $' by solving the RE-SSAT formula:
+	We illustrate the RE-SSAT encoding for calculating the probability of positive prediction for the sensitive group age $ \ge 40 $ in the decision tree of Figure~\ref{fairness_justicia_fig:fair_example}. We assign three Boolean variables $ F,I,J $ for three nodes in the decision tree, where literal $ F,I,J $ denote fitness $ \ge 0.61 $, income $ \ge 0.29 $, and income $ \ge 0.69 $, respectively. We consider another Boolean variable $A$  where the literal $ A $ represents the sensitive group age $ \ge 40 $ and $ \neg A $ denotes age $ < 40 $. Thus, the CNF formula  for the decision tree is $ (\neg F \vee I) \wedge (F \vee J) $. From the distribution in Figure~\ref{fairness_justicia_fig:fair_example}, we get $ \Pr[F] = 0.41, \Pr[I] = 0.93 $, and $ \Pr[J] = 0.09 $. Given this information, we calculate the probability of positive prediction for the sensitive group age $ \ge 40 $ by solving the following RE-SSAT formula:
 	\begin{equation}
 	\Phi_A := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge A.\notag
 	\end{equation}
-	From the solution to this SSAT formula, we get $ \Pr[\Phi_A] = 0.43 $. Similarly, to calculate the PPV for the group `age $ < 40 $', we replace the unit (single-literal) clause $ \sensitive $ with $ \neg A $ in the CNF in $ \Phi_A $ and construct another SSAT formula $ \Phi_{\neg A} $ where $ \Pr[\Phi_{\neg A}] = 0.43 $. 
-	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of $A$ and $\neg A$, both age groups demonstrate equal PPV as the sensitive feature is not explicitly present in the classifier. 
-	However, there is an implicit bias in the data distribution for different sensitive groups and the classifier unintentionally learns it. 
-	To capture this implicit bias, we calculate the conditional probabilities  $ \Pr[F|A] = 0.01, \Pr[I|A] = 0.99 $, and $ \Pr[J|A] = 0.18 $ from the distribution. Using the conditional probabilities in  $\Phi_A $, we find that $ \Pr[\Phi_A] = 0.18 $ for `age $ \ge 40 $'. For `age $ < 40 $',  we similarly obtain $ \Pr[F|\neg A] = 0.82, \Pr[I|\neg A] = 0.88 $, and $ \Pr[J|\neg A] = 0.01 $, and thus  $ \Pr[\Phi_{\neg A}] = 0.72 $. 
-	Therefore, presented RE-SSAT encoding detects the discrimination of the classifier among different sensitive groups. An astute reader would observe that $I$ and $J$ are not independent. Following~\cite{chavira2008probabilistic}, we can simply capture relationship between the variables using constraints and if needed, auxiliary variables. In this case, it suffices to add the the constraint $J \rightarrow I$. 
+	From the solution to this SSAT formula, we get $ \Pr[\Phi_A] = 0.43 $. Similarly, to calculate the probability of positive prediction for the group age $ < 40 $, we replace the unit clause\footnote{A unit clause is a clause with a single literal.} $ A $ with $ \neg A $ in the CNF formula in $ \Phi_A $ and construct another SSAT formula $ \Phi_{\neg A} $. 
+	\[ \Phi_{\neg A} := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge \neg A \]
+	For $ \Phi_{\neg A} $, the solution $ \Pr[\Phi_{\neg A}] = 0.43 $ is similarly derived from an SSAT solver. 
+	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of the sensitive feature $A$, both age groups demonstrate equal probability of positive prediction as the sensitive feature is not explicitly present in the classifier. 
+
+	However, there is an implicit bias in the data distribution for different sensitive groups and the classifier unintentionally learns it. To capture this implicit bias, we calculate conditional probabilities  $ \Pr[F|A] = 0.01, \Pr[I|A] = 0.99 $, and $ \Pr[J|A] = 0.18 $ from the distribution for group age $ \ge 40 $ in Figure~\ref{fairness_justicia_fig:fair_example}. Providing the conditional probabilities, we construct a modified SSAT formula $\Phi'_A $ and compute $ \Pr[\Phi'_A] = 0.18 $ for age $ \ge 40 $. 
+	\begin{equation}
+	\Phi'_A := \R^{0.01}F, \R^{0.99}I, \R^{0.18}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge A\notag
+	\end{equation}
+	For the sensitive group age $ < 40 $,  we similarly obtain $ \Pr[F|\neg A] = 0.82, \Pr[I|\neg A] = 0.88 $, $ \Pr[J|\neg A] = 0.01 $, construct the modified formula $ \Phi'_{\neg A} $ and get  $ \Pr[\Phi'_{\neg A}] = 0.72 $. 
+	\[ \Phi'_{\neg A} := \R^{0.82}F, \R^{0.88}I, \R^{0.01}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge \neg A \]	
+	In the later case with correlations among sensitive and non-sensitive features, the RE-SSAT encoding detects the discrimination of the classifier among different sensitive groups, where the classifier is more biased towards the younger group with age $ < 40 $ than the elderly group with age $ \ge 40 $.
+	
+	
+	\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
+	
+	
+%	An astute reader would observe that $I$ and $J$ are not independent. Following~\cite{chavira2008probabilistic}, we can simply capture relationship between the variables using constraints and if needed, auxiliary variables. In this case, it suffices to add the the constraint $J \rightarrow I$. 
 \end{example}
 
 \subsubsection{Measuring Fairness Metrics.}
@@ -98,16 +110,16 @@ Specifically, to compute TPR, we use the conditional probability $ p_i = \Pr[X_i
 Thus, {\justiciaenum} allows us to compute different fairness metrics using a unified algorithmic framework.
 
 
-\subsection{Learning Fairness with ER-SSAT Encoding}
+\subsection{\red{Learning Fairness with ER-SSAT Encoding}}
 \label{fairness_justicia_sec:learn_ssat}
 In most practical problems, there can be exponentially many compound groups based on the different combinations of valuation to the sensitive features. 
 Therefore, the enumeration approach may suffer from scalability issues. 
-Hence, we propose efficient SSAT encodings to \textit{learn} the most favored group and the least favored group for given  $\alg$ and $ \mathcal{D} $, and to compute their PPVs to measure different fairness metrics. 
+Hence, we propose efficient SSAT encodings to \textit{learn} the most favored group and the least favored group for given  $\alg$ and $ \mathcal{D} $, and to compute their \red{probability of positive prediction}s to measure different fairness metrics. 
 
 \subsubsection{Learning the Most Favored Group.}
 In an SSAT formula $ \Phi $, the order of quantification of the Boolean variables in the prefix  carries distinct interpretation of the satisfying probability of $ \Phi $.  
 In ER-SSAT formula, the probability of satisfying $ \Phi $ is the \textit{maximum} satisfying probability over the existentially quantified variables given the randomized quantified variables (by Rule 2, Sec.~\ref{fairness_justicia_sec:ssat}). 
-In this paper, we leverage this property to compute the most favored group with the highest PPV. 
+In this paper, we leverage this property to compute the most favored group with the highest \red{probability of positive prediction}. 
 We consider the following ER-SSAT formula. 
 \begin{equation}
 \Phi_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
@@ -116,12 +128,12 @@ We consider the following ER-SSAT formula.
 \end{equation}
 %In the prefix of the ER-SSAT formula $ \Phi_{\mathsf{ER}} $, the sensitive variables are  existentially quantified and they are followed by randomized quantified non-sensitive variables, which is in reverse order  in Eq.~\eqref{fairness_justicia_eq:re}. 
 The CNF formula $\phi_{\hat{Y}}$ is the CNF translation  of the classifier $ \hat{Y} = 1 $ without any specification of the compound sensitive group.  Therefore, as we solve $ \Phi_{\mathsf{ER}} $, we find the assignment to the existentially quantified variables $ A_1 = a^{\max}_1, \dots,A_{\numsensitive} = a^{\max}_{\numsensitive} $ for which the satisfying probability $ \Pr[\Phi_{\mathsf{ER}}] $ is maximum. 
-Thus, we compute  the most favored group $ \mathbf{a}_{\mathsf{fav}} \triangleq \{ a^{\max}_1, \dots, a^{\max}_{\numsensitive} \}$ achieving the highest PPV. 
-%Since an assignment to $\{A_1, \dots, A_{\numsensitive}\}$ uniquely denotes a compound sensitive group, say $ \mathbf{a}_{\mathsf{fav}} \in A $, we find the most favored group $ \mathbf{a}_{\mathsf{fav}} $ for which $ \Pr[\Phi_{\mathsf{ER}}] $ achieves the highest PPV. 
+Thus, we compute  the most favored group $ \mathbf{a}_{\mathsf{fav}} \triangleq \{ a^{\max}_1, \dots, a^{\max}_{\numsensitive} \}$ achieving the highest \red{probability of positive prediction}. 
+%Since an assignment to $\{A_1, \dots, A_{\numsensitive}\}$ uniquely denotes a compound sensitive group, say $ \mathbf{a}_{\mathsf{fav}} \in A $, we find the most favored group $ \mathbf{a}_{\mathsf{fav}} $ for which $ \Pr[\Phi_{\mathsf{ER}}] $ achieves the highest \red{probability of positive prediction}. 
 
 
 \subsubsection{Learning the Least Favored Group.}
-In order to learn the least favored group in terms of PPV, we  compute the \textit{minimum} satisfying probability of the classifier $ \phi_{\hat{Y}} $ given the random values of the non-sensitive variables $ X_1, \dots, X_{\numnonsensitive} $. In order to do so, we have to solve a `universal-random' (UR) SSAT formula (Eq.~\eqref{fairness_justicia_eq:ar}) with  universal quantification over the sensitive variables and randomized quantification over the non-sensitive variables (by Rule 3, Sec.~\ref{fairness_justicia_sec:ssat}).
+In order to learn the least favored group in terms of \red{probability of positive prediction}, we  compute the \textit{minimum} satisfying probability of the classifier $ \phi_{\hat{Y}} $ given the random values of the non-sensitive variables $ X_1, \dots, X_{\numnonsensitive} $. In order to do so, we have to solve a `universal-random' (UR) SSAT formula (Eq.~\eqref{fairness_justicia_eq:ar}) with  universal quantification over the sensitive variables and randomized quantification over the non-sensitive variables (by Rule 3, Sec.~\ref{fairness_justicia_sec:ssat}).
 \begin{equation}
 \Phi_{\mathsf{UR}} := \forall A_1,\dots, \forall A_{\numsensitive},
 \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \phi_{\hat{Y}}.
@@ -145,7 +157,7 @@ and solve the UR-SSAT formula on the CNF $ \phi $ using the ER-SSAT formula on t
 Given Eq.~\eqref{fairness_justicia_eq:ar} and~\eqref{fairness_justicia_eq:er_complement},	$ \Pr[\Phi_{\mathsf{UR}}] = 1 - \Pr[\Phi'_{\mathsf{ER}}]  $.
 \end{lemma}
 As we solve $\Phi'_{\mathsf{ER}}$, we obtain the assignment to the sensitive features $\mathbf{a}_{\mathsf{unfav}} \triangleq \{a^{min}_1, \dots, a^{min}_{\numsensitive}\}$ that maximizes $\Phi'_{\mathsf{ER}}$. 
-If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, according to Lemma~\ref{fairness_justicia_thm:dual}, $ 1 - p $ is the minimum satisfying probability of $ \Phi_{\mathsf{UR}} $,  which is the PPV of the least favored group $ \mathbf{a}_{\mathsf{unfav}}$. We present the algorithm for this learning approach, namely {\justicialearn} in Algorithm~\ref{fairness_justicia_algo:enum} (Line~\ref{fairness_justicia_algo:justicia_learn_begin}--\ref{fairness_justicia_algo:justicia_learn_end}).
+If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, according to Lemma~\ref{fairness_justicia_thm:dual}, $ 1 - p $ is the minimum satisfying probability of $ \Phi_{\mathsf{UR}} $,  which is the \red{probability of positive prediction} of the least favored group $ \mathbf{a}_{\mathsf{unfav}}$. We present the algorithm for this learning approach, namely {\justicialearn} in Algorithm~\ref{fairness_justicia_algo:enum} (Line~\ref{fairness_justicia_algo:justicia_learn_begin}--\ref{fairness_justicia_algo:justicia_learn_end}).
 
 \iffalse
 \begin{algorithm}[t!]
@@ -174,17 +186,17 @@ In ER-SSAT formula of Eq.~\eqref{fairness_justicia_eq:er_complement}, we need to
 	$ \Phi_{\mathsf{ER}} =  \exists S,\exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; (\neg F \vee I \vee S) \wedge (F \vee J).
 	$
 	
-	As we solve $ \Phi_{\mathsf{ER}} $, we learn that the assignment to the existential variables $ \sigma(S) = 1, \sigma(A) = 0$, i.e. `male individuals with age $ < 40 $' is the most favored group with PPV computed as $ \Pr[\Phi_{\mathsf{ER}}] = 0.46$. Similarly, to learn the least favored group, we negate the CNF of the classifier $\alg$ to obtain the following ER-SSAT formula:
+	As we solve $ \Phi_{\mathsf{ER}} $, we learn that the assignment to the existential variables $ \sigma(S) = 1, \sigma(A) = 0$, i.e. `male individuals with age $ < 40 $' is the most favored group with \red{probability of positive prediction} computed as $ \Pr[\Phi_{\mathsf{ER}}] = 0.46$. Similarly, to learn the least favored group, we negate the CNF of the classifier $\alg$ to obtain the following ER-SSAT formula:
 	$	\Phi_{\mathsf{ER'}} =  \exists S, \exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; \neg((\neg F \vee I \vee S) \wedge (F \vee J)).
 	$
 	
-	Solving $ \Phi_{\mathsf{ER'}} $, we learn the assignment $ \sigma(S) = 0, \sigma(A) = 0  $ and $  \Pr[\Phi_{\mathsf{ER'}}] = 0.57 $. Thus, `female individuals with age $ < 40 $' constitute the least favored group with PPV:  $ 1-0.57 = 0.43$. 
+	Solving $ \Phi_{\mathsf{ER'}} $, we learn the assignment $ \sigma(S) = 0, \sigma(A) = 0  $ and $  \Pr[\Phi_{\mathsf{ER'}}] = 0.57 $. Thus, `female individuals with age $ < 40 $' constitute the least favored group with \red{probability of positive prediction}:  $ 1-0.57 = 0.43$. 
 	Thus, {\justicialearn} allows us to learn the most and least favored groups and the corresponding discrimination.
 \end{example}
-We use the PPVs of the most and least favored groups to compute different fairness metrics. We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\ref{fairness_justicia_lm:equivalence}.
+We use the \red{probability of positive prediction}s of the most and least favored groups to compute different fairness metrics. We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\ref{fairness_justicia_lm:equivalence}.
 \begin{lemma}
 	\label{fairness_justicia_lm:equivalence}
-	Let $ \Phi_{\mathbf{a}} $ be the RE-SSAT formula for computing the PPV of the compound sensitive group $ \mathbf{a} \in A $. If $ \Phi_{\mathsf{ER}} $ is the ER-SSAT formula for learning the most favored group and $ \Phi_{\mathsf{UR}} $ is the UR-SSAT formula for learning the least favored group, then
+	Let $ \Phi_{\mathbf{a}} $ be the RE-SSAT formula for computing the \red{probability of positive prediction} of the compound sensitive group $ \mathbf{a} \in A $. If $ \Phi_{\mathsf{ER}} $ is the ER-SSAT formula for learning the most favored group and $ \Phi_{\mathsf{UR}} $ is the UR-SSAT formula for learning the least favored group, then
 	$\max_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{ER}}]$   
 	and
 	$\min_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{UR}}]$.   
@@ -229,7 +241,7 @@ We use the PPVs of the most and least favored groups to compute different fairne
 
 
 \subsection{Theoretical Analysis: Error Bounds}\label{fairness_justicia_sec:theory}
-We access the data generating distribution through  finite number of samples observed from it. These finite sample set introduce errors in the computed probabilities of the randomised quantifiers being $1$. These finite-sample errors in computed probabilities induce further errors in the computed positive predictive value (PPV) and fairness metrics. We next provide a bound on this finite-sample error.
+We access the data generating distribution through  finite number of samples observed from it. These finite sample set introduce errors in the computed probabilities of the randomised quantifiers being $1$. These finite-sample errors in computed probabilities induce further errors in the computed positive predictive value (\red{probability of positive prediction}) and fairness metrics. We next provide a bound on this finite-sample error.
 
 Let us consider that $\hat{p_i}$ is the estimated probability of a Boolean variable $ \bool_i $ being assigned to $ 1 $ from $k$-samples and $p_i$ is the true probability according to $ \mathcal{D} $. 
 %If $ | p_i - \hat{p_i}| \le \epsilon $, i.e., $ \epsilon $ additive error for small $ \epsilon \approx 0 $, we want to compute the error of probability $ p $ of the satisfaction of the SSAT formula $ \Phi $.  
