@@ -63,7 +63,7 @@ For simplicity, we have described the computation of conditional probability $ \
 %	An astute reader would observe that $I$ and $J$ are not independent. Following~\cite{chavira2008probabilistic}, we can simply capture relationship between the variables using constraints and if needed, auxiliary variables. In this case, it suffices to add the the constraint $J \rightarrow I$. 
 \end{example}
 
-\subsubsection{Measuring Fairness Metrics.}
+\subsubsection{Measuring Fairness Metrics}
 As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}] $ by solving the SSAT formula $ \Phi_\mathbf{a} $, we  use $ \Pr[\Phi_\mathbf{a}] $ to measure different fairness metrics. To this end, we compute $ \Pr[\Phi_\mathbf{a}] $ for all compound groups $\mathbf{a} \in A$ by solving an exponential number (with $ \numsensitive $) of SSAT formulas. We elaborate this enumeration approach, namely {\justiciaenum}, in Algorithm~\ref{fairness_justicia_algo:enum}  (Line~\ref{fairness_justicia_algo:justicia_enum_begin}--\ref{fairness_justicia_algo:justicia_enum_end}).
 
 \begin{algorithm}[t!]
@@ -91,9 +91,9 @@ As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}
 		\label{fairness_justicia_algo:justicia_learn_begin}
 		\State $ \phi_{\hat{Y}} := \mathsf{CNF}(\hat{Y}  = 1) $
 		\State $ p_{i} \leftarrow \Pr[X_i=1], \forall X_i \in \nonsensitive $
-		\State $  \Phi_\mathbf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \phi_{\hat{Y}} $
-		\State $  \Phi'_\mathbf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \neg \phi_{\hat{Y}} $
-		\State \Return $ \mathsf{SSAT}(\Phi_\mathbf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathbf{ER}) $
+		\State $  \Phi_\mathsf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \phi_{\hat{Y}} $
+		\State $  \Phi'_\mathsf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \neg \phi_{\hat{Y}} $
+		\State \Return $ \mathsf{SSAT}(\Phi_\mathsf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathsf{ER}) $
 		\label{fairness_justicia_algo:justicia_learn_end}
 		\EndFunction
 	\end{algorithmic}
@@ -109,55 +109,51 @@ For measuring path-specific causal fairness, we compute  $ \max_{ \mathbf{a}} \P
 
 
 
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
 
 
 \subsection{\red{Inference Approach using ER-SSAT Encoding}}
 \label{fairness_justicia_sec:learn_ssat}
-In most practical problems, there can be exponentially many compound groups due to the combinatorial combination of categorical sensitive features.  As a result, the enumeration approach may suffer from scalability issues due to an exponential number of calls to the SSAT solver. Hence, we propose an efficient SSAT encoding, where we make two SSAT calls, one for inferring the the most favored sensitive group with the maximum conditional probability of positive prediction of the classifier and another for inferring the least favored sensitive group with the minimum conditional probability of positive prediction of the same classifier. As shown above, these two probabilities are sufficient to measure different group and causal fairness metrics.
+In most practical problems, there can be exponentially many compound sensitive groups due to the combinatorial combination of categorical sensitive features.  As a result, the enumeration approach may suffer from scalability issues due to an exponential number of calls to the SSAT solver. To this end, we propose an efficient SSAT encoding, where we make two SSAT calls, one for inferring the the most favored sensitive group with the maximum conditional probability of positive prediction of the classifier and another for inferring the least favored sensitive group with the minimum conditional probability of positive prediction of the same classifier. As shown above, these two probabilities are sufficient to measure different group and causal fairness metrics.
 
-\subsubsection{Inferring the Most Favored Sensitive Group.}
-In an SSAT formula $ \Phi $, the order of quantification of the Boolean variables in the prefix  carries distinct interpretation of the satisfying probability of $ \Phi $.  
-In ER-SSAT formula, the probability of satisfying $ \Phi $ is the \textit{maximum} satisfying probability over the existentially quantified variables given the randomized quantified variables (by Rule 2, Sec.~\ref{fairness_justicia_sec:ssat}). 
-In this paper, we leverage this property to compute the most favored group with the highest \red{probability of positive prediction}. 
-We consider the following ER-SSAT formula. 
+\subsubsection{Inferring the Most Favored Sensitive Group}
+In the prefix of an SSAT formula $ \Phi $, the order of quantified variables carries distinct interpretation of  $ \Pr[\Phi] $.   In an ER-SSAT formula, $ \Pr[\Phi] $ is the \textit{maximum} satisfying probability of $ \Phi $ over the optimal assignment of existentially quantified variables given the randomized quantified variables (by Semantic 2, Sec.~\ref{fairness_justicia_sec:ssat}). In this paper, we leverage this property to compute the most favored sensitive group with the highest probability of positive prediction of a classifier. In particular, we consider the following ER-SSAT formula:
+
 \begin{equation}
 \Phi_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
  \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \phi_{\hat{Y}}.
  \label{fairness_justicia_eq:er}
 \end{equation}
-%In the prefix of the ER-SSAT formula $ \Phi_{\mathsf{ER}} $, the sensitive variables are  existentially quantified and they are followed by randomized quantified non-sensitive variables, which is in reverse order  in Eq.~\eqref{fairness_justicia_eq:re}. 
-The CNF formula $\phi_{\hat{Y}}$ is the CNF translation  of the classifier $ \hat{Y} = 1 $ without any specification of the compound sensitive group.  Therefore, as we solve $ \Phi_{\mathsf{ER}} $, we find the assignment to the existentially quantified variables $ A_1 = a^{\max}_1, \dots,A_{\numsensitive} = a^{\max}_{\numsensitive} $ for which the satisfying probability $ \Pr[\Phi_{\mathsf{ER}}] $ is maximum. 
-Thus, we compute  the most favored group $ \mathbf{a}_{\mathsf{fav}} \triangleq \{ a^{\max}_1, \dots, a^{\max}_{\numsensitive} \}$ achieving the highest \red{probability of positive prediction}. 
-%Since an assignment to $\{A_1, \dots, A_{\numsensitive}\}$ uniquely denotes a compound sensitive group, say $ \mathbf{a}_{\mathsf{fav}} \in A $, we find the most favored group $ \mathbf{a}_{\mathsf{fav}} $ for which $ \Pr[\Phi_{\mathsf{ER}}] $ achieves the highest \red{probability of positive prediction}. 
+
+The CNF formula $\phi_{\hat{Y}}$ in $ \Phi_{\mathsf{ER}} $ is the CNF translation  of the classifier $ \hat{Y} = 1 $ without any specification of the compound sensitive group.  Therefore, as we solve $ \Phi_{\mathsf{ER}} $, we find the optimal assignment to the existentially quantified variables $ A_1 = a^{\max}_1, \dots,A_{\numsensitive} = a^{\max}_{\numsensitive} $ for which the probability of satisfaction of the ER-SSAT formula $ \Pr[\Phi_{\mathsf{ER}}] $ becomes maximum. Thus, we compute  the most favored group $ \red{\mathbf{a}_{\max}} \triangleq [ a^{\max}_1, \dots, a^{\max}_{\numsensitive} ] $ achieving the highest probability of positive prediction of the classifier. 
 
 
-\subsubsection{Learning the Least Favored Group.}
-In order to learn the least favored group in terms of \red{probability of positive prediction}, we  compute the \textit{minimum} satisfying probability of the classifier $ \phi_{\hat{Y}} $ given the random values of the non-sensitive variables $ X_1, \dots, X_{\numnonsensitive} $. In order to do so, we have to solve a `universal-random' (UR) SSAT formula (Eq.~\eqref{fairness_justicia_eq:ar}) with  universal quantification over the sensitive variables and randomized quantification over the non-sensitive variables (by Rule 3, Sec.~\ref{fairness_justicia_sec:ssat}).
+\subsubsection{Inferring the Least Favored Sensitive Group}
+In order to infer the least favored sensitive group by a classifier, we  compute the \textit{minimum} conditional probability of positive prediction of the classifier with respect to all sensitive groups given the random values of the non-sensitive features. To this end, we  solve a `universal-random' (UR) SSAT formula with  universal quantifiers over sensitive features and randomized quantification over non-sensitive features (by Semantic 3, Sec.~\ref{fairness_justicia_sec:ssat}).
 \begin{equation}
 \Phi_{\mathsf{UR}} := \forall A_1,\dots, \forall A_{\numsensitive},
-\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \phi_{\hat{Y}}.
+\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \phi_{\hat{Y}}
 \label{fairness_justicia_eq:ar}
 \end{equation}
-A UR-SSAT formula returns the minimum satisfying probability of $ \phi $ over the universally quantified variables in contrast to the ER-SSAT formula that returns the maximum satisfying  probability over the existentially quantified variables.  
-Due to practical issues to solve UR-SSAT formula, in this paper, we leverage the \textit{duality} between UR-SSAT (Eq.~\eqref{fairness_justicia_eq:ar}) and ER-SSAT formulas (Eq.~\eqref{fairness_justicia_eq:er_complement}) 
+%By solving $ \Phi_{\mathsf{UR}} $, we find the optimal assignment to the universally quantified variables $ A_1 = a^{\min}_1, \dots,A_{\numsensitive} = a^{\min}_{\numsensitive} $ for which the probability of satisfaction of the UR-SSAT formula $ \Pr[\Phi_{\mathsf{UR}}] $ becomes minimum. Thus, $ \red{\mathbf{a}_{\min}} \triangleq [ a^{\min}_1, \dots, a^{\min}_{\numsensitive} ] $ becomes the least favored sensitive group achieving the lowest probability of positive prediction of the classifier. 
+
+\red{Solving an UR-SSAT formula raises several practical issues.} As a result, there is an unavailability of solvers for UR-SSAT formulas. To resolve this problem, we leverage the \textit{duality} between UR-SSAT  and ER-SSAT formulas, where we solve an UR-SSAT formula on the CNF $ \phi $ using the solution of an ER-SSAT formula on the complemented CNF $ \neg \phi $~\cite{littman2001stochastic}. More specifically, we solve the following ER-SSAT formula for finding the least favored sensitive group.
+
 \begin{equation}
-\Phi'_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
-\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \neg \phi_{\hat{Y}}.
-\label{fairness_justicia_eq:er_complement}
+	\Phi'_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
+	\R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive},   \; \neg \phi_{\hat{Y}}
+	\label{fairness_justicia_eq:er_complement}
 \end{equation}
-%\begin{equation}
-%\Phi'_{\mathsf{ER}} = \underbrace{\exists a_1,\dots, \exists a_{\numsensitive}}_{\text{sensitive features}},
-%\underbrace{\R^{p_{1}}x_1, \dots, \R^{p_{\numnonsensitive}}x_{\numnonsensitive}}_{\text{non-sensitive features}},   \; \underbrace{\neg \phi_{\hat{Y}} }_{\phi}.
-%\label{fairness_justicia_eq:er_complement}
-%\end{equation}
-and solve the UR-SSAT formula on the CNF $ \phi $ using the ER-SSAT formula on the complemented CNF $ \neg \phi $~\cite{littman2001stochastic}. Lemma~\ref{fairness_justicia_thm:dual} encodes this duality.
-%We apply such a duality because of the practical unavailability of an UR-SSAT solver (to the best of our knowledge).  Formally, we solve the following ER-SSAT formula to find the least favored group. 
+
+
+In Lemma~\ref{fairness_justicia_thm:dual}, we discuss the duality between UR-SSAT and ER-SSAT formulas.
+
+
 \begin{lemma}\label{fairness_justicia_thm:dual}
 Given Eq.~\eqref{fairness_justicia_eq:ar} and~\eqref{fairness_justicia_eq:er_complement},	$ \Pr[\Phi_{\mathsf{UR}}] = 1 - \Pr[\Phi'_{\mathsf{ER}}]  $.
 \end{lemma}
-As we solve $\Phi'_{\mathsf{ER}}$, we obtain the assignment to the sensitive features $\mathbf{a}_{\mathsf{unfav}} \triangleq \{a^{min}_1, \dots, a^{min}_{\numsensitive}\}$ that maximizes $\Phi'_{\mathsf{ER}}$. 
-If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, according to Lemma~\ref{fairness_justicia_thm:dual}, $ 1 - p $ is the minimum satisfying probability of $ \Phi_{\mathsf{UR}} $,  which is the \red{probability of positive prediction} of the least favored group $ \mathbf{a}_{\mathsf{unfav}}$. We present the algorithm for this learning approach, namely {\justicialearn} in Algorithm~\ref{fairness_justicia_algo:enum} (Line~\ref{fairness_justicia_algo:justicia_learn_begin}--\ref{fairness_justicia_algo:justicia_learn_end}).
+
+
+As we solve $\Phi'_{\mathsf{ER}}$, we obtain the optimal assignment to the sensitive features $\mathbf{a}_{\min} \triangleq [a^{min}_1, \dots, a^{min}_{\numsensitive}]$ that maximizes $\Phi'_{\mathsf{ER}}$.  If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, then according to Lemma~\ref{fairness_justicia_thm:dual}, $ 1 - p $ is the minimum satisfying probability of $ \Phi_{\mathsf{UR}} $;  which is also the minimum probability of positive prediction of the classifier. We present the algorithm for the inference approach, namely {\justicialearn} in Algorithm~\ref{fairness_justicia_algo:enum} (Line~\ref{fairness_justicia_algo:justicia_learn_begin}--\ref{fairness_justicia_algo:justicia_learn_end}).
 
 \iffalse
 \begin{algorithm}[t!]
@@ -175,8 +171,8 @@ If $ p $ is the maximum satisfying probability of $ \Phi'_{\mathsf{ER}} $, accor
 \end{algorithm}
 \fi
 
-In ER-SSAT formula of Eq.~\eqref{fairness_justicia_eq:er_complement}, we need to negate the classifier $ \phi_{\hat{Y}} $ to another CNF formula $ \neg \phi_{\hat{Y}} $. The na\"ive approach of negating a CNF to another CNF generates exponential number of new clauses. Here, we can apply Tseitin transformation that increases the clauses linearly while introducing linear number of new variables~\cite{tseitin1983complexity}. As an alternative, we also directly encode the classifier $\alg$ for the negative class label $\hat{Y} = 0$ as a CNF formula and pass it to $\Phi'_{\mathsf{ER}} $, if possible. The last approach is generally more efficient than the other approaches as the resulting CNF is often smaller. 
-
+In the ER-SSAT formula in Eq.~\eqref{fairness_justicia_eq:er_complement}, we need to negate the classifier $ \phi_{\hat{Y}} $ to another CNF formula $ \neg \phi_{\hat{Y}} $. The na\"ive approach of negating one CNF to another CNF generates an exponential number of new clauses. Here, we apply Tseitin transformation for the negation, which increases the number of clauses linearly while introducing a linear number of new variables~\cite{tseitin1983complexity}. As an alternative approach, we also directly encode the binary classifier $\alg$ for the negative class label $\hat{Y} = 0$ as a CNF formula and pass it to $\Phi'_{\mathsf{ER}} $, whenever it is possible. The last approach is generally more efficient than the other approaches as the resulting CNF is often smaller.  
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
 
 
 \begin{example}[ER-SSAT encoding]
