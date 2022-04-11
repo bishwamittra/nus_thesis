@@ -172,24 +172,33 @@ As we solve $\Phi'_{\mathsf{ER}}$, we obtain the optimal assignment to the sensi
 \fi
 
 In the ER-SSAT formula in Eq.~\eqref{fairness_justicia_eq:er_complement}, we need to negate the classifier $ \phi_{\hat{Y}} $ to another CNF formula $ \neg \phi_{\hat{Y}} $. The na\"ive approach of negating one CNF to another CNF generates an exponential number of new clauses. Here, we apply Tseitin transformation for the negation, which increases the number of clauses linearly while introducing a linear number of new variables~\cite{tseitin1983complexity}. As an alternative approach, we also directly encode the binary classifier $\alg$ for the negative class label $\hat{Y} = 0$ as a CNF formula and pass it to $\Phi'_{\mathsf{ER}} $, whenever it is possible. The last approach is generally more efficient than the other approaches as the resulting CNF is often smaller.  
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
+
+
+
+
 
 
 \begin{example}[ER-SSAT encoding]
 	\label{fairness_justicia_example:er_ssat}
-	Here, we illustrate the ER-SSAT encodings for learning the most favored and the least favored group in presence of multiple sensitive groups. As the example in Figure~\ref{fairness_justicia_fig:fair_example} is degenerate for this purpose, we introduce another sensitive group `sex $ \in $ \{male, female\}'. Consider a Boolean variable $ S $ for `sex' where the literal $ S $ denotes `sex = male'. With this new sensitive feature, let the classifier be  $\alg \triangleq (\neg F \vee I \vee S) \wedge (F \vee J)$, where $ A,F,I,J $ have same distributions as discussed in Example~\ref{fairness_justicia_example:re_ssat}. 
-	Hence, we obtain the ER-SSAT formula of $\alg$ to learn the most favored group:
-	$ \Phi_{\mathsf{ER}} =  \exists S,\exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; (\neg F \vee I \vee S) \wedge (F \vee J).
-	$
+	Here, we illustrate the ER-SSAT encoding for inferring the most favored and the least favored sensitive group of a classifier in the presence of multiple compound sensitive groups. As the example in Figure~\ref{fairness_justicia_fig:fair_example} is degenerate for this purpose, we introduce another Boolean sensitive feature `sex' $ \in $ \{male, female\}. Consider a Boolean variable $ S $ for sex where the literal $ S $ denotes sex = male. With this new sensitive feature, let the classifier be  $\alg \triangleq (\neg F \vee I \vee S) \wedge (F \vee J)$, where variables $ F,I,J $, and $ A $ have same distributions as discussed in Example~\ref{fairness_justicia_example:re_ssat}. Hence, we obtain the following ER-SSAT formula of $\alg$ to infer the most favored sensitive group:
 	
-	As we solve $ \Phi_{\mathsf{ER}} $, we learn that the assignment to the existential variables $ \sigma(S) = 1, \sigma(A) = 0$, i.e. `male individuals with age $ < 40 $' is the most favored group with \red{probability of positive prediction} computed as $ \Pr[\Phi_{\mathsf{ER}}] = 0.46$. Similarly, to learn the least favored group, we negate the CNF of the classifier $\alg$ to obtain the following ER-SSAT formula:
-	$	\Phi_{\mathsf{ER'}} =  \exists S, \exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; \neg((\neg F \vee I \vee S) \wedge (F \vee J)).
-	$
+	\[ \Phi_{\mathsf{ER}} =  \exists S,\exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; (\neg F \vee I \vee S) \wedge (F \vee J).
+	\]
 	
-	Solving $ \Phi_{\mathsf{ER'}} $, we learn the assignment $ \sigma(S) = 0, \sigma(A) = 0  $ and $  \Pr[\Phi_{\mathsf{ER'}}] = 0.57 $. Thus, `female individuals with age $ < 40 $' constitute the least favored group with \red{probability of positive prediction}:  $ 1-0.57 = 0.43$. 
-	Thus, {\justicialearn} allows us to learn the most and least favored groups and the corresponding discrimination.
+	As we solve $ \Phi_{\mathsf{ER}} $, we infer that the optimal assignment to the existential variables $ \sigma(S) = 1, \sigma(A) = 0$, which implies that `male individuals with age $ < 40 $' is the most favored group with probability of positive prediction computed as $ \Pr[\Phi_{\mathsf{ER}}] = 0.46$. Similarly, to infer the least favored group, we negate the CNF of the classifier $\alg$ to obtain the following ER-SSAT formula:
+	
+	\[\Phi'_{\mathsf{ER}} =  \exists S, \exists A, \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \; \neg((\neg F \vee I \vee S) \wedge (F \vee J)).
+	\]
+	
+	Solving $ \Phi'_{\mathsf{ER}} $, we learn the optimal assignment $ \sigma(S) = 0, \sigma(A) = 0  $ and $  \Pr[\Phi'_{\mathsf{ER}}] = 0.57 $. Thus, `female individuals with age $ < 40 $' constitute the least favored group with probability of positive prediction:  $ 1-0.57 = 0.43$. 
+	Thus, {\justicialearn} allows us to infer the most and least favored sensitive groups and the corresponding discrimination.
 \end{example}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
+
+
 We use the \red{probability of positive prediction}s of the most and least favored groups to compute different fairness metrics. We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\ref{fairness_justicia_lm:equivalence}.
+
 \begin{lemma}
 	\label{fairness_justicia_lm:equivalence}
 	Let $ \Phi_{\mathbf{a}} $ be the RE-SSAT formula for computing the \red{probability of positive prediction} of the compound sensitive group $ \mathbf{a} \in A $. If $ \Phi_{\mathsf{ER}} $ is the ER-SSAT formula for learning the most favored group and $ \Phi_{\mathsf{UR}} $ is the UR-SSAT formula for learning the least favored group, then
