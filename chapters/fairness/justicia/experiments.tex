@@ -43,9 +43,7 @@ Finally, {\justicialearn} is significantly efficient in terms of runtime than {\
 %\subsubsection{Performance of Different Verifiers.}
 \subsubsection{Accuracy: Less Than $  1\%$-error} 
 In order to assess the accuracy of different verifiers, we have considered the decision tree in Figure~\ref{fairness_justicia_fig:fair_example} for which the fairness metrics  are analytically computable. 
-In Table~\ref{fairness_justicia_tab:synthetic}, we show the computed fairness metrics by {\justicia}, FairSquare, VeriFair, and AIF360. We observe that {\justicia} and AIF360  yield more accurate estimates of DI and SP compared against the ground truth with less than $1\%$ error.
-FairSquare and VeriFair  estimate the disparate impact to be $0.99$ and thus, being unable to verify the fairness violation. 
-Thus, {\justicia} is significantly accurate than the existing formal verifiers: FairSquare and VeriFair. 
+In Table~\ref{fairness_justicia_tab:synthetic}, we show the computed fairness metrics by {\justicia}, FairSquare, VeriFair, and AIF360. We observe that {\justicia} and AIF360  yield more accurate estimates of DI and SP compared against the ground truth values of fairness metrics with less than $1\%$ error. In contrast, FairSquare and VeriFair  estimate DI to be $0.99$ and thus, being unable to verify the fairness violation. Therefore, {\justicia} is significantly more accurate than the existing formal verifiers: FairSquare and VeriFair. 
 %First we observe that both RE and ER encoding result in the same disparate impact, thereby showing the equivalence between the two encodings.  
 
 
@@ -73,21 +71,17 @@ Thus, {\justicia} is not only accurate but also scalable than the existing verif
 
 
 \subsubsection{Verification: Detecting Compounded Discrimination in Protected Groups.}
-We have tested {\justicia} for datasets consisting of multiple sensitive features and reported the results in Figure~\ref{fairness_justicia_fig:sensitive_groups}. {\justicia} operates on datasets with even 40 compound sensitive groups and can potentially scale more than that while the state-of-the-art fairness verifiers (e.g., FairSquare and VeriFair) consider a single sensitive feature.
-Thus, {\justicia} removes an important limitation in practical fairness verification. 
-Additionally, we observe in most datasets the disparate impact decreases and thus, discrimination increases as more compound sensitive groups are considered. For instance, when we increase the total  groups from $ 5 $ to $ 40 $ in the Adult dataset, disparate impact decreases from around $ 0.9 $ to $ 0.3 $, thereby detecting higher discrimination. Thus, {\justicia} detects that the marginalized individuals of a specific type (e.g., `race')  are even more discriminated and marginalized when they also belong to a marginalized group of another type (e.g., `sex').
+We have tested {\justicia} for datasets consisting of multiple sensitive features and reported results in Figure~\ref{fairness_justicia_fig:sensitive_groups}. {\justicia} operates on datasets with even 40 compound sensitive groups and can potentially scale more than that while the state-of-the-art fairness verifiers (e.g., FairSquare and VeriFair) consider a single sensitive feature with two sensitive groups. Thus, {\justicia} removes an important limitation in practical fairness verification, which was previously restricted to Boolean sensitive groups. Additionally, in most datasets, we observe that disparate impact decreases and thus, discrimination increases as more compound sensitive groups are considered. For instance, when we increase the total  groups from $ 5 $ to $ 40 $ in the Adult dataset, disparate impact decreases from around $ 0.9 $ to $ 0.3 $, thereby detecting higher discrimination. Thus, {\justicia} detects that the marginalized individuals of a specific type (e.g., `race')  are even more discriminated and marginalized when they also belong to a marginalized group of another type (e.g., `sex').
 
 
 \input{chapters/fairness/justicia/table_fairness_algorithm.tex}
 
 
-\subsubsection{Verification: Fairness of Algorithms on Datasets.}
-We have experimented with two fairness-enhancing algorithms: the reweighing (RW) algorithm and the optimized-preprocessing (OP) algorithm.
-Both of them pre-process to remove statistical bias from the dataset. 
-We study the effectiveness of these algorithms using {\justicia} on three datasets each with two different sensitive features.  
+\subsubsection{Verification: Fairness of Algorithms on Datasets}
+We have experimented with two fairness-enhancing algorithms: reweighing (RW) algorithm and optimized-preprocessing (OP) algorithm. Both of them pre-process to remove statistical bias from the dataset. We study the effectiveness of these algorithms using {\justicia} on three datasets each with two different sensitive features.  
 In Table~\ref{fairness_justicia_tab:fair_algo_verification}, we report different fairness metrics on logistic regression and decision tree. We observe that {\justicia} verifies fairness improvement as the bias mitigating algorithms are applied.  For example, for the Adult dataset with `race' as the sensitive feature, disparate impact increases from $ 0.23 $ to $ 0.85 $ for applying the reweighing algorithm on logistic regression classifier. In addition, statistical parity decreases from $ 0.09 $ to $ 0.01 $, and equalized odds decreases from $ 0.13 $ to $ 0.03 $, thereby showing the effectiveness of reweighing algorithm in all three fairness metrics. 
 {\justicia} also finds instances where the fairness algorithms fail, specially when considering the decision tree classifier. 
-Thus, {\justicia} enables verification of different fairness enhancing algorithms in literature.
+Thus, {\justicia} verifies the effectiveness of different fairness enhancing algorithms.
 
 \subsubsection{Robustness: Stability to Sample Size.} 
 We have compared the robustness of {\justicia} with AIF360 by varying the sample-size and reporting the standard deviation of different fairness metrics. 
@@ -99,7 +93,7 @@ Thus, {\justicia} is more robust than the sample-based verifier AIF360.
 \begin{figure*}
 	\centering
 	\subfloat{\includegraphics[scale=.2]{figures/fairness/justicia/sampling_DI_after_Adult_rw_LR_race.pdf}}
-	\subfloat{\includegraphics[scale=.2]{figures/fairness/justicia/sampling_SPD_after_Adult_rw_LR_race.pdf}}		\caption{Standard deviation in estimation of disparate impact (DI) and stat. parity (SP)  for different sample sizes. {\justicia} is more robust with variation of sample size than  AIF360. }
+	\subfloat{\includegraphics[scale=.2]{figures/fairness/justicia/sampling_SPD_after_Adult_rw_LR_race.pdf}}		\caption{Standard deviation in estimation of disparate impact (DI) and stat. parity (SP)  for different sample sizes (sample size $ = 1 $ refers to the entire dataset). {\justicia} is more robust with variation of sample size than  AIF360. }
 	\label{fairness_justicia_fig:sample-size}
 \end{figure*}
 
@@ -118,7 +112,7 @@ Thus, {\justicia} is more robust than the sample-based verifier AIF360.
 
 
 \subsubsection{Comparative Evaluation of Different Encodings.}
-While both {\justiciaenum} and {\justicialearn}  have the same output according to Lemma~\ref{fairness_justicia_lm:equivalence},  {\justicialearn} encoding  improves exponentially  in runtime  than {\justiciaenum} encoding on both decision tree and Boolean CNF classifiers as we vary the total compound groups in Figure~\ref{fairness_justicia_fig:runtime_diff_encodings}. {\justiciacond} (conditional probabilities w.r.t. sensitive groups) also has an exponential trend in runtime similar to {\justiciaenum}.  This analysis justifies that the na\"ive enumeration-based approach cannot verify large-scale fairness problems containing multiple sensitive features, and {\justicialearn} is a more efficient approach for practical use.
+While both {\justiciaenum} and {\justicialearn}  have the same output according to Lemma~\ref{fairness_justicia_lm:equivalence},  {\justicialearn} encoding  improves exponentially  in runtime  than {\justiciaenum} encoding on both decision tree and Boolean CNF classifiers as we vary the total compound groups in Figure~\ref{fairness_justicia_fig:runtime_diff_encodings}. {\justiciacond} ({\justiciaenum} encoding where we consider conditional probabilities of non-sensitive features w.r.t. sensitive groups) also has an exponential trend in runtime similar to {\justiciaenum}.  This analysis justifies that the na\"ive enumeration-based approach cannot verify large-scale fairness problems containing multiple sensitive features, and {\justicialearn} is a more efficient approach for practical use.
 
 %The runtime efficiency of {\justicialearn} posits it as a more scalable and practical approach to verify fairness than {\justiciaenum}.
 %\red{Justify the use of }.
