@@ -194,17 +194,13 @@ In the ER-SSAT formula in Eq.~\eqref{fairness_justicia_eq:er_complement}, we nee
 	Thus, {\justicialearn} allows us to infer the most and least favored sensitive groups and the corresponding discrimination.
 \end{example}
 
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{2.5pt}}
 
 
-We use the \red{probability of positive prediction}s of the most and least favored groups to compute different fairness metrics. We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\ref{fairness_justicia_lm:equivalence}.
+We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\ref{fairness_justicia_lm:equivalence}.
 
 \begin{lemma}
 	\label{fairness_justicia_lm:equivalence}
-	Let $ \Phi_{\mathbf{a}} $ be the RE-SSAT formula for computing the \red{probability of positive prediction} of the compound sensitive group $ \mathbf{a} \in A $. If $ \Phi_{\mathsf{ER}} $ is the ER-SSAT formula for learning the most favored group and $ \Phi_{\mathsf{UR}} $ is the UR-SSAT formula for learning the least favored group, then
-	$\max_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{ER}}]$   
-	and
-	$\min_{\mathbf{a}} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{UR}}]$.   
+	Let $ \Phi_{\mathbf{a}} $ be an RE-SSAT formula for computing the probability of positive prediction of a classifier corresponding to the sensitive group $  \sensitive = \mathbf{a} $. Additionally, for the same classifer, let $ \Phi_{\mathsf{ER}} $ be an ER-SSAT formula for inferring the most favored sensitive group and $ \Phi_{\mathsf{UR}} $ be a UR-SSAT formula for inferring the least favored sensitive group.  Therefore,	$\max_{\mathbf{a} \in \sensitive} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{ER}}]$   	and	$\min_{\mathbf{a} \in \sensitive} \; \Pr[\Phi_{\mathbf{a}}] = \Pr[\Phi_{\mathsf{UR}}]$.\improvement{Rewrite this lemma in Appendix.}   
 \end{lemma}
 \iffalse
 \begin{theorem}
@@ -246,12 +242,11 @@ We use the \red{probability of positive prediction}s of the most and least favor
 
 
 \subsection{Theoretical Analysis: Error Bounds}\label{fairness_justicia_sec:theory}
-We access the data generating distribution through  finite number of samples observed from it. These finite sample set introduce errors in the computed probabilities of the randomised quantifiers being $1$. These finite-sample errors in computed probabilities induce further errors in the computed positive predictive value (\red{probability of positive prediction}) and fairness metrics. We next provide a bound on this finite-sample error.
+For practical fairness problems, we do not have access to the distribution of features rather to a finite-sample dataset. Since the input of {\justicia} is the distribution of features, we compute the distribution from the dataset. The finite-sample dataset introduces errors in the computed probabilities of randomized quantified features being assigned to $1$. These finite-sample errors in computed probabilities induce further errors in the computed probability of positive prediction of the classifier and corresponding fairness metrics. We next provide a bound on this finite-sample error.
 
 Let us consider that $\hat{p_i}$ is the estimated probability of a Boolean variable $ \bool_i $ being assigned to $ 1 $ from $k$-samples and $p_i$ is the true probability according to $ \mathcal{D} $. 
 %If $ | p_i - \hat{p_i}| \le \epsilon $, i.e., $ \epsilon $ additive error for small $ \epsilon \approx 0 $, we want to compute the error of probability $ p $ of the satisfaction of the SSAT formula $ \Phi $.  
-Thus, the true satisfying probability $p$ of $ \Phi $ is the weighted sum of all satisfying assignments of the CNF $ \phi $: $p = \sum_\sigma \prod_{\bool_i \in \sigma}p_i$.
-This probability is estimated as $\hat{p}$ using $k$-samples from the data generating distribution $\mathcal{D}$ such that $\hat{p} \leq \epsilon_0 p$ for $\epsilon_0 \geq 1$. 
+\red{Thus, the true satisfying probability $p$ of an SSAT formula $ \Phi $ is the weighted sum of all satisfying assignments of the CNF $ \phi $: $p = \sum_\sigma \prod_{l_i \in \sigma}l_i * p_i + (1 - l_i) * (1 - p_i)$, where the literal $ l_i \in \{0,1\} $ denotes either the variable $ B_i $ (when $ l_i = 1 $) or its negation (when $ l_i = 0 $). }This probability $ p $ is estimated as $\hat{p}$ using $k$-samples from the distribution $\mathcal{D}$ such that $\hat{p} \leq \epsilon_0 p$ for $\epsilon_0 \geq 1$. 
 %However, the true satisfying probability $ \hat{p} $  of $ \Phi $ is 
 %\[
 %\hat{p} = \sum_\sigma \prod_{\bool_i \in \sigma}\hat{p_i}  \leq \sum_\sigma \prod_{\bool_i \in \sigma}(1 \pm \epsilon_i) p_i = \prod_{i =1}^m (1 \pm \epsilon_i) p = \epsilon_0 p
@@ -275,7 +270,7 @@ If we consider $\epsilon_i = \frac{\ln \epsilon_0}{2^i}$, we obtain
 %Theorem~\ref{fairness_justicia_thm:sample} states that for the prescribed number of samples the estimated disparate impact $\hat{DI}$ and statistical parity $\hat{SP}$ would also satisfy $\hat{DI} \leq  \epsilon_0 DI, $ and $\hat{SP} \leq 2\epsilon_0 SP$.
 %Apply Hoeffding inequality for each term and then use Union bound for $2^n$ existential variables.
 \begin{corollary}
-	If $k$ samples are considered from the data-generating distribution in {\justicia} such that 
+	If $k$ samples are considered from the  distribution in {\justicia} such that 
 	$
 	k = O\left((n+ \ln(1/\delta))\frac{\ln m}{\ln \epsilon_0}\right),
 	$
@@ -284,10 +279,11 @@ If we consider $\epsilon_i = \frac{\ln \epsilon_0}{2^i}$, we obtain
 	\hat{DI} \leq  \epsilon_0 DI, \quad \text{and} \quad \hat{SP} \leq 2\epsilon_0 SP.
 	$
 \end{corollary}
-This implies that given a classifier $ \alg \triangleq \Pr(\hat{Y}|X, A) $ represented as a CNF formula and a data-generating distribution $ (X,A,Y) \sim \mathcal{D} $, {\justicia} can verify independence and separation notion of fairness up to an error level $\epsilon_0$ and $2\epsilon_0$ with probability $1-\delta$.
+This implies that given a binary classifier represented as a CNF formula and a distribution of sensitive and non-sensitive features, {\justicia} can verify independence and separation notion of fairness up to an error level $\epsilon_0$ and $2\epsilon_0$ with probability $1-\delta$.
 Thus, {\justicia} is a sound framework of fairness verification with high probability.
 %\red{Proof of all theorems for arxiv version}
 %Use definition of $GF = p_1/p_2$.
+
 
 
 
