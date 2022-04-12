@@ -19,5 +19,4 @@ For a binary decision tree, each feature, including the continuous ones, is comp
 Linear classifiers are generally trained on continuous features, where we apply discretization in the following way. Let us consider a continuous feature $X_c$, where $w$ is its weight during training. We discretize $ X_c $ to a set $ \mathbf{B} $ of Boolean features and recalculate the weight of each variable in $ \mathbf{B} $ based on $ w $. For the discretization of $X_c$, we consider the interval-based approach\footnote{Our implementation is agnostic to any discretization technique.}. For each interval in the continuous space of $X_c$, we consider a Boolean variable $B_i \in \mathbf{B}$, such that $ B_i $ is assigned $ 1 $ when the feature-value of $X_c$ lies within the $i^{\mathrm{th}}$ interval and $ B_i $ is assigned $ 0 $ otherwise. Following that, we assign the weight of $ B_i $ to be $ \mu_iw $, where $ \mu_i $ is the mean of feature values in the $i^{\mathrm{th}}$ interval. We can show that if we consider infinite number of intervals, $ X_c \approx \sum_i \mu_i B_i $. 
 
 
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{2pt}}
 
