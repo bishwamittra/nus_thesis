@@ -1,4 +1,4 @@
-\documentclass[12pt]{report}
+\documentclass[10pt]{report}
 %\renewcommand{\baselinestretch}{1.5} 
 
 
@@ -39,7 +39,8 @@
 \usepackage{comment}
 \usepackage{microtype}
 \usepackage{wrapfig}
-\usepackage{hyperref,url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
 \usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{caption}
@@ -124,6 +125,11 @@
 			\newcommand{\parent}{\ensuremath{\mathrm{Pa}}}
 			\newcommand{\BN}{\ensuremath{\mathsf{BN}}}
 			
+			
+% 	FairXplainer
+			\newcommand{\fairxplainer}{\ensuremath{\mathsf{FairXplainer}}}
+			
+			
 %			color
 			\definecolor{terminate}{gray}{0.8}
 			\definecolor{collision}{rgb}{0.2,1,0.3}
@@ -167,10 +173,13 @@
 		\vspace{1em}
 		\large Bishwamittra Ghosh
 	\end{center}
-	
+
+	\input{chapters/abstract.tex}
+	\input{chapters/list_of_papers.tex}	
 	\input{chapters/introduction.tex}
 	
-%
+
+%% Interpretability
 %%		IMLI
 %			\chapter{Efficient Learning of  Interpretable Classification Rules}
 %				\input{chapters/interpretability/imli/abstract}
@@ -183,24 +192,24 @@
 %				\input{chapters/interpretability/imli/iterative_learning}
 %				\input{chapters/interpretability/imli/experiment}
 %				\input{chapters/interpretability/imli/conclusion}
-
-
-
-%		Relaxed CNF
-			\chapter{Classification Rules in Relaxed Logical Form}
-				\input{chapters/interpretability/relaxed-cnf/abstract.tex}
-				\input{chapters/interpretability/relaxed-cnf/introduction.tex}
-				\input{chapters/interpretability/relaxed-cnf/related_work.tex}
-				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
-				\input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
-				\input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
-				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
-				\input{chapters/interpretability/relaxed-cnf/experiment.tex}
-				\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
-				
-			
-	
-	
+%
+%
+%
+%%		Relaxed CNF
+%			\chapter{Classification Rules in Relaxed Logical Form}
+%				\input{chapters/interpretability/relaxed-cnf/abstract.tex}
+%				\input{chapters/interpretability/relaxed-cnf/introduction.tex}
+%				\input{chapters/interpretability/relaxed-cnf/related_work.tex}
+%				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
+%				\input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
+%				\input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
+%				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
+%				\input{chapters/interpretability/relaxed-cnf/experiment.tex}
+%				\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
+%				
+%			
+%	
+%	
 %%	Fairness
 %%		Justicia
 %			\chapter{Justicia: A Stochastic SAT Approach to Formally Verify Fairness}
@@ -223,8 +232,7 @@
 %				\input{chapters/fairness/fvgm/evaluations}
 %				\input{chapters/fairness/fvgm/applications}
 %				\input{chapters/fairness/fvgm/conclusion}
-%				
-%% Interpretability
+				
 				
 				
 				
