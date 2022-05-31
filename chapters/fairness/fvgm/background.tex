@@ -5,7 +5,7 @@
 	\textbf{Fairness in ML.}
 	We consider\footnote{{We represent sets/vectors by bold letters, and the corresponding distributions by calligraphic letters. We express random variables in uppercase, and an assignment of a random variable in lowercase.}} a dataset $ \mathbf{D} $ as a collection of triples $ (\nonsensitive, \sensitive, Y) $ generated from an underlying distribution $\mathcal{D}$. $ \nonsensitive \triangleq \{X_1, \dots, X_{m_1}\} $ are non-sensitive features whereas $ \sensitive \triangleq \{A_1, \dots, A_{m_2}\} $ are categorical sensitive features.  $Y \in \{0,1\}$ is the binary label (or class) of $(\nonsensitive,\sensitive)$. Each non-sensitive feature $ X_i$ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each sensitive feature $ A_j \in \{0, \dots, N_j\}  $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. 
 %	\red{Therefore, the distribution $\mathcal{D}$ is the joint distribution on $(\nonsensitive,\sensitive)$, where  $\mathcal{X}_i$ and $\mathcal{A}_i$ are the marginal distributions.} 
-	%Therefore, $ \mathcal{D} = \prod_{i=1}^{m} \mathcal{X}_i \prod_{j=1}^{n} \mathcal{A}_j $ denotes the product distribution of sensitive and non-sensitive features and thus considered the underlying distribution for the dataset $ D $.  Additionally, $ Y \in \{0,1\} $ denotes the binary class label of $ (\nonsensitive, \sensitive) $. Let $ \alg : (\nonsensitive, \sensitive) \rightarrow \hat{Y} $  be a binary classier trained on $ D $, where $ \hat{Y} \in \{0,1\} $ is the predicted class. The positive predictive value (PPV) of $ \alg $, denoted as $ \Pr[\hat{Y} = 1] $, is the probability of positive outcome.
+	%Therefore, $ \mathcal{D} = \prod_{i=1}^{m} \mathcal{X}_i \prod_{j=1}^{n} \mathcal{A}_j $ denotes the product distribution of sensitive and non-sensitive features and thus considered the underlying distribution for the dataset $ D $.  Additionally, $ Y \in \{0,1\} $ denotes the binary class label of $ (\nonsensitive, \sensitive) $. Let $ \alg : (\nonsensitive, \sensitive) \rightarrow \hat{Y} $  be a binary classier trained on $ D $, where $ \hat{Y} \in \{0,1\} $ is the predicted class. The positive predictive value (\red{PPV}) of $ \alg $, denoted as $ \Pr[\hat{Y} = 1] $, is the probability of positive outcome.
  	We use $ (\mathbf{x}, \mathbf{a}) $ to denote the feature-values of  $ (\nonsensitive, \sensitive) $.  For sensitive features, a valuation vector $ \mathbf{a} = [a_1, .., a_{m_2}] $ is called a \textit{compound sensitive group}. For example, consider $ \sensitive = $ \{race, sex\} where race $ \in $ \{Asian, Color, White\} and sex $ \in $ \{female, male\}. Thus $ \mathbf{a} = $ [Asian, female]  is a compound sensitive group. 
  	We represent a binary classifier trained on the dataset $\mathbf{D}$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \hat{Y} $. Here, $\hat{Y} \in \{0,1\}$ is the predicted class of $ (\nonsensitive, \sensitive) $.
  	
@@ -33,10 +33,10 @@
  		$.
  	\end{enumerate}
 
- 	  For all of the above metrics, lower value of $\epsilon$ indicates higher fairness demonstrated by the classifier $\mathcal{M}$. Following the observation of~\cite{ghosh2020justicia},  computing all of the aforementioned fairness metrics is equivalent to computing the maximum and minimum of the \textit{Positive Predictive Value} (PPV) of the classifier, denoted as $\Pr[\hat{Y}=1|\mathbf{A} =\mathbf{a}]$, for all compound sensitive groups $\mathbf{a}$ from $ \sensitive $. Thus, in Section~\ref{fvgm_sec:fvgm}, we focus on computing the maximum and minimum PPVs and then extend it to assess corresponding fairness metrics. We call the group for which PPV is maximum (minimum) as the \textit{most (least) favored group}.
+ 	  For all of the above metrics, lower value of $\epsilon$ indicates higher fairness demonstrated by the classifier $\mathcal{M}$. Following the observation of~\cite{ghosh2020justicia},  computing all of the aforementioned fairness metrics is equivalent to computing the maximum and minimum of the \textit{probability of positive prediction} of the classifier, denoted as $\Pr[\hat{Y}=1|\mathbf{A} =\mathbf{a}]$, for all compound sensitive groups $\mathbf{a}$ from $ \sensitive $. Thus, in Section~\ref{fvgm_sec:fvgm}, we focus on computing the maximum and minimum probability of positive prediction of the classifier and then extend it to assess corresponding fairness metrics. We call the group for which the probability of positive prediction is maximum (minimum) as the \textit{most (least) favored group} of the classifier.
  
-% 	\textit{Disparate impact} (DI)~\cite{feldman2015certifying} measures the ratio of PPVs between the most favored group and least favored group, and prescribe it to be close to $1$. Formally, 
-% 	Another popular relaxation of independence metrics  is \textit{statistical parity} (SP) that measures the difference of PPV among sensitive groups, and prescribe this to be near zero. Formally, an algorithm satisfies $\epsilon$-statistical parity if, for $\epsilon \in [0,1] $, 
+% 	\textit{Disparate impact} (DI)~\cite{feldman2015certifying} measures the ratio of \red{PPV}s between the most favored group and least favored group, and prescribe it to be close to $1$. Formally, 
+% 	Another popular relaxation of independence metrics  is \textit{statistical parity} (SP) that measures the difference of \red{PPV} among sensitive groups, and prescribe this to be near zero. Formally, an algorithm satisfies $\epsilon$-statistical parity if, for $\epsilon \in [0,1] $, 
 % 	\[
 % 	\max_{\mathbf{a}_i, \mathbf{a}_j \in A}|\Pr[\hat{Y} =1 | A = \mathbf{a}_i] - \Pr [\hat{Y} = 1| A = \mathbf{a}_j]| \le \epsilon.
 % 	\] 	
@@ -58,7 +58,7 @@
 % 	\red{Need to clarify, group fairness and causal fairness?}
 % 	
 % 	
-% 	\blue{It may be space consuming to discuss different fairness metrics, in which case we can mention that computing PPV is the core component of estimating different fairness metrics.}
+% 	\blue{It may be space consuming to discuss different fairness metrics, in which case we can mention that computing \red{PPV} is the core component of estimating different fairness metrics.}
 % 
 
 	\textbf{Stochastic Subset Sum Problem ({\stochastic}).} 
