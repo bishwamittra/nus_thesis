@@ -1,0 +1,101 @@
+%\clearpage
+\section{Background: Fairness and Global Sensitivity Analysis}\label{sec:preliminaries}\vspace*{-.5em}
+Before proceeding to the details of our contribution, we present the fundamentals of group fairness metrics as quantifiers of bias and global sensitivity analysis as a classical method of feature attribution.\vspace*{-.5em}
+\subsection{Fairness in Machine Learning: Fairness Metrics}
+We consider\footnote{{We represent sets/vectors by bold letters, and the corresponding distributions by calligraphic letters. We express random variables in uppercase, and an assignment of a random variable in lowercase.}} a dataset $ \mathbf{D} $ as a collection of $n$ triples  $\{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n$ 
+ generated from an underlying distribution $\mathcal{D}$. Each non-sensitive data point $\mathbf{x}^{(i)}$ consists of $\numnonsensitive$ features $\{\mathbf{x}^{(i)}_1, \dots, \mathbf{x}^{(i)}_{\numnonsensitive}\} $. Each sensitive data point $\mathbf{a}^{(i)}$ consists of $\numsensitive$ categorical features $\{\mathbf{a}^{(i)}_1, \dots, \mathbf{a}^{(i)}_{\numsensitive}\} $.  $y^{(i)} \in \{0,1\}$ is the binary class corresponding to $(\mathbf{x}^{(i)}, \mathbf{a}^{(i)})$. %Each non-sensitive feature $ X_i$ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each sensitive feature $ A_j \in \{0, \dots, N_j\}  $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. 
+ We use $ (\nonsensitive, \sensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, \mathbf{a}, y)$.  
+%\blue{For sensitive features, a vector $ \mathbf{a} = [a_1, .., a_{\numsensitive}] $ of categorical values is called a \textit{compound sensitive group}. For example, consider $ \sensitive = $ \{race, sex\}, where race $ \in $ \{Asian, Color, White\} and sex $ \in $ \{female, male\}. Thus $ \mathbf{a} = $ [Asian, female]  is a compound sensitive group.}\unsure{blue part is not needed} 
+ We represent a binary classifier trained on the dataset $\mathbf{D}$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $. Here, $\widehat{Y} \in \{0,1\}$ is the class predicted for $ (\nonsensitive, \sensitive) $.
+Given this setup, we discuss different fairness metrics to compute bias in the prediction of a classifier~\cite{feldman2015certifying,hardt2016equality,nabi2018fair}.  %\red{We use $ f(\alg, \mathbf{D}) $ to denote a fairness metric computed for a classifier $ \alg $ on the dataset $ \mathbf{D} $}. %\blue{We certify a classifier $ \epsilon $-fair, for a constant $ \epsilon \in [0,1] $, by computing $ \mathds{1}(f(\alg, \mathbf{D}) \le \epsilon) $. Here, $ \mathds{1} $ is an indicator function evaluating to $ 1 $ whenever the input is true, and $ 0 $ otherwise.}\info{Not necessary!} 
+\begin{enumerate}[leftmargin=*]
+	%		\itemsep0em 
+	\item \textit{Statistical Parity} ($ \mathsf{SP} $)~\cite{feldman2015certifying}: Statistical parity belongs to \textit{independence} measuring group fairness metrics, where the prediction $ \widehat{Y} $ is statistically independent of sensitive features $ \sensitive $.  The statistical parity of  a classifier is measured as $ f_{\mathsf{SP}}(\alg, \mathbf{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] $, which is the difference between the maximum and minimum conditional probability of positive prediction the classifier for different sensitive groups.
+	
+	\item \textit{Equalized Odds} ($ \mathsf{EO} $)~\cite{hardt2016equality}: \textit{Separation} measuring group fairness metrics such as equalized odds constrain that $ \widehat{Y} $ is independent of $ \sensitive $ given the ground class $ Y $.  Formally, for $ Y \in \{0,1\} $, equalized odds is $ f_{\mathsf{EO}}(\alg, \mathbf{D})  \triangleq \max(\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0], \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1])$. 
+	
+	
+	\item \textit{Predictive Parity} ($ \mathsf{PP} $)~\cite{verma2018fairness}: \textit{Sufficiency} measuring group fairness metrics such as predictive parity constrain that the ground class $ Y $ is independent of $ \sensitive $ given the prediction $ \widehat{Y} $. Formally, $ f_{\mathsf{PP}}(\alg, \mathbf{D})  \triangleq \max(\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0], \max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1])$. % \textit{Conditional Use Accuracy Equality (CUAE):}
+%	\item \blue{\textit{Path-specific Causal Fairness} (PCF): 
+%		Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\widehat{Y} =1 |\mathbf{A}=  \mathbf{a}] $ be the sensitive group with maximum conditional probability of positive prediction of the classifier. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.  To this end, the path-specific causal fairness of a classifier is $ f(\alg, \mathbf{D}) = \max_{\mathbf{a}}\Pr[\widehat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] - \min_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}, \mediator ] $.}\change{How to sample $ \mathbf{Z} $?}
+\end{enumerate}
+All of the aforementioned group fairness metrics depend on the difference between different conditional probabilities of positive prediction of a classifier.
+For all of these metrics, lower value of $ f(\alg, \mathbf{D}) $ indicates higher fairness demonstrated by the classifier $\mathcal{M}$. \textit{We deploy these fairness metrics as the measures of bias of a classifier w.r.t\ a given dataset.}%\info{Not necessary!} 
+
+\subsection{Global Sensitivity Analysis: Variance Decomposition}
+Global sensitivity analysis is a field that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input while considering the whole input domain~\cite{saltelli2008global}.
+Sensitivity analysis is an essential component for quality assurance and impact assessment of models in EU~\cite{eu}, USA~\cite{usepa}, and research communities~\cite{saltelli2020five}.
+%\paragraph{Sensitivity Analysis:}
+\emph{Variance-based sensitivity analysis} is a form of global sensitivity analysis, where variance is considered as the measure of uncertainty~\cite{sobol1990sensitivity,sobol2001global}. To illustrate, let us consider a real-valued function $  \function(\mathbf{Z}) $, where $ \mathbf{Z} $ is a vector of $ \numnonsensitive $ input variables $ \{Z_1, \dots, Z_k\} $.
+% and $ Y $ is a univariate output. 
+%\blue{In sensitivity analysis, assumptions are made on the independence and uniform distribution of $ X_i $'s within the unit hypercube}, that is, $ X_i \in [0,1] $ for $ i = \{ 1, \dots, k\} $.\footnote{In our experiments, we have not considered this yet.} Let $ [\numnonsensitive] \triangleq \{1,2,\dots, \numnonsensitive\} $. Then, 
+Now, we decompose $ \function(\mathbf{Z}) $ among the subsets of inputs, such that:
+\begin{align}
+	\function(\mathbf{Z}) &= \function_0 + \sum_{i=1}^{\numnonsensitive} \function_{\{i\}}(Z_i) +  \sum_{i < j}^{\numnonsensitive} \function_{\{i,j\}}(Z_i, Z_j)  + \cdots  + \function_{\{1, 2, \dots, \numnonsensitive\}} (Z_1, Z_2, \dots, Z_{\numnonsensitive})\notag%\label{eq:functional_decomposition}
+	\\    
+	&= \function_0 +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \function_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}})\label{eq:functional_decomposition_set_notation}
+\end{align}
+%	$S_> = \{{S_0}, \ldots, {S_{|s|}}\}$ i.e. a monotonically increasing ordering of $|S|$ features for a given starting feature $Z_{S_0}$ such that $S_0 <S_1 <\ldots <S_{|S|}$.
+In this decomposition, $ \function_0 $ is a constant, $ \function_{\{i\}} $ is a function of $ Z_i $, $ \function_{\{i,j\}} $ is a function of $ Z_i $ and $ Z_j $, and so on. Here, $ [\numnonsensitive] \triangleq \{1,2,\dots, \numnonsensitive\} $ and $ \mathbf{S}$ is an ordered subset of $[\numnonsensitive] \setminus \emptyset $.  We denote $ \mathbf{Z}_{\mathbf{S}}  \triangleq \{Z_i | i \in \mathbf{S}\}$ as the input of $ \function_{\mathbf{S}} $, where $ \mathbf{Z}_{\mathbf{S}}$ is a set of variables with indices belonging to $ \mathbf{S} $.  The standard condition of this decomposition is the orthogonality of each term in the right-hand side of Eq.~\eqref{eq:functional_decomposition_set_notation}~\cite{sobol1990sensitivity}. $ \function_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}}) $ is the effect of varying all the features in $\mathbf{Z}_{\mathbf{S}}$ simultaneously. %\unsure{Is this sentence necessary?}  
+For $|\mathbf{S}|=1$, it quantifies an individual variable's effect. For $|\mathbf{S}|>1$, it quantifies the higher-order interactive effect of variables.
+\iffalse
+\begin{align}
+	\label{eq:orthogonality_in_decomposition}
+	\int_{0}^{1} \function_{\mathbf{S}}(\mathbf{X}_{\mathbf{S}})dX_i = 0, \text{ for } i \in \mathbf{S} = \{S_1, S_2, \dots, S_{|\mathbf{S}|}\}
+\end{align}\info{let's discuss this}
+
+This orthogonality constraint leads to the definitions of each term expressed as integrals (equivalently, the conditional expected values) of $ Y = f(\mathbf{X}) $. 
+
+\begin{align*}
+	&\int f(\mathbf{X})\prod_l dX_l =  \mathsf{E}[Y] = \function_0\\
+	&\int f(\mathbf{X})\prod_{l \ne i} dX_l =  \mathsf{E}[Y|X_i] = \function_{\{i\}}(X_i) + \function_0\\
+	&\int f(\mathbf{X})\prod_{l \ne i, j} dX_l = \mathsf{E}[Y|X_i, X_j] = \function_{\{i,j\}}(X_i, X_j)  +  \function_{\{i\}}(X_i) +  \function_{\{j\}}(X_j) + \function_0 \\
+	&\vdots
+\end{align*}
+
+Thus, $ \function_{\{i\}} $ is the effect of varying $ X_i $ alone and it is known as the \emph{main effect} of $ X_i $. Similarly, $ \function_{\{i,j\}} $ is the effect of varying both $ X_i $ and $ X_j $ simultaneously, additional to their effect of individual variations. $ \function_{\{i,j\}} $ is thus known as the \emph{second-order interaction} between $ X_i $ and $ X_j $. Higher order interactions have analogous interpretations. 
+
+Now, we assume $ f $ to be square integrable. Then each term $ \function_{\mathbf{S}} $ in Eq.~\eqref{eq:functional_decomposition_set_notation} are also square integrable. Squaring Eq.~\eqref{eq:functional_decomposition_set_notation}, integrating over $  [0,1]^\numnonsensitive$, and applying orthogonality constraint in Eq.~\ref{eq:orthogonality_in_decomposition}, we get
+\begin{align*}
+	\int f^2(\mathbf{X})\prod_l dX_l - \function_0^2 = \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset}  \function_{\mathbf{S}}^2(\mathbf{X}_{\mathbf{S}}) \prod_{S_i \in \mathbf{S}} d Z_{S_i}
+\end{align*}
+
+Here, the left hand side is equal to the variance of $ Y = f(\mathbf{X}) $, and the terms in the right hand side are variance terms decomposed with respect to  $ \mathbf{X}_{\mathbf{S}} \subseteq \mathbf{X} $. 
+\fi
+Now, if we assume $ \function $ to be square integrable, we obtain the decomposition of the variance of the output~\cite{sobol1990sensitivity}.
+\begin{align}\label{eq:variance_decomposition_set_notation}
+	\mathsf{Var}[g(\mathbf{Z})] &= \sum_{i=1}^{\numnonsensitive}V_{\{i\}} +  \sum_{i<j}^{\numnonsensitive} V_{\{i,j\}}  + \cdots  + V_{\{1, 2\dots, \numnonsensitive\}}= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} V_{\mathbf{S}} 
+\end{align}
+where $ V_{\{i\}} $ is the variance of $ \function_{\{i\}} $, $ V_{\{i,j\}} $ is the variance of $ \function_{\{i,j\}} $ and so on. Formally,  $V_{\mathbf{S}} \triangleq \mathsf{Var} _{\mathbf{Z}_{\mathbf{S}}}\left[\mathbb{E}_{{\textbf {Z}}/\mathbf{Z}_{\mathbf{S}}}[g(\mathbf{Z})\mid \mathbf{Z}_{\mathbf{S}}]\right]- \sum_{\mathbf{S}' \subset \mathbf{S}/\emptyset}{V} _{\mathbf{S}'}$. Here, $\mathbf{S}'$ denotes all the ordered proper subsets of $\mathbf{S}$. %\improvement{Check notations.}
+This variance decomposition shows how the variance of $\function(\mathbf{Z}) $ can be decomposed into terms attributable to each input, as well as the interactive effects among them. Together all terms sum to the total variance of the model output. 
+\textit{We reduce the problem of computing FIFs of subsets of features into a variance decomposition problem.}
+
+\iffalse
+
+Formally, $V_{\{i\}} = \mathsf{Var}_{\mathbf{X}_{\{i\}}}[\mathsf{E}_{\mathbf{X}_{\sim \{i\}}}[Y | X_i]]$ and $V_{\{i,j\}} = \mathsf{Var}_{\mathbf{X}_{\{i,j\}}}[\mathsf{E}_{\mathbf{X}_{\sim \{i,j\}}}[Y | X_i, X_j]] - V_{\{i\}} - V_{\{j\}}$
+\begin{align*}
+	& V_{\{i\}} = \mathsf{Var}_{\mathbf{X}_{\{i\}}}[\mathsf{E}_{\mathbf{X}_{\sim \{i\}}}[Y | X_i]]\\
+	& V_{\{i,j\}} = \mathsf{Var}_{\mathbf{X}_{\{i,j\}}}[\mathsf{E}_{\mathbf{X}_{\sim \{i,j\}}}[Y | X_i, X_j]] - V_{\{i\}} - V_{\{j\}}%\\
+	%& \vdots
+\end{align*}
+$ \mathbf{X}_{\sim \mathbf{S}} \triangleq \mathbf{X} \setminus \mathbf{X}_{\mathbf{S}} $ notation indicates the set of all variables except that are in  $ \mathbf{X}_{\mathbf{S}} $. Thus, in each definition of $ V_{\mathbf{S}} $, the expectation of $ Y $ is computed on variables in $ \mathbf{X}_{\sim \mathbf{S}} $ and then, the variance of expectations is computed on variables in $ \mathbf{X}_{\mathbf{S}} $. 
+
+
+This variance decomposition shows how the variance of $\function(\mathbf{X}) $ can be decomposed into terms attributable to each input, as well as the interactive effects among them. Together all terms sum to the total variance of the model output. 
+\textit{We reduce the problem of computing FIFs of subsets of features into a variance decomposition problem.}
+%	In the rest of the manuscript, we refer $ V_i $ as the first order variance of $ X_i $, $ V_{ij} $ as the second order variance of $ X_i $ and $ X_j $, and so on.
+
+
+\paragraph{Law of total variance:}
+
+if $ X $ and $ Y $ are random variables in the same probability space, and the variance of $ Y $ is finite, then law of total variance states the following.
+
+\begin{align*}
+	\mathsf{Var}[Y] = \mathsf{E}_X[\mathsf{Var}_Y[Y|X]] + \mathsf{Var}_X[\mathsf{E}_Y[Y|X]]
+\end{align*}
+
+
+Law of total variance is useful when we can compute the conditional variance/expectation of $ Y $ given $ X $ instead of the variance of $ Y $. 
+\fi
+
+

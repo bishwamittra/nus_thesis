@@ -15,15 +15,15 @@
 
 
 % Define header and footer
-\usepackage{lastpage}
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\lhead{{\includegraphics[height=.8cm]{figures/nus.png}}}
-%\rhead{\textbf{\textit{Interpretable and Fair Machine Learning}} }
-\rfoot{\thepage}
-\renewcommand{\footrulewidth}{0.7pt}
-\renewcommand{\headrulewidth}{0.7pt}
+%\usepackage{lastpage}
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%\fancyhf{}
+%\lhead{{\includegraphics[height=.8cm]{figures/nus.png}}}
+%%\rhead{\textbf{\textit{Interpretable and Fair Machine Learning}} }
+%\rfoot{\thepage}
+%\renewcommand{\footrulewidth}{0.7pt}
+%\renewcommand{\headrulewidth}{0.7pt}
 
 
 
@@ -99,6 +99,7 @@
 \newcommand{\blue}[1]{\textcolor{blue}{#1}}
 \newcommand{\green}[1]{\textcolor{green}{#1}}
 
+
 % Fairness 
 %	Justicia
 			\newcommand{\justicia}{\ensuremath{\mathsf{Justicia}}}
@@ -125,15 +126,16 @@
 			\newcommand{\parent}{\ensuremath{\mathrm{Pa}}}
 			\newcommand{\BN}{\ensuremath{\mathsf{BN}}}
 			
-			
-% 	FairXplainer
-			\newcommand{\fairxplainer}{\ensuremath{\mathsf{FairXplainer}}}
+%	FairXplainer
+			\newcommand{\fairXplainer}{\ensuremath{\mathsf{FairXplainer}}}
+			\newcommand{\function}{\ensuremath{g}}
 			
 			
 %			color
 			\definecolor{terminate}{gray}{0.8}
 			\definecolor{collision}{rgb}{0.2,1,0.3}
 			\definecolor{existential}{rgb}{0.9,0.9, 0.1}
+			\definecolor{affirmative}{rgb}{0.2,1,0.3}
 			
 
 % Interpretability
@@ -163,20 +165,19 @@
 			
 			
 			
-			
+\title{Interpretability and Fairness in Machine Learning: A Formal Method Approach}
+\author{Bishwamittra Ghosh}
+\date{}		
 			
 
 
 \begin{document}
-	\begin{center}
-		\Large \textbf{Interpretability and Fairness in Machine Learning: A Formal Method Approach} \\
-		\vspace{1em}
-		\large Bishwamittra Ghosh
-	\end{center}
-
+	\maketitle
+	\tableofcontents
 	\input{chapters/abstract.tex}
 	\input{chapters/list_of_papers.tex}	
 	\input{chapters/introduction.tex}
+	\input{chapters/background.tex}
 	
 
 %% Interpretability
@@ -185,7 +186,7 @@
 %				\input{chapters/interpretability/imli/abstract}
 %				\input{chapters/interpretability/imli/introduction}
 %				\input{chapters/interpretability/imli/related_work}
-%				\input{chapters/interpretability/imli/preliminaries}
+				\input{chapters/interpretability/imli/preliminaries}
 %				\input{chapters/interpretability/imli/problem_formulation}
 %				\input{chapters/interpretability/imli/baseline}
 %				\input{chapters/interpretability/imli/incremental_learning}
@@ -200,7 +201,7 @@
 %				\input{chapters/interpretability/relaxed-cnf/abstract.tex}
 %				\input{chapters/interpretability/relaxed-cnf/introduction.tex}
 %				\input{chapters/interpretability/relaxed-cnf/related_work.tex}
-%				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
+				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
 %				\input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
 %				\input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
 %				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
@@ -234,8 +235,15 @@
 %				\input{chapters/fairness/fvgm/conclusion}
 				
 				
-				
-				
+%%		FairXplainer
+%			\chapter{``How Biased is Your Feature?": Computing Fairness Influence Functions with Global Sensitivity Analysis}				
+%				\input{chapters/fairness/fif/abstract.tex}
+%				\input{chapters/fairness/fif/introduction.tex}
+%				\input{chapters/fairness/fif/preliminaries.tex}
+%				\input{chapters/fairness/fif/framework.tex}
+%				\input{chapters/fairness/fif/fairxplainer.tex}
+%				\input{chapters/fairness/fif/experiments.tex}
+%				\input{chapters/fairness/fif/conclusion.tex}	
 			
 		
 			 

@@ -1,0 +1,62 @@
+%\clearpage
+\section{Fairness Influence Functions: Definition and Computation}\label{sec:fifs}
+In this section, we discuss our contribution of formalizing and computing Fairness Influence Functions (FIF) as a quantifier of the contribution of a subset of features to the resultant bias of a classifier on a dataset. The key idea in the formalization of FIFs is their additive formulation. The key idea in the computation of FIFs is to relate bias with the scaled difference of the conditional variance of positive prediction of the classifier over specific sensitive groups, and to apply variance decomposition to compute individual and intersectional FIFs. %\red{In this section, we first formalize fairness influence functions, and then discuss a variance decomposition based approach to compute FIFs for group fairness metrics.}\todo{Structure: 1. Background (measuring bias using fairness metrics) 2.FIFs as a measure of feature bias 3. Reducing FIF estimation to variance decomposition 4. An algorithm to do the variance decomposition}
+
+%in Section~\ref{??}, and conclude by extending influence computation to other group fairness metrics in Section~\ref{??}
+%\subsection{An Axiomatic Formulation}
+%\label{sec:problem_formulation}
+\noindent\textbf{FIF: An Axiomatic Formulation.} We are given a binary classifier  $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $, a dataset $ \mathbf{D} = \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n $, and a  fairness metric $ f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0} $. Our objective is to compute the influences of non-sensitive features on $ f $. We compute influence of each subset of non-sensitive features $ \mathbf{X}_{\mathbf{S}} $, where $ \mathbf{S} = \{S_i | 1 \le S_i \le \numnonsensitive\} \subseteq [\numnonsensitive] \setminus \emptyset $ is a non-empty subset of indices. 
+
+\begin{definition}[Fairness Influence Function]
+Fairness Influence Function (FIF) $ w_{\mathbf{S}}:\mathbf{X}_{\mathbf{S}} \rightarrow \mathbb{R} $ measures the quantitative contribution of the subset of features $ \mathbf{X}_{\mathbf{S}} \subseteq \mathbf{X}_{[k]}$ on the incurred bias $ f(\alg, \mathbf{D}) $ of the classifier $ \alg $ for dataset $\mathbf{D}$. We refer $ w_{\mathbf{S}} $ as an \emph{individual influence} when $ |\mathbf{S}| = 1 $ and an \emph{inter-sectional influence} when $ |\mathbf{S}| > 1 $\textemdash particularly, a second-order influence when $ |\mathbf{S}| = 2 $ and a higher-order influence when $ 3 \le |\mathbf{S}| \le \numnonsensitive $. %\unsure{What do we mean by function here? Isn't FIF scalar?}
+\end{definition}	
+Since FIF is meant to attribute the bias of the classifier to the subset of features, it is natural to choose a function such that the FIFs of all the subsets of features exactly adds up to the total bias. This leads to the following additivity axiom.
+%{\fairXplainer} is an axiomatic approach to relate individual and inter-sectional influences with associated fairness metrics, which we formalize in the following.
+\begin{axiom}[Additivity of influence]
+	\label{axm:additivity}
+	Let $ f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}$ be the bias of the classifer and $ w_{\mathbf{S}}:\mathbf{X}_{\mathbf{S}} \rightarrow \mathbb{R} $ be the FIF of features $ \mathbf{X}_{\mathbf{S}} $ on $ f $. The additivity axiom states that the total influences of all possible subset of non-sensitive features is equal to the bias of the classifier.
+	\begin{align}\label{eq:constraint_framework}
+		f(\alg, \mathbf{D}) = \sum\nolimits_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} w_{\mathbf{S}}
+	\end{align}
+\end{axiom}
+\noindent\textbf{Computing FIF: Reduction to Variance Decomposition.} Henceforth, our objective is to design an estimator of FIF $ w_\mathbf{S} $ that satisfies Axiom~\ref{axm:additivity}. In the following, we discuss the closed form representation of $ w_{\mathbf{S}} $ for statistical parity fairness metric and extend to other metrics in Section~\ref{sec:fairxplainer}.
+
+
+%\begin{comment}
+%	\[
+%	\mathsf{Var}_v[v] = \mathsf{Var}[v]
+%	\]
+%\end{comment}
+
+
+\noindent\textbf{Connecting Statistical Parity and Conditional Variance.} Let $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}] $ and $ \mathbf{a}_{\min} = \argmin_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] $ be the most favored and the least favored sensitive group of the classifier, respectively, according to their conditional probability of positive prediction. Next, we consider a Bernoulli random variable $ B_{\mathbf{a}} $ to denote the positive prediction of the classifier for the sensitive group $ \sensitive = \mathbf{a} $. Then, the probability of the random variable is $ p_\mathbf{a} \triangleq \Pr[B_{\mathbf{a}} = 1] = \Pr[\widehat{Y} = 1| \sensitive = \mathbf{a}] $, and variance is $ V_{\mathbf{a}} = p_{\mathbf{a}}(1-p_{\mathbf{a}}) $. Therefore, considering two random variables $ B_{\mathbf{a}_{\max}} $ and $ B_{\mathbf{a}_{\min}} $, we state the statistical parity of the classifier as $ p_{a_{\max}} - p_{a_{\min}} = (V_{a_{\max}} - V_{a_{\min}})/(1  - (p_{a_{\max}} + p_{a_{\min}})) $, where $ p_{a_{\max}} $ and $ p_{a_{\min}} $ is the probability of positive prediction of the classifier for the group $ \sensitive = \mathbf{a}_{\max} $ and $ \sensitive = \mathbf{a}_{\min} $, respectively. Intuitively, the statistical parity of the classifier is the scaled (by $ 1/(1  - (p_{a_{\max}} + p_{a_{\min}})) $) difference of the conditional variance of the positive prediction of the classifier over the most and the least favored sensitive groups.
+
+
+\begin{example}
+	In Example~\ref{ex:motivating_example} (Figure~\ref{fig:dt_original}), the conditional probabilities of positive prediction of the decision tree for the most and least favored groups are $  p_{a_{\max}} = \Pr[\widehat{Y} = 1 | \text{age } < 40] = 0.704 $ and $ p_{a_{\min}} = \Pr[\widehat{Y} = 1 | \text{age } \ge 40] = 0.172 $, respectively. Thus, the statistical parity of the classifier is $ p_{a_{\max}} - p_{a_{\min}} = 0.704 - 0.172 =  0.532 $. Now, we compute conditional variances of positive prediction as $ V_{a_{\max}} = \mathsf{Var}[\widehat{Y} = 1| \text{age } < 40] = 0.208 $ and $ V_{a_{\min}} = \mathsf{Var}[\widehat{Y} = 1| \text{age } \ge 40] = 0.142 $. Thus, following our argument, we compute the scaled difference in conditional variances as $ (0.208 - 0.142)/(1 - (0.702 + 0.172)) = 0.532 $, which coincides with the statistical parity.
+\end{example}
+Now, we apply variance decomposition (Eq.~\eqref{eq:variance_decomposition_set_notation}) for both the conditional variances $ V_{\mathbf{a}_{\max}} $ and $ V_{\mathbf{a}_{\min}} $ to compute the FIF of features, as stated in Theorem~\ref{lemma:fif}.
+\begin{theorem}[FIF as Difference of Conditional Variances]
+	\label{lemma:fif}
+	Let $ V_{\mathbf{a}, \mathbf{S}} \triangleq \mathsf{Var}_{\nonsensitive_{\mathbf{S}}}[\widehat{Y} = 1|\sensitive = \mathbf{a}] $ be the decomposed conditional variance of the classifier's positive prediction for the sensitive group $ \sensitive = \mathbf{a} $, where features $ \nonsensitive_{\mathbf{S}} $ are jointly varied. Then, we can express FIF of $ \nonsensitive_{\mathbf{S}} $ as
+	\begin{equation}\label{eq:fif_decompose}
+	w_{\mathbf{S}}  = \frac{V_{\mathbf{a}_{\max},\mathbf{S}} - V_{\mathbf{a}_{\min},\mathbf{S}}}{1 - (\Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\max}] + \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\min}])}
+	\end{equation}
+	and FIFs defined by Equation~\eqref{eq:fif_decompose} satisfy Axiom~\ref{axm:additivity}.
+\end{theorem}
+For brevity of space. we defer the detailed proof to Appendix~\ref{sec:proof_1}.
+
+\noindent\textbf{Consequences of Theorem~\ref{lemma:fif}.} Here, we discuss the algorithmic consequences of Theorem~\ref{lemma:fif} and probable issues that might appear in computation.
+
+1. \textit{Algorithm Design.} Expressing FIF in terms of the variance decomposition over subset of features allows us to import and extend well-studied techniques of global sensitivity analysis to perform FIF estimation accurately and at scale.
+%To prove Lemma~\ref{lemma:fif}, we present that the statistical parity of a classifier is equal to the scaled difference in the conditional variance of positive prediction of the classifier over specific sensitive groups. Later, we apply variance decomposition to derive the expression for $ w_{\mathbf{S}} $.
+
+2. \textit{Bias Amplifying and Eliminating Features.} The sign of a FIF $ w_{\mathbf{S}} $ denotes whether the features $ \nonsensitive_{\mathbf{S}} $ are amplifying the bias of the classifier or eliminating it. When $ w_{\mathbf{S}} > 0 $, $ \nonsensitive_{\mathbf{S}} $ increases bias. When $ w_{\mathbf{S}} < 0 $, $ \nonsensitive_{\mathbf{S}} $ eliminates bias, and thus improves fairness. The features $ \nonsensitive_{\mathbf{S}} $ are neutral when $ w_{\mathbf{S}} = 0 $.
+
+3. \textit{Degenerate Cases:} If the classifier always makes positive prediction or never makes positive prediction, i.e. $ \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] \in \{1, 0\} $ for any sensitive group $ \sensitive = \mathbf{a} $, the conditional variance $ \mathsf{Var}[\widehat{Y} = 1 | \sensitive = \mathbf{a}]  = 0 $. When total variance is zero, the decomposed variances $V_{\mathbf{a},\mathbf{S}}$ may become zero for each feature combination $\nonsensitive_\mathbf{S}$, and Equation~\eqref{eq:fif_decompose} cannot trivially compute fairness influence functions. Though such degenerate cases rarely occur for real-life data, we can avoid them by randomly perturbing at least one sample in the dataset to yield the opposite predicted class.
+
+4. \textit{Numerical Instability.} In Equation~\eqref{eq:fif_decompose}, the conditional probabilities of positive prediction of the classifier $ \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}_{\max}]  $ and $ \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}_{\min}]  $ are constant. When $ \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}_{\max}] + \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}_{\min}]   = 1 $, the denominator in $ w_{\mathbf{S}} $ becomes $ 0 $ and hence, $ w_{\mathbf{S}} $ is undefined. In this case, we add/subtract a small number in the denominator to avoid numerical instability of division though we have not encountered any such case in our experiments.%\red{However, the interpretation of influence functions such as whether $ \nonsensitive_{\mathbf{S}} $ improve or worsen fairness becomes inconsistent due to the choice of addition/subtraction.}
+
+
+
+

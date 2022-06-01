@@ -1,0 +1,374 @@
+\clearpage
+\red{Extra}
+
+\section{Introduction}
+The last decade has witnessed a tremendous progress in machine learning with a host of applications of algorithmic decision making. Presently, machine learning classifiers make high-stake decisions in various safety-critical domains such as college admission, recidivism prediction, and job applications. In these domains, the fairness and explainability of the deployed classifiers are of paramount importance. Fairness in machine learning detects and improves the unfairness/bias of the classifier towards certain demographic population in the dataset, such as offering more college admission to White-male candidates than to Black-female candidates. Moreover, the black-box nature of classifiers, such as neural networks, encourages researchers in developing explainable methods for black-box predictions. The explainability methods identify important features for tabular data or highlight regions in an image that the black-box classifer may focus on during prediction. In this paper, we combine both the fairness and explainability aspects in machine learning and propose an explanation framework for the fairness of a classifer. 
+
+
+
+
+
+There is a rich literature on algorithmic fairness and explainability in machine learning. To quantify the bias of an unfair classifier, multiple fairness definitions have been proposed. In this paper, we focus on \red{\emph{group fairness}}, which quantifies the bias in the prediction of the classifier among \emph{sensitive} groups in the data. Group-based fairness metrics mostly belong to three categories: independence, separation, and sufficiency. In binary classification, independence group fairness metrics, such as statistical parity, quantify whether the probability of positive prediction of the classifier is equal across all sensitive groups. Separation metrics, such as equalized odds, apply conditions on the ground-truth (actual) class in the data and constrain that for population belonging to each ground-truth class, the probability of positive prediction is equal across all sensitive groups. In contrast, sufficiency metrics, such as conditional use accuracy equality, apply conditions on the predicted class and emphasize that for each predicted class, the probability of individuals originally belonging to a particular ground truth class is equal across all sensitive groups. From the measurement aspect of these metrics, one  computes the difference in the (conditional)  probability of positive prediction of the classifier between each pair of sensitive groups and outputs the maximum difference as a measure of the fairness metric. 
+
+There is a growing interest in explaining the prediction of opaque black-box classifiers. \red{When the input to the classifer is a feature vector}, the most popular explanation methods are based on additive feature attribution~\cite{lundberg2017unified,ribeiro2016should}. In this method, the prediction of the classifier (almost) equals the sum of weights/effects attributable to each individual feature~\cite{lundberg2017unified} or the higher-order interactions among features (or a subset of features)~\cite{sundararajan2020shapley}. Moreover, these weights are computed locally for a single sample, thereby tagging such methods as local explainers. To explain a classifier globally on a dataset, local explanation is performed on each sample separately and later each individual local weight is aggregated (for example, by averaging) for all samples as a global weight of a feature (or a subset of features). 
+
+While fairness and explainability in machine learning are studied separately in the literature, there has been an insignificant effort in applying explainability methods to explain the fairness of a classifer. To the best of our knowledge, there are two studies that explain fairness using Shapley values~\cite{lundberg2020explaining,benesse2021fairness}. The key idea in both studies is to compute the global weight of individual features on the prediction of the classifier separately for each sensitive group and take the difference in individual weights between specific groups. Consequently, the sum of differences in weights corresponds to group fairness metrics such as statistical parity. This explainability approach for fairness suffers from two-fold limitations. Firstly, fairness, particularly group fairness, is a global property of a classifier. Hence, the state-of-the-art local to global explainability procedure leads to an \emph{inaccurate explanation} of fairness. Secondly, existing approaches are limited to explaining fairness in terms of individual features. However, features are often correlated in real-world fairness problems. To this end, practical algorithms are required to explain fairness by considering higher-order interactions among features, where existing Shapley-based computation suffers from \emph{poor scalability}. Therefore, in this paper, we ask the following research question: \emph{Can we design an explainability framework that can accurately and scalably explain the fairness of a classifer by attributing to individual features and their higher-order interactions?}
+
+The primary contribution of this paper is an explanation framework for fairness, namely {\framework}, which explains the fairness of a classifier based on additive feature (or subset of features) attribution. The key idea is to compute the \emph{\red{fairness influence function}}\unsure{Do we introduce this terminology?} of a subset of non-sensitive features, such that the sum of influences of all possible subsets of non-sensitive features equals the fairness value achieved by the classifer. {\framework} relies on relating the fairness of a classifier with the difference in the conditional variances of the classifier between specific sensitive groups. To this end, we apply techniques from global sensitive analysis to decompose the variance of the classifier to compute the influence of features. Furthermore, to account for correlated features, we apply covariance decomposition while computing influences. 
+
+In our experiments.... 
+
+
+
+\noindent\makebox[\textwidth]{\rule{\textwidth}{2pt}}\info{Up to this}
+
+
+
+In order to formulate fairness influence functions, we next apply variance decomposition on $ \mathsf{Var}[B_{\mathbf{a}}] $
+\begin{align}
+\mathsf{Var}[B_\mathbf{a}] = \mathsf{Var}[Y=1|\sensitive = \mathbf{a}] =  \sum_{i=1}^{n}V_{\{i\}}^{(\mathbf{a})} +  \sum_{i<j}^{n} V_{\{i,j\}}^{(\mathbf{a})}  + \cdots  + V_{\{1,2,\dots,n\}}^{(\mathbf{a})}
+\end{align}
+
+where the superscript of $ V_{\mathbf{S}}^{(\mathbf{a})} $ denotes the decomposed variance $ V_{\mathbf{S}} $ conditioned on the sensitive group $ \sensitive = \mathbf{a} $.  Thus, we rewrite Eq.~\ref{eq:sp_to_var} in terms of differences in the decomposed conditional \red{variances}. 
+
+\begin{align}
+p_\mathbf{a} -  p_\mathbf{a'}  &= \frac{	\mathsf{Var}[B_\mathbf{a}] - \mathsf{Var}[B_\mathbf{a'}]}{1 - (p_\mathbf{a} + p_\mathbf{a'})}\notag \\ 
+&= \frac{\sum_{i=1}^{n} (V_{\{i\}}^{(\mathbf{a})} - V_{\{i\}}^{(\mathbf{a'})})+  \sum_{i<j}^{n} (V_{\{i,j\}}^{(\mathbf{a})} - V_{\{i,j\}}^{(\mathbf{a'})})  + \cdots  + (V_{\{1,2\dots,n\}}^{(\mathbf{a})} - V_{\{1,2\dots,n\}}^{(\mathbf{a'})})}{1 - (p_\mathbf{a} + p_\mathbf{a'})} \notag \\
+&= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \frac{V_{\mathbf{S}}^{(\mathbf{a})} - V_{\mathbf{S}}^{(\mathbf{a'})}}{1 - (p_\mathbf{a} + p_\mathbf{a'})} \label{eq:influence_value}
+\end{align}
+
+Next, we compute $ w_{\mathbf{S}} $ by taking out terms associated with the subset of features $ \mathbf{S} $ in Eq.~\ref{eq:influence_value}. 
+
+\begin{align*}
+p_\mathbf{a} -  p_\mathbf{a'} =  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} w_{\mathbf{S}} = \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \frac{ V_{\mathbf{S}}^{(\mathbf{a})} - V_{\mathbf{S}}^{(\mathbf{a'})}}{1 - (p_\mathbf{a} + p_\mathbf{a'})} \\
+\Rightarrow w_{\mathbf{S}} = \frac{V_{\mathbf{S}}^{(\mathbf{a})} - V_{\mathbf{S}}^{(\mathbf{a'})}}{1 - (p_\mathbf{a} + p_\mathbf{a'})}
+\end{align*}
+
+
+Intuitively, $ w_{\mathbf{S}} $ is the difference in the decomposed conditional \red{variances} of the classifier corresponding to the most and least favored sensitive groups, where the variance of the classifier is computed with respect to features $ \mathbf{X}_{\mathbf{S}} $. 
+
+
+\paragraph{Important points regarding Approach 1}
+\begin{itemize}
+	\item \textbf{Numerical instability:} The denominator of $ w_{\mathbf{S}} $ is $ 1 - (p_\mathbf{a} + p_{\mathbf{a}}') \ne 0 $.  We may require to add a small number to the denominator to avoid the cases when the value is $ 0 $. 
+	
+	\item \textbf{Computation of variance decomposition:} There is rich literature on computing the decomposed variance of a function, such as Fourier-based algorithm FAST and Sobol sensitivity analysis. FAST only computes first order \red{variances}, when $ |\mathbf{S}| = 1 $, whereas Sobol sensitivity approaches can compute both first and second order \red{variances}, $ 1 \le |\mathbf{S}| \le 2 $. From a practitioner's perspective, first and second order effects should be sufficient to inspect the cause of unfairness of a classifier. 
+	
+	\item \textbf{Sign of $ w_{\mathbf{S}} $:} $ w_{\mathbf{S}} $ can be  positive, negative or zero. If $ w_{\mathbf{S}} > 0 $, then the interaction $ \mathbf{X}_{\mathbf{S}} $ is responsible for increasing the statistical parity of the classifier, thereby leading to higher unfairness. When $ w_{\mathbf{S}} < 0 $, then the interaction $ \mathbf{X}_{\mathbf{S}} $ favors fairness. Finally, the interaction $ \mathbf{X}_{\mathbf{S}} $ is neutral when $ w_{\mathbf{S}} = 0 $. 
+\end{itemize}
+
+
+\begin{comment}
+Next, we relate SP with the difference in \red{variances} of the classifier by substituting $ \mathbf{a} $ as $ \mathbf{a}_{\max} $ and $ \mathbf{a'} $ as $ \mathbf{a}_{\min} $. 
+
+\begin{align*}
+\text{Statistical parity }= p_{\mathbf{a}_{\max}} -  p_{\mathbf{a}_{\min}}  = \frac{	\mathsf{Var}[B_{\mathbf{a}_{\max}}] - \mathsf{Var}[B_{\mathbf{a}_{\min}}]}{1 - (p_{\mathbf{a}_{\max}} + p_{\mathbf{a}_{\min}})}
+\end{align*}
+
+
+Thus, statistical parity can be distributed to all subset of features in $ \nonsensitive \cup \sensitive $ based on variance decomposition. We observe that computing the variance for all possible subsets of features is computationally expensive and in practice one may look into only first and second-order \red{variances}. 
+
+\end{comment}
+
+
+\section{Variance Decomposition}
+There is a rich literature on variance decomposition for the sensitivity analysis of a function in terms of the cumulative effect of all possible subset of variables in the function. In our case, the non-sensitive features are correlated. As such, we discuss a meta-learning approach, where we apply functional decomposition on the function $ f(\mathbf{X}) $ with $ \delta $ being the implicit error in this decomposition.
+
+\begin{align*}
+f(\mathbf{X}) = f_{\emptyset} +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}| \le \lambda} f_{\mathbf{S}}(\mathbf{X}_{\mathbf{S}}) + \delta
+\end{align*}
+
+Here, $ f_{\mathbf{S}} $ is known as a component function, where $ \lambda $ denotes its maximum order. In functional decomposition, lower order component functions impacts more on $ f(\mathbf{X}) $ than higher order functions. Once each $ f_{\mathbf{S}} $ is learned, we compute its variance $ V_{\mathbf{S}}  = \mathsf{Var}_{X_{\mathbf{S}}}[f_{\mathbf{S}}(\mathbf{X}_{\mathbf{S}})]$. Furthermore, features in $ \mathbf{X} $ may be correlated with each other. Therefore, the component function $ f_{\mathbf{S}} $ is in correlation with other component function $ f_{\mathbf{S}'} $, for $ \mathbf{S} \ne \mathbf{S}' $. To account for this correlation,~\cite{li2010global} propose to decompose the variance of $ f(\mathbf{X}) $ as the sum of the variance of $ f_{\mathbf{S}}(\mathbf{X}_{\mathbf{S}}) $'s along with its covariance with other component functions $ \sum_{\mathbf{S}' \ne \mathbf{S}} f_{\mathbf{S'}}(\mathbf{X}_{\mathbf{S}'}) $.
+
+
+\[
+\mathsf{Var}[f(\mathbf{X})] = \sum_{\mathbf{S} \subseteq [k] \setminus \emptyset} \Big(V_{\mathbf{S}}  + \mathbf{Cov}[f_{\mathbf{S}}, \sum_{\mathbf{S}' \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}'| \le \lambda, \mathbf{S} \ne \mathbf{S}'} f_{\mathbf{S}'}]\Big)
+\]
+
+
+Now, we focus on learning the component function $ f_{\mathbf{S}} $. In this paper, we apply backfitting algorithm, which is an iterative procedure to learn component functions in additive models. In each iteration, all but one component function, say $ f_{\mathbf{S}} $ is learned, while other components are fixed constant. Also, $ f_{\mathbf{S}} $ is learned as a smoothed function of $ f(\mathbf{X}) $ and $ f_{\mathbf{S}'} $, for $ \mathbf{S} \ne \mathbf{S}' $. In the following, we present the pseudo-code of backfitting algorithm. 
+
+\begin{algorithm}
+	\caption{Backfitting algorithm}
+	\label{algo:iterative_decision_sets_learning}
+	\begin{algorithmic}[1]
+		\State \textbf{Initialize}: $ \hat{f}_{\emptyset} \leftarrow \frac{1}{n}\sum_{i=1}^ny_i, \hat{f}_{\mathbf{S}} \leftarrow 0, \forall \mathbf{S} \in [k]\setminus\emptyset, |\mathbf{S}|\le \lambda$ 
+		\While{$ \hat{f}_{\mathbf{S}} $ does not converge}
+		\For{each $\mathbf{S}$}
+		\State $ \hat{f}_{\mathbf{S}} \leftarrow \mathsf{Smooth}[\{y_i - \hat{f}_{\emptyset} - \sum_{\mathbf{S} \ne \mathbf{S}'} \hat{f}_{\mathbf{S}'}(x_{\mathbf{S}}^{(i)})\}_{i=1}^n] $ \Comment{Backfitting step}
+		\State $\hat{f}_{\mathbf{S}}  \leftarrow \hat{f}_{\mathbf{S}} - \frac{1}{n}\sum_{i=1}^n \hat{f}_{\mathbf{S}}(x_{\mathbf{S}}^{(i)})$ \Comment{Mean centering}
+		\EndFor
+		\EndWhile
+	\end{algorithmic}
+\end{algorithm}
+
+Here, $ \mathsf{Smooth} $ is a smoothing operator, which is typically chosen to be cubic spline smoother or Kernel smoother. In this paper, we have experimented with both approaches. First, we discuss cubic spline methods, as discussed in~\cite{li2010global}. 
+
+
+\paragraph{Cubic Splines as Smoothing Function.} Spline is a piecewise polynomial function studied in interpolation problems. Each piecewise term is computed on local points and is aggregated as a global curve with smoothly fitting the data. Cubic splines are of polynomials with degree $ 3 $ with continuity $ C^2 $ meaning that the second derivatives of each piecewise term is zero at the endpoints of each interval in the interpolation. ~\cite{li2010global} propose to estimate component function $ f_{\mathbf{S}} $'s in terms of cubic B spline function $ B_r(\mathbf{X}) $, where $ r $ is the index of a specified knot vector. More specifically, each component function $ f_{\mathbf{S}} $ is defined in terms of these basis functions. 
+
+\begin{align*}
+&f_{\{i\}} (\mathbf{X}_{\{i\}}) \approx \sum_{r=-1}^{m+1}\alpha_r^iB_r(\mathbf{X}_{\{i\}})\\
+&f_{\{i, j\}} (\mathbf{X}_{\{i, j\}}) \approx \sum_{p=-1}^{m+1}\sum_{q=-1}^{m+1}\beta_{pq}^{ij}B_p(\mathbf{X}_{\{i\}})B_q(\mathbf{X}_{\{j\}})\\
+&f_{\{i, j, k\}} (\mathbf{X}_{\{i, j, k\}}) \approx \sum_{p=-1}^{m+1}\sum_{q=-1}^{m+1}\sum_{r=-1}^{m+1}\gamma_{pqr}^{ijk}B_p(\mathbf{X}_{\{i\}})B_q(\mathbf{X}_{\{j\}})B_r(\mathbf{X}_{\{j\}})\\
+\end{align*}
+
+Here, $ m $ is the number of knots, with $ \alpha, \beta, \gamma $ being constant coefficients that need to be determined. 
+
+
+\paragraph{Kernel Smoothing.}
+Kernel smoother estimates a real-valued function $ f:\mathbb{R}^k \rightarrow \mathbb{R} $ as the weighted average of neighboring observed data. The weight is defined by the kernel such that closer points are given higher weights. The estimated function is smooth, where the level of smoothness is specified by a single parameter.
+
+Let $ k_{h_\lambda}(X_0, X) $ be a kernel defined by
+\[
+k_{h_\lambda}(X_0, X) = D\Big(\frac{||X_0 - X||}{h_\lambda(X_0)}\Big)
+\]
+
+where: 
+\begin{itemize}
+	\item $ X, X_0 \in \mathbb{R}^k $
+	\item $ ||\cdot|| $ is Euclidean norm
+	\item $ h_\lambda(X_0) $ is a parameter, known as kernel radius
+	\item $ D(t) $ is a positive real-valued function, whose value is decreasing (or not increasing) for the increasing distance $ t $
+\end{itemize}
+Popular kernels used for smoothing include parabolic, Tricube, and Gaussian kernels. Popular smoother based kernels are Gaussian kernel smoother, nearest neighbor smoother, kernel average smoother, local linear or polynomial regression.
+
+
+
+\clearpage
+\section{Methodology [\red{Backup}]}
+In this section, we discuss the computational aspects of fairness influence $ w_{\mathbf{S}} $ of a subset of non-sensitive features $ \mathbf{X}_{\mathbf{S}} $. The key idea in computing $ w_{\mathbf{S}} $ is to decompose the conditional variance $ \mathsf{Var}[B_{\mathbf{a}}] $ such that $ \mathsf{Var}[B_{\mathbf{a}}] = \sum_{\mathbf{S} \in [k] \setminus \emptyset} V_{\mathbf{S}}^{(\mathbf{a})} $. To compute $ V_{\mathbf{S}}^{(\mathbf{a})} $, assumptions are made on the distribution of input features. In the following, we discuss two approaches, one where features are independent and another where feature correlations are taken into account.
+
+
+\subsection{Variance Decomposition on Independent Features}
+
+Sobol sensitivity analysis is a popular approach for computing $ V_{\mathbf{S}} $ where input non-sensitive features are probabilistically independent of others. Sobol approach relies on Monte Carlo estimation where quasi Monte Carlo samples are generated by uniformly covering the sample space of features. These are also called Sobol sequences. Since the distribution of features is not necessarily uniform, each random sample is rescaled based on each feature's independent distribution. Let $ x_i \in [0,1] $ be the uniform random value of feature $ X_i $ during the Monte Carlo sampling. Let $ \mathsf{ICDF}_{i}: \{0,1\} \rightarrow \mathsf{supp}(X_i) $ is the inverse cumulative distribution function of $ X_i $, where $ \mathsf{supp}(X_i) $ denotes the possible feature values of $ X_i $. Then, $ x_i $ is rescaled to $ \mathsf{ICDF}_{i}(x_i) $.  In practice, the distribution of individual features are not readily available. We apply univariate KDE (kernel density estimation) to learn a distribution of features, which can be queried as $ \mathsf{ICDF} $. 
+
+Once a sufficient number of samples are generated (for example, $ 2^n $, for $ n \ge 10 $), Sobol approach computes $ V_{\mathbf{S}} $, for $ |\mathbf{S}| \in \{1,2\} $.\footnote{While Sobol approach computes the total effect of a subset of feature, we do not consider them in our setting. Because the sum of total Sobol indices does to add up to $ 1 $, which is a  requirement in our case.} 
+
+\textbf{Equations for Monte Carlo Estimation.}
+Let sample matrices $ \mathbf{P} $, $ \mathbf{Q} $, and $ \mathbf{P}_{\mathbf{Q}}^i $, for $ i = 1, \dots, \numnonsensitive $. 
+
+Computing the first order ($ |\mathbf{S}| = 1 $) variance: 
+\[
+V_{\mathbf{S}}^{(\mathbf{a})} = 
+\mathsf{Var}_{\mathbf{X}_{\mathbf{S}}}[\mathsf{E}_{\mathbf{X}_{\sim \mathbf{S}}}[\hat{Y} = 1 | \mathbf{X}_{\mathbf{S}}, \sensitive = \mathbf{a}]] = \frac{1}{n}\sum_{j=1}^{n}\alg(\mathbf{Q}, \sensitive)_j\Big(\alg(\mathbf{P}_{\mathbf{Q}}^i, \sensitive)_j - \alg(\mathbf{P}, \sensitive)_j\Big)
+\]
+
+
+
+\subsection{Variance Decomposition on Correlated Features}
+The earlier Monte Carlo estimation approach for variance decomposition does not consider any correlation among features. For including feature-correlation we apply following techniques. 
+
+\paragraph{High Dimensional Model Representation (HDMR)~\cite{li2010global}} The key idea is to decompose the variance of $ \hat{Y} $ using the covariance of individual term $ \mathbf{X}_{\mathbf{S}} $, for $ \mathbf{S} \subseteq [k] \setminus \emptyset $. 
+
+\red{Goes to preliminaries.}
+Let $ Y =  f(\mathbf{X}) $ be decomposed into a limited number of subsets of features $ \mathbf{X}_{\mathbf{S}} $. 
+
+\[
+f(\mathbf{X})  =  f_0 +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}| \le \lambda} f_{\mathbf{S}}(\mathbf{X}_{\mathbf{S}}) + \epsilon
+\]
+
+
+Here parameter $ \lambda $ sets the upper bound of the cardinality of $ \mathbf{S} $. $ \epsilon $ is the error incurred due to limiting $ |\mathbf{S}| $ up to $ \numnonsensitive $.  Then, the variance of $ Y $ can be decomposed as the covariance of subset of features.
+\[
+\mathsf{Var}[Y] = \sum_{\mathbf{S} \subseteq [k] \setminus \emptyset} (V_{\mathbf{S}}  + \mathbf{Cov}[\mathbf{X}_{\mathbf{S}}, \sum_{\mathbf{S}' \subseteq [k] \setminus (\emptyset \cup \mathbf{S}), |\mathbf{S}'| \le \lambda} V_{\mathbf{S}'}])
+\]
+
+Here, $ V_{\mathbf{S}} $ is the uncorrelated effect on variance, whereas $ \mathbf{Cov}[\mathbf{X}_{\mathbf{S}}, \sum_{\mathbf{S}' \subseteq [k] \setminus (\emptyset \cup \mathbf{S}), |\mathbf{S}'| \le \lambda} V_{\mathbf{S}'}] $ is the correlated effect of variance of $ \mathbf{X}_{\mathbf{S}} $ on the total variance.
+
+
+
+\paragraph{HDMR: Estimation Aspects~\cite{li2010global}}
+
+\begin{enumerate}
+	\item The first step is to compute component functions $ f_{\mathbf{S}} $'s using a regression method from a set of input-output examples. The cited paper applies RS-HDMR combined with a $ F $-test.
+	
+	\item RS-HDMR is a general approach to optimally construct component functions sequentially from lower to higher order, such that the lower order contributions are maximized and the higher order contributions are minimized. In this process, the higher order component functions (if they exist) are decomposed and portions are included in the low order ones.
+	
+	\item RS-HDMR computes $ f_{\mathbf{S}} $ with sampling of $ \mathbf{X} $ following any given PDF (Probability Density Function). 
+	
+	\item To reduce the sampling effort, the RS-HDMR component functions are approximated by expansions in terms of some suitable basis functions. The cited paper used \red{cubic B spline functions} $ B_k(\mathbf{X}) $. 
+	
+	
+	\item The first, second, and third order RS-HDMR component functions are approximately expanded as 
+	\begin{align*}
+	&f_{\{i\}} (\mathbf{X}_{\{i\}}) \approx \sum_{r=-1}^{m+1}\alpha_r^iB_r(\mathbf{X}_{\{i\}})\\
+	&f_{\{i, j\}} (\mathbf{X}_{\{i, j\}}) \approx \sum_{p=-1}^{m+1}\sum_{q=-1}^{m+1}\beta_{pq}^{ij}B_p(\mathbf{X}_{\{i\}})B_q(\mathbf{X}_{\{j\}})\\
+	&f_{\{i, j, k\}} (\mathbf{X}_{\{i, j, k\}}) \approx \sum_{p=-1}^{m+1}\sum_{q=-1}^{m+1}\sum_{r=-1}^{m+1}\gamma_{pqr}^{ijk}B_p(\mathbf{X}_{\{i\}})B_q(\mathbf{X}_{\{j\}})B_r(\mathbf{X}_{\{j\}})\\
+	\end{align*}
+	
+	Here, $ m $ is the number of knots, with $ \alpha, \beta, \gamma $ being constant coefficients that need to be determined. 
+	
+	\item \textbf{Determination of component functions by backfitting} 
+	
+	\begin{enumerate}
+		\item After the component functions being approximated by suitable basis functions, a statistical $ F $-test is carried out to provide confidence bands for the predicted functions. 
+		
+		\item Component functions can be determined sequentially or simultaneously by least-squares regression. If the system has independent inputs, the sequential determination is more efficient because the process does not depend on the order of the inputs and in each step only one component function needs to be determined. For correlated inputs, this approach is improper because the process depends on the order of inputs. For this case, either simultaneous or backfitting determinations can be used. The cited paper prefers backfitting approach in high-dimension systems because each iteration of backfitting only treats one component function whose dimension is always low (low to high order construction?) 
+		
+		\item A new estimate of component function is estimated through backfitting. 
+		
+		\[
+		Y^{(i)} - f_{0}  - \sum_{\mathbf{S'} \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S'}| \le \lambda, \mathbf{S} \ne \mathbf{S}'} f_{\mathbf{S}'}(\mathbf{X}_{\mathbf{S'}}^{(i)}) = f_{\mathbf{S}}(\mathbf{X}_{\mathbf{S}}^{(i)}),  
+		\] 
+		
+		where $ i = 1, 2, \dots, n $ denotes the $ i $-th sample, and $ n $ is the total number of samples. This procedure is performed for each component function $ f_{\mathbf{S}} $ in term, using the current estimates of the $ f_{\mathbf{S}'} $'s. This process continues until the estimated $ f_{\mathbf{S}} $'s converge.
+		
+		\item \textbf{$ F $-testing}: Let $ RSS_1 $ represent the residual sum of squares for the least-squares regression of the large model $ f_0 + \sum_{\mathbf{S}' \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}'| \le \lambda} f_{\mathbf{S}'}(\mathbf{X}_{\mathbf{S}'})  $ with $ p_1 $ unknown parameters (e.g., the coefficients $ \alpha, \beta, \gamma $ in the spline function expansions). Also, let $ RSS_0 $ be the same quantity for a small model $ f_0 + \sum_{\mathbf{S}' \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}'| \le \lambda, \mathbf{S} \ne \mathbf{S}'} f_{\mathbf{S}'}(\mathbf{X}_{\mathbf{S}'})  $ nested in the large model, but with $ p_0 $ unknown parameters. 
+		
+		\[
+		F = \frac{(RSS_0 - RSS_1)/(p1 - p_0)}{RSS_1 / (n - p_1)}
+		\]		
+		
+		The $ F $ statistic has an $ F $ distribution with $ (p_1 - p_0) $ and $ (n - p_1) $ degrees of freedom. If the observed $ F $ is larger than the tabulated value of the $ F $ distribution with $ (p_1 - p_0) $ and $ (n - p_1) $ degrees of freedom at the $ 99 \% $ confidence level (or with other desired confidence level), the $ f_{\mathbf{S}} $ is significant  and should be included in the approximated. Otherwise, $ f_{\mathbf{S}} $ can be excluded. 
+	\end{enumerate}
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Approach $ 2 $ [\red{Revision required}]: Variance of PPV over Sensitive Features} 
+
+In the second approach, we express $ p_\mathbf{a} - p_{\mathbf{a}'} $ with variance of $ p_\mathbf{a} $ and  $ p_{\mathbf{a}'} $.  Let assume $ p_\mathbf{a} \ge  p_{\mathbf{a}'} $. 
+
+\begin{align*}
+	\mathsf{Var}[\{p_\mathbf{a}, p_{\mathbf{a}'} \}] &= \frac{1}{2}((p_\mathbf{a} - \frac{p_\mathbf{a} + p_{\mathbf{a}'}}{2})^2 + (p_\mathbf{a}' - \frac{p_\mathbf{a} + p_{\mathbf{a}'}}{2})^2)\\
+	&= \frac{1}{2^2}(p_\mathbf{a} -  p_{\mathbf{a}'})^2 = \frac{1}{2^2}\mathsf{sp}^2
+\end{align*}
+
+Now, we express $ \mathsf{Var}[\{p_\mathbf{a}, p_{\mathbf{a}'} \}] =  \mathsf{Var}_\sensitive[\mathsf{E}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]] $, where $ \sensitive $ takes two values $ \mathbf{a} $ and $ \mathbf{a}' $.  Reorganizing the above equation and applying the law of total variance result in the following derivation for $ \mathsf{sp} $.
+
+\begin{align*}
+	\frac{1}{2^2}\mathsf{sp}^2 &= \mathsf{Var}_\sensitive[\mathsf{E}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]]\\
+	&= \mathsf{Var}[\hat{Y}] - \mathsf{E}_\sensitive[\mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]]\\
+	&= \mathsf{Var}[\hat{Y}] - \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}] \mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive=\mathbf{a}]\\
+	&= \mathsf{Var}[\hat{Y}] - \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Big(\Pr[\sensitive=\mathbf{a}] \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} V_{\mathbf{S}}^{(\mathbf{a})} \Big)\\
+	&= \mathsf{Var}[\hat{Y}] -  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \underbrace{\sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}}_{---}\\
+	&\red{= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \left(\frac{1}{2^\numnonsensitive - 1} \mathsf{Var}[\hat{Y}] -   \underbrace{\sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}}_{w_{\mathbf{S}}}\right)}\\
+\end{align*}
+
+
+We compute influence of $ \mathbf{X}_{\mathbf{S}} $ as follows: 
+
+\begin{align}
+	w_{\mathbf{S}} =  C\sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}
+\end{align}
+
+where the constant $ C $ is defined as:
+\begin{align*}
+	C &\triangleq \frac{\mathsf{Var}[\hat{Y}] - \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}}{\sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}} \\
+	&= \frac{\mathsf{Var}[\hat{Y}] - \mathsf{E}_\sensitive[\mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]]}{\mathsf{E}_\sensitive[\mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]]}
+\end{align*}
+
+\red{
+	From the above equation, we derive the influence of $ \mathbf{X}_{\mathbf{S}} $ in the following.
+	\[
+	w_{\mathbf{S}} =  \frac{1}{2^\numnonsensitive - 1} \mathsf{Var}[\hat{Y}] - \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}
+	\]
+	Here, $ \frac{1}{2^\numnonsensitive - 1} \mathsf{Var}[\hat{Y}] $ is the variance of $ \hat{Y} $ normalized by the total combination of subsets of features in $ \nonsensitive $. \red{Ideally, each $ \mathbf{X}_{\mathbf{S}} $ should have equal variance imposed by $ \hat{Y} $.} On the other hand, $ \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})} $ is the decomposition of the expected variance of $ \hat{Y} $ conditioned on different sensitive groups evaluated on the subset $ \mathbf{X}_{\mathbf{S}} $. Therefore, $ w_{\mathbf{S}} $ quantifies the difference between the ideal variance of the prediction $ \hat{Y} $ on $ \mathbf{X}_{\mathbf{S}} $ and  the expected conditional variance of $ \mathbf{X}_{\mathbf{S}} $ due to considering different sensitive groups.  
+}
+
+
+\begin{comment}
+	\textit{ An alternate} is to further decompose $ \mathsf{Var}[\hat{Y}] $ and include in $ w_{\mathbf{S}} $. 
+	
+	\begin{align*}
+		\frac{1}{2^2}\mathsf{sp}^2 &= \mathsf{Var}[\hat{Y}] -  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})} \\ 
+		&= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \Big(V_{\mathbf{S}}  - 
+		\sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})} \Big) \\ 
+	\end{align*}
+	
+	In that case, we compute $ w_{\mathbf{S}} $ as follows:
+	
+	\[
+	w_{\mathbf{S}} = V_{\mathbf{S}}  - 
+	\sum_{\mathbf{a} \in \{\mathbf{a}, \mathbf{a}'\}} \Pr[\sensitive=\mathbf{a}]V_{\mathbf{S}}^{(\mathbf{a})}
+	\]
+	
+	
+	\red{Update:}
+	\begin{itemize}
+		\item In current implementation, $ w_\mathbf{S} $ becomes $ 0 $ for each \textit{individual} features (when $ |\mathbf{S}| $ = 1) .  
+	\end{itemize}
+\end{comment}
+
+
+\paragraph{Difference between approach $ 1 $ and $ 2 $}
+\begin{itemize}
+	\item In approach 1, $ w_{\mathbf{S}} $ is the difference in conditional variances while in approach 2, it is the expected conditional variance with inverse sign.
+	\item In approach 2, we explain $ \mathsf{sp}^2 $, while in approach 1, we explain $ \mathsf{sp} $. 
+	\item The interpretation of $ w_{\mathsf{S}} $ is opposite in the two approaches, because of the sign of $ w_{\mathbf{S}} $. 
+\end{itemize}
+
+
+
+\red{Why do we consider more than two sensitive groups? Especially, because we are explaining the difference of conditional PPVs between two sensitive groups.}
+
+\section{Approach $ 2 $: General case.}
+Let consider $ k $ different sensitive groups $ \mathbf{a}_1, \dots, \mathbf{a}_k $ each denoting an assignment of sensitive features $ \sensitive $. Also, let the conditional PPV of the classifier be $ p_i = \Pr[\hat{Y}=1|\sensitive=\mathbf{a}_i] $. The variance of the PPVs are derived as follows. 
+
+\begin{align*}
+	\mathsf{Var}[\{p_1, \dots, p_k\}] 
+	&= \frac{1}{k} \sum_i (p_i - \frac{1}{k}\sum_j p_j)^2 \\
+	&= \frac{1}{k^3}\sum_i (\sum_j (p_i - p_j))^2 \\ 
+	%		&\ge \frac{1}{k^3}\sum_i (\sum_j |p_i - p_j|)^2 \\ 
+	&\ge \frac{1}{k^3} \sum_i (\max |p_i - p_j|)^2 \\
+	&= \frac{1}{k^3} k (\max |p_i - p_j|)^2 \\
+	&= \frac{1}{k^2} (\max |p_i - p_j|)^2
+\end{align*}
+
+Therefore, 
+
+\begin{align*}
+	\max|p_i - p_j| \le k \sqrt{\mathsf{Var}[\{p_1, \dots, p_k\}] }
+\end{align*}
+
+Equality happens when $ k = 2 $. \red{and SP = 0 (why?)}
+
+
+For example, when $ k  = 2 $, statistical parity, $ \max|p_i - p_j| = 2 \sqrt{\mathsf{Var}[\{p_1, \dots, p_k\}] } $. 
+
+
+
+\[
+\mathsf{Var}[\{p_1, \dots, p_k\}]  \triangleq \mathsf{Var}_\sensitive[\mathsf{E}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]]
+\]
+
+We recall the law of total variance: 
+
+\begin{align*}
+	\mathsf{Var}[\hat{Y}] &= \mathsf{E}_\sensitive[\mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]] + \mathsf{Var}_\sensitive[\mathsf{E}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]] \\
+	\Rightarrow \mathsf{Var}_\sensitive[\mathsf{E}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]] &= \mathsf{Var}[\hat{Y}] - \mathsf{E}_\sensitive[\mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive]]\\
+	&=\mathsf{Var}[\hat{Y}] - \sum_{i=1}^k \Pr[\sensitive=\mathbf{a}_i] \mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive=\mathbf{a}_i]
+\end{align*}
+
+Therefore, $ \text{Statistical parity } = \max|p_i - p_j| \le k \sqrt{\mathsf{Var}[\hat{Y}] - \sum_{i=1}^k \Pr[\sensitive=\mathbf{a}_i] \mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive=\mathbf{a}_i]}$
+
+Finally, we decompose $ \mathsf{Var}_{\mathbf{X}}[\hat{Y}|\mathbf{X}, \sensitive = \mathbf{a}_i] $ to variances of $1, 2, \dots, n $ order.
+
+
+\paragraph{\red{Todo}}:
+
+\begin{itemize}
+	\item  Can we prove the central limit theorem of $ w_{\mathbf{S}} $ that relates to the theorem 2 in GSA based fairness paper? 
+	
+	\item Can we prove error bound on finite sample?
+	
+	\item Approach 1 takes the subtraction of variance decomposition of two random variables. Our error analysis should consider this case. 
+\end{itemize}
+
+
+
