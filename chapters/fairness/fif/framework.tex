@@ -5,7 +5,7 @@ In this section, we discuss our contribution of formalizing and computing Fairne
 %in Section~\ref{??}, and conclude by extending influence computation to other group fairness metrics in Section~\ref{??}
 %\subsection{An Axiomatic Formulation}
 %\label{sec:problem_formulation}
-\noindent\textbf{FIF: An Axiomatic Formulation.} We are given a binary classifier  $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $, a dataset $ \mathbf{D} = \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n $, and a  fairness metric $ f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0} $. Our objective is to compute the influences of non-sensitive features on $ f $. We compute influence of each subset of non-sensitive features $ \mathbf{X}_{\mathbf{S}} $, where $ \mathbf{S} = \{S_i | 1 \le S_i \le \numnonsensitive\} \subseteq [\numnonsensitive] \setminus \emptyset $ is a non-empty subset of indices. 
+\paragraph{FIF: An Axiomatic Formulation.} We are given a binary classifier  $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $, a dataset $ \mathbf{D} = \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n $, and a  fairness metric $ f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0} $. Our objective is to compute the influences of non-sensitive features on $ f $. We compute influence of each subset of non-sensitive features $ \mathbf{X}_{\mathbf{S}} $, where $ \mathbf{S} = \{S_i | 1 \le S_i \le \numnonsensitive\} \subseteq [\numnonsensitive] \setminus \emptyset $ is a non-empty subset of indices. 
 
 \begin{definition}[Fairness Influence Function]
 Fairness Influence Function (FIF) $ w_{\mathbf{S}}:\mathbf{X}_{\mathbf{S}} \rightarrow \mathbb{R} $ measures the quantitative contribution of the subset of features $ \mathbf{X}_{\mathbf{S}} \subseteq \mathbf{X}_{[k]}$ on the incurred bias $ f(\alg, \mathbf{D}) $ of the classifier $ \alg $ for dataset $\mathbf{D}$. We refer $ w_{\mathbf{S}} $ as an \emph{individual influence} when $ |\mathbf{S}| = 1 $ and an \emph{inter-sectional influence} when $ |\mathbf{S}| > 1 $\textemdash particularly, a second-order influence when $ |\mathbf{S}| = 2 $ and a higher-order influence when $ 3 \le |\mathbf{S}| \le \numnonsensitive $. %\unsure{What do we mean by function here? Isn't FIF scalar?}
@@ -19,7 +19,7 @@ Since FIF is meant to attribute the bias of the classifier to the subset of feat
 		f(\alg, \mathbf{D}) = \sum\nolimits_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} w_{\mathbf{S}}
 	\end{align}
 \end{axiom}
-\noindent\textbf{Computing FIF: Reduction to Variance Decomposition.} Henceforth, our objective is to design an estimator of FIF $ w_\mathbf{S} $ that satisfies Axiom~\ref{axm:additivity}. In the following, we discuss the closed form representation of $ w_{\mathbf{S}} $ for statistical parity fairness metric and extend to other metrics in Section~\ref{sec:fairxplainer}.
+\paragraph{Computing FIF: Reduction to Variance Decomposition.} Henceforth, our objective is to design an estimator of FIF $ w_\mathbf{S} $ that satisfies Axiom~\ref{axm:additivity}. In the following, we discuss the closed form representation of $ w_{\mathbf{S}} $ for statistical parity fairness metric and extend to other metrics in Section~\ref{sec:fairxplainer}.
 
 
 %\begin{comment}
@@ -29,10 +29,11 @@ Since FIF is meant to attribute the bias of the classifier to the subset of feat
 %\end{comment}
 
 
-\noindent\textbf{Connecting Statistical Parity and Conditional Variance.} Let $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}] $ and $ \mathbf{a}_{\min} = \argmin_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] $ be the most favored and the least favored sensitive group of the classifier, respectively, according to their conditional probability of positive prediction. Next, we consider a Bernoulli random variable $ B_{\mathbf{a}} $ to denote the positive prediction of the classifier for the sensitive group $ \sensitive = \mathbf{a} $. Then, the probability of the random variable is $ p_\mathbf{a} \triangleq \Pr[B_{\mathbf{a}} = 1] = \Pr[\widehat{Y} = 1| \sensitive = \mathbf{a}] $, and variance is $ V_{\mathbf{a}} = p_{\mathbf{a}}(1-p_{\mathbf{a}}) $. Therefore, considering two random variables $ B_{\mathbf{a}_{\max}} $ and $ B_{\mathbf{a}_{\min}} $, we state the statistical parity of the classifier as $ p_{a_{\max}} - p_{a_{\min}} = (V_{a_{\max}} - V_{a_{\min}})/(1  - (p_{a_{\max}} + p_{a_{\min}})) $, where $ p_{a_{\max}} $ and $ p_{a_{\min}} $ is the probability of positive prediction of the classifier for the group $ \sensitive = \mathbf{a}_{\max} $ and $ \sensitive = \mathbf{a}_{\min} $, respectively. Intuitively, the statistical parity of the classifier is the scaled (by $ 1/(1  - (p_{a_{\max}} + p_{a_{\min}})) $) difference of the conditional variance of the positive prediction of the classifier over the most and the least favored sensitive groups.
+\paragraph{Connecting Statistical Parity and Conditional Variance.} Let $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}] $ and $ \mathbf{a}_{\min} = \argmin_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] $ be the most favored and the least favored sensitive group of the classifier, respectively, according to their conditional probability of positive prediction. Next, we consider a Bernoulli random variable $ B_{\mathbf{a}} $ to denote the positive prediction of the classifier for the sensitive group $ \sensitive = \mathbf{a} $. Then, the probability of the random variable is $ p_\mathbf{a} \triangleq \Pr[B_{\mathbf{a}} = 1] = \Pr[\widehat{Y} = 1| \sensitive = \mathbf{a}] $, and variance is $ V_{\mathbf{a}} = p_{\mathbf{a}}(1-p_{\mathbf{a}}) $. Therefore, considering two random variables $ B_{\mathbf{a}_{\max}} $ and $ B_{\mathbf{a}_{\min}} $, we state the statistical parity of the classifier as $ p_{a_{\max}} - p_{a_{\min}} = (V_{a_{\max}} - V_{a_{\min}})/(1  - (p_{a_{\max}} + p_{a_{\min}})) $, where $ p_{a_{\max}} $ and $ p_{a_{\min}} $ is the probability of positive prediction of the classifier for the group $ \sensitive = \mathbf{a}_{\max} $ and $ \sensitive = \mathbf{a}_{\min} $, respectively. Intuitively, the statistical parity of the classifier is the scaled (by $ 1/(1  - (p_{a_{\max}} + p_{a_{\min}})) $) difference of the conditional variance of the positive prediction of the classifier over the most and the least favored sensitive groups.
 
 
 \begin{example}
+	\normalfont
 	In Example~\ref{ex:motivating_example} (Figure~\ref{fig:dt_original}), the conditional probabilities of positive prediction of the decision tree for the most and least favored groups are $  p_{a_{\max}} = \Pr[\widehat{Y} = 1 | \text{age } < 40] = 0.704 $ and $ p_{a_{\min}} = \Pr[\widehat{Y} = 1 | \text{age } \ge 40] = 0.172 $, respectively. Thus, the statistical parity of the classifier is $ p_{a_{\max}} - p_{a_{\min}} = 0.704 - 0.172 =  0.532 $. Now, we compute conditional variances of positive prediction as $ V_{a_{\max}} = \mathsf{Var}[\widehat{Y} = 1| \text{age } < 40] = 0.208 $ and $ V_{a_{\min}} = \mathsf{Var}[\widehat{Y} = 1| \text{age } \ge 40] = 0.142 $. Thus, following our argument, we compute the scaled difference in conditional variances as $ (0.208 - 0.142)/(1 - (0.702 + 0.172)) = 0.532 $, which coincides with the statistical parity.
 \end{example}
 Now, we apply variance decomposition (Eq.~\eqref{eq:variance_decomposition_set_notation}) for both the conditional variances $ V_{\mathbf{a}_{\max}} $ and $ V_{\mathbf{a}_{\min}} $ to compute the FIF of features, as stated in Theorem~\ref{lemma:fif}.
@@ -44,9 +45,58 @@ Now, we apply variance decomposition (Eq.~\eqref{eq:variance_decomposition_set_n
 	\end{equation}
 	and FIFs defined by Equation~\eqref{eq:fif_decompose} satisfy Axiom~\ref{axm:additivity}.
 \end{theorem}
-For brevity of space. we defer the detailed proof to Appendix~\ref{sec:proof_1}.
 
-\noindent\textbf{Consequences of Theorem~\ref{lemma:fif}.} Here, we discuss the algorithmic consequences of Theorem~\ref{lemma:fif} and probable issues that might appear in computation.
+\begin{proof}
+	
+	Let $ B_{\mathbf{a}} \in \{0, 1\} $ be a Bernoulli random variable such that $ B_{\mathbf{a}} = 1 $ denotes the classifier predicting positive class $ \hat{Y} = 1 $ for an individual belonging to the sensitive group $ \sensitive = \mathbf{a} $, and $ B_{\mathbf{a}} = 0 $ denotes $ \hat{Y} = 0 $. Hence, if $ p_\mathbf{a} \triangleq \Pr[B_\mathbf{a} = 1] $, then $ p_\mathbf{a} $ is also the conditional probability of positive prediction of the classifier,  $ p_\mathbf{a} = \Pr[\hat{Y} = 1 |  \sensitive = \mathbf{a}] $. The variance of $ B_{\mathbf{a}} $ is computed as
+	\begin{align*}
+	\mathsf{Var}[B_\mathbf{a}] = p_{\mathbf{a}}(1 - p_{\mathbf{a}}). 
+	\end{align*}
+	
+	Now, we consider two Bernoulli random variables $ B_\mathbf{a} $ and $ B_\mathbf{a'} $ associated with two different sensitive groups $ \sensitive = \mathbf{a} $ and $ \sensitive = \mathbf{a}' $, respectively. The difference in variances between $ B_\mathbf{a} $ and $ B_\mathbf{a'} $ implies that
+	\begin{align*}
+	\mathsf{Var}[B_\mathbf{a}] - \mathsf{Var}[B_\mathbf{a'}] &= p_{\mathbf{a}}(1 - p_{\mathbf{a}}) - p_{\mathbf{a'}}(1 - p_{\mathbf{a'}}) \\
+	&= p_{\mathbf{a}} - p_{\mathbf{a}}^2 - p_{\mathbf{a'}} + p_{\mathbf{a'}}^2 \\ 
+	&= (p_\mathbf{a} -  p_\mathbf{a'}) (1 - (p_\mathbf{a} + p_\mathbf{a'}))
+	\end{align*}
+	
+	After reorganization, we express the difference in probabilities $ p_\mathbf{a} -  p_\mathbf{a'} $ as
+	\begin{align}
+	\label{eq:sp_to_var}
+	p_\mathbf{a} -  p_\mathbf{a'}  = \frac{	\mathsf{Var}[B_\mathbf{a}] - \mathsf{Var}[B_\mathbf{a'}]}{1 - (p_\mathbf{a} + p_\mathbf{a'})}
+	\end{align}
+	
+	
+	
+	
+	By setting $ \mathbf{a} = \mathbf{a}_{\max} $ and $ \mathbf{a'} = \mathbf{a}_{\min} $ in Equation~\eqref{eq:sp_to_var}, we express the statistical parity of the classifier in terms of the scaled difference in the conditional variance of the positive prediction of the classifier. 
+	\begin{align}
+	f_{\mathsf{SP}}(\alg, \mathbf{D}) \triangleq p_{\mathbf{a}_{\max}} -  ~~p_{\mathbf{a}_{\min}}  &= \frac{	\mathsf{Var}[B_{\mathbf{a}_{\max}}] - \mathsf{Var}[B_{\mathbf{a}_{\min}}]}{1 - (p_{\mathbf{a}_{\max}} + p_{\mathbf{a}_{\min}})}\label{eq:sp_var_diff}\\
+	&= \frac{	\mathsf{Var}[\hat{Y} = 1| \sensitive = \mathbf{a}_{\max}] - \mathsf{Var}[\hat{Y} = 1| \sensitive = \mathbf{a}_{\min}]}{1 - (p_{\mathbf{a}_{\max}} + p_{\mathbf{a}_{\min}})} \notag.
+	\end{align}
+	
+	%The last inequality is obtained by the definition of $B_{\mathbf{a}}$.
+	
+	Next, we apply variance decomposition (Equation~\eqref{eq:variance_decomposition_set_notation}) to estimate the influence of each $ \nonsensitive_{\mathbf{S}} $. From Equation~\eqref{eq:variance_decomposition_set_notation}, we obtain that the variance of $ B_{\mathbf{a}} $ can be decomposed as 
+	\[ \mathsf{Var}[B_\mathbf{a}] = \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} V_{\mathbf{a}, \mathbf{S}},\] 
+	where $ V_{\mathbf{a}, \mathbf{S}} $ denotes the decomposed variance of $ B_\mathbf{a} $ w.r.t.\ the features $ \nonsensitive_{\mathbf{S}} $ conditioned on the sensitive group $ \sensitive = \mathbf{a} $. 
+	
+	Now, we apply variance decomposition on both $ \mathsf{Var}[B_{\mathbf{a}_{\max}}] $ and $ \mathsf{Var}[B_{\mathbf{a}_{\min}}] $ in Equation~\ref{eq:sp_var_diff} to obtain
+	
+	\begin{align}
+	f_{\mathsf{SP}}(\alg, \mathbf{D}) & = \frac{\mathsf{Var}[B_{\mathbf{a}_{\max}}] - \mathsf{Var}[B_{\mathbf{a}_{\min}}]}{1 - (p_{\mathbf{a}_{\max}} + p_{\mathbf{a}_{\max}})}= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \frac{V_{\mathbf{a}_{\max}, \mathbf{S}} - V_{\mathbf{a}_{\min}, \mathbf{S}}}{1 - (p_{\mathbf{a}_{\max}} + p_{\mathbf{a}_{\min}})} \label{eq:influence_value}
+	\end{align}
+	Finally, we estimate  the FIF of the subset of features $ \nonsensitive_{\mathbf{S}}  $ as 
+	\begin{align}
+	w_{\mathbf{S}}  = \frac{V_{\mathbf{a}_{\max}, \mathbf{S}} - V_{\mathbf{a}_{\min}, \mathbf{S}}}{1 - (p_{\mathbf{a}_{\max}} + p_{\mathbf{a}_{\min}})}
+	\end{align} 
+	by separating the terms corresponding to $ \nonsensitive_{\mathbf{S}} $.
+	
+	Following Equation~\eqref{eq:influence_value}, $	w_{\mathbf{S}} $ satisfies Axiom~\ref{axm:additivity} as $f_{\mathsf{SP}}(\alg, \mathbf{D}) = \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} w_{\mathbf{S}} $.
+\end{proof}
+
+
+\paragraph{Consequences of Theorem~\ref{lemma:fif}.} Here, we discuss the algorithmic consequences of Theorem~\ref{lemma:fif} and probable issues that might appear in computation.
 
 1. \textit{Algorithm Design.} Expressing FIF in terms of the variance decomposition over subset of features allows us to import and extend well-studied techniques of global sensitivity analysis to perform FIF estimation accurately and at scale.
 %To prove Lemma~\ref{lemma:fif}, we present that the statistical parity of a classifier is equal to the scaled difference in the conditional variance of positive prediction of the classifier over specific sensitive groups. Later, we apply variance decomposition to derive the expression for $ w_{\mathbf{S}} $.

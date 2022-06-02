@@ -38,22 +38,31 @@ For simplicity, we have described the computation of conditional probability $ \
 %This relaxes the independence requirement.
 
 \begin{example}[RE-SSAT encoding]
+	\normalfont
 	\label{fairness_justicia_example:re_ssat}
 	We illustrate the RE-SSAT encoding for calculating the probability of positive prediction for the sensitive group age $ \ge 40 $ in the decision tree of Figure~\ref{fairness_justicia_fig:fair_example}. We assign three Boolean variables $ F,I,J $ for three nodes in the decision tree, where literal $ F,I,J $ denote fitness $ \ge 0.61 $, income $ \ge 0.29 $, and income $ \ge 0.69 $, respectively. We consider another Boolean variable $A$  where the literal $ A $ represents the sensitive group age $ \ge 40 $ and $ \neg A $ denotes age $ < 40 $. Thus, the CNF formula  for the decision tree is $ (\neg F \vee I) \wedge (F \vee J) $. From the distribution in Figure~\ref{fairness_justicia_fig:fair_example}, we get $ \Pr[F] = 0.41, \Pr[I] = 0.93 $, and $ \Pr[J] = 0.09 $. Given this information, we calculate the probability of positive prediction for the sensitive group age $ \ge 40 $ by solving the following RE-SSAT formula:
+	
 	\begin{equation}
 	\Phi_A := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge A.\notag
 	\end{equation}
+	
 	From the solution to this SSAT formula, we get $ \Pr[\Phi_A] = 0.43 $. Similarly, to calculate the probability of positive prediction for the group age $ < 40 $, we replace the unit clause\footnote{A unit clause is a clause with a single literal.} $ A $ with $ \neg A $ in the CNF formula in $ \Phi_A $ and construct another SSAT formula $ \Phi_{\neg A} $. 
+	
 	\[ \Phi_{\neg A} := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge \neg A \]
+	
 	For $ \Phi_{\neg A} $, the solution $ \Pr[\Phi_{\neg A}] = 0.43 $ is similarly derived from an SSAT solver. 
 	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of the sensitive feature $A$, both age groups demonstrate equal probability of positive prediction as the sensitive feature is not explicitly present in the classifier. 
 
 	However, there is an implicit bias in the data distribution for different sensitive groups and the classifier unintentionally learns it. To capture this implicit bias, we calculate conditional probabilities  $ \Pr[F|A] = 0.01, \Pr[I|A] = 0.99 $, and $ \Pr[J|A] = 0.18 $ from the distribution for group age $ \ge 40 $ in Figure~\ref{fairness_justicia_fig:fair_example}. Providing the conditional probabilities, we construct a modified SSAT formula $\Phi'_A $ and compute $ \Pr[\Phi'_A] = 0.18 $ for age $ \ge 40 $. 
+	
 	\begin{equation}
 	\Phi'_A := \R^{0.01}F, \R^{0.99}I, \R^{0.18}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge A\notag
 	\end{equation}
+	
 	For the sensitive group age $ < 40 $,  we similarly obtain $ \Pr[F|\neg A] = 0.82, \Pr[I|\neg A] = 0.88 $, $ \Pr[J|\neg A] = 0.01 $, construct the modified formula $ \Phi'_{\neg A} $ and get  $ \Pr[\Phi'_{\neg A}] = 0.72 $. 
+
 	\[ \Phi'_{\neg A} := \R^{0.82}F, \R^{0.88}I, \R^{0.01}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge \neg A \]	
+
 	In the later case with correlations among sensitive and non-sensitive features, the RE-SSAT encoding detects the discrimination of the classifier among different sensitive groups, where the classifier is more biased towards the younger group with age $ < 40 $ than the elderly group with age $ \ge 40 $.
 	
 	
@@ -116,7 +125,7 @@ For measuring path-specific causal fairness, we compute  $ \max_{ \mathbf{a}} \P
 In most practical problems, there can be exponentially many compound sensitive groups due to the combinatorial combination of categorical sensitive features.  As a result, the enumeration approach may suffer from scalability issues due to an exponential number of calls to the SSAT solver. To this end, we propose an efficient SSAT encoding, where we make two SSAT calls, one for inferring the the most favored sensitive group with the maximum conditional probability of positive prediction of the classifier and another for inferring the least favored sensitive group with the minimum conditional probability of positive prediction of the same classifier. As shown above, these two probabilities are sufficient to measure different group and causal fairness metrics.
 
 \subsubsection{Inferring the Most Favored Sensitive Group}
-In the prefix of an SSAT formula $ \Phi $, the order of quantified variables carries distinct interpretation of  $ \Pr[\Phi] $.   In an ER-SSAT formula, $ \Pr[\Phi] $ is the \textit{maximum} satisfying probability of $ \Phi $ over the optimal assignment of existentially quantified variables given the randomized quantified variables (by Semantic 2, Sec.~\ref{fairness_justicia_sec:ssat}). In this paper, we leverage this property to compute the most favored sensitive group with the highest probability of positive prediction of a classifier. In particular, we consider the following ER-SSAT formula:
+In the prefix of an SSAT formula $ \Phi $, the order of quantified variables carries distinct interpretation of  $ \Pr[\Phi] $.   In an ER-SSAT formula, $ \Pr[\Phi] $ is the \textit{maximum} satisfying probability of $ \Phi $ over the optimal assignment of existentially quantified variables given the randomized quantified variables (by Semantic 2, Sec.~\ref{fairness_justicia_sec:ssat}). In this chapter, we leverage this property to compute the most favored sensitive group with the highest probability of positive prediction of a classifier. In particular, we consider the following ER-SSAT formula:
 
 \begin{equation}
 \Phi_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
@@ -179,6 +188,7 @@ In the ER-SSAT formula in Eq.~\eqref{fairness_justicia_eq:er_complement}, we nee
 
 
 \begin{example}[ER-SSAT encoding]
+	\normalfont
 	\label{fairness_justicia_example:er_ssat}
 	Here, we illustrate the ER-SSAT encoding for inferring the most favored and the least favored sensitive group of a classifier in the presence of multiple compound sensitive groups. As the example in Figure~\ref{fairness_justicia_fig:fair_example} is degenerate for this purpose, we introduce another Boolean sensitive feature `sex' $ \in $ \{male, female\}. Consider a Boolean variable $ S $ for sex where the literal $ S $ denotes sex = male. With this new sensitive feature, let the classifier be  $\alg \triangleq (\neg F \vee I \vee S) \wedge (F \vee J)$, where variables $ F,I,J $, and $ A $ have same distributions as discussed in Example~\ref{fairness_justicia_example:re_ssat}. Hence, we obtain the following ER-SSAT formula of $\alg$ to infer the most favored sensitive group:
 	

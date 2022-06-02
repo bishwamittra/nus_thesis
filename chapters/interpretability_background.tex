@@ -5,7 +5,7 @@
 %\section{Preliminaries}
 %\label{interpretability_imli_sec:preliminaries}
 
-In this chapter, we discuss preliminaries for learning interpretable rule-based classifiers. Throughout this part of the thesis, we use capital  boldface letters such as $\mathbf{X}$ to denote matrices while lower boldface letters $\mathbf{x}$ are reserved for vectors/sets. 
+In this chapter, we discuss preliminaries for learning interpretable rule-based classifiers. Throughout this part of the thesis, we use capital  boldface letters such as $\mathbf{X}$ to denote matrices while lower boldface letters such as $\mathbf{x}$ are reserved for vectors/sets. 
 
 \subsection*{Propositional Satisfiability}
 
@@ -34,7 +34,7 @@ In this part of the thesis, we use true as $ 1 $ and false as $ 0 $ interchangea
 The MaxSAT problem is an optimization analog to the SAT problem that finds an optimal assignment satisfying the maximum number of clauses in a CNF. In interpretable machine learning, we consider a \emph{weighted} variant of the MaxSAT problem\textemdash more specifically, a weighted-partial MaxSAT problem\textemdash that optimizes over a set of hard and soft constraints in the form of a weighted-CNF formula. In a weighted-CNF formula, a weight $ {\weight{C_i}} \in \mathbb{R}^+ \cup \{\infty\} $ is defined over each clause $ C_i $, wherein $C_i$ is called a \emph{hard} clause if $\weight{C_i} = \infty$, and  $C_i$ is  a \emph{soft} clause, otherwise.  To avoid notational clutter, we overload {\weight{\cdot}} to denote the weight of an assignment $ \sigma $. In particular, we define $\weight{\sigma}$ as the sum of the weights of \emph{unsatisfied clauses} in a CNF, formally, $\weight{\sigma} = \Sigma_{i | \sigma \not \models C_i} \weight{C_i}$.
 
 
-Given a weighted-CNF formula $F \triangleq \bigvee_i C_i$ with weight $ \weight{C_i} $, the weighted-partial MaxSAT problems finds an optimal assignment $\sigma^*$ that achieves the minimum weight. Formally,  $\sigma^* = \MaxSAT(F,\weight{\cdot})$ if $\forall \sigma \neq \sigma^*, \weight{\sigma^*} \leq \weight{\sigma}$. The optimal weight of the MaxSAT problem $  \weight{\sigma^*} $ is infinity ($ \infty $) when at least one hard clause becomes unsatisfied.  Therefore,  the weighted-partial MaxSAT problem finds $ \sigma^* $ that satisfies all hard clauses and as many soft clauses as possible such that the total weight of unsatisfied soft clauses is minimum. In this paper, we reduce the classification problem  to the solution of a weighted-partial MaxSAT problem. The knowledge of the inner workings of {MaxSAT} solvers is  not required for this paper.  
+Given a weighted-CNF formula $F \triangleq \bigvee_i C_i$ with weight $ \weight{C_i} $, the weighted-partial MaxSAT problems finds an optimal assignment $\sigma^*$ that achieves the minimum weight. Formally,  $\sigma^* = \MaxSAT(F,\weight{\cdot})$ if $\forall \sigma \neq \sigma^*, \weight{\sigma^*} \leq \weight{\sigma}$. The optimal weight of the MaxSAT problem $  \weight{\sigma^*} $ is infinity ($ \infty $) when at least one hard clause becomes unsatisfied.  Therefore,  the weighted-partial MaxSAT problem finds $ \sigma^* $ that satisfies all hard clauses and as many soft clauses as possible such that the total weight of unsatisfied soft clauses is minimum. In this chapter, we reduce the classification problem  to the solution of a weighted-partial MaxSAT problem. The knowledge of the inner workings of {MaxSAT} solvers is  not required for this chapter.  
 
 %
 %\subsection*{\red{Mixed Integer Linear Programming (MILP)}}
