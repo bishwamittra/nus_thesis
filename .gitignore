@@ -6,4 +6,7 @@
 *.toc
 *.blg
 *.bbl
+*.loa
+*.lof
+*.lot
 main.pdf

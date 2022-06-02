@@ -64,7 +64,7 @@ Thus, {\justicia} is not only accurate but also scalable than the existing verif
 	\subfloat{
 		\includegraphics[scale=.2]{figures/fairness/justicia/sensitive_attribute_race_spd_Adult_DT_RE.pdf}
 	}
-	\caption{Fairness metrics measured by {\justicia} for different sensitive groups in the Adult dataset. The number within parenthesis in the xticks denotes total compound groups.}
+	\caption[Fairness verification on compound sensitive groups]{Fairness metrics measured by {\justicia} for different sensitive groups in the Adult dataset. The number within parenthesis in the xticks denotes total compound groups.}
 	\label{fairness_justicia_fig:sensitive_groups}
 \end{figure*}
 
@@ -93,7 +93,9 @@ Thus, {\justicia} is more robust than the sample-based verifier AIF360.
 \begin{figure*}
 	\centering
 	\subfloat{\includegraphics[scale=.2]{figures/fairness/justicia/sampling_DI_after_Adult_rw_LR_race.pdf}}
-	\subfloat{\includegraphics[scale=.2]{figures/fairness/justicia/sampling_SPD_after_Adult_rw_LR_race.pdf}}		\caption{Standard deviation in estimation of disparate impact (DI) and stat. parity (SP)  for different sample sizes (sample size $ = 1 $ refers to the entire dataset). {\justicia} is more robust with variation of sample size than  AIF360. }
+	\subfloat{\includegraphics[scale=.2]{figures/fairness/justicia/sampling_SPD_after_Adult_rw_LR_race.pdf}}		
+	
+	\caption[Robustness of fairness verification]{Standard deviation in estimation of disparate impact (DI) and stat. parity (SP)  for different sample sizes (sample size $ = 1 $ refers to the entire dataset). {\justicia} is more robust with variation of sample size than  AIF360. }
 	\label{fairness_justicia_fig:sample-size}
 \end{figure*}
 
@@ -104,7 +106,7 @@ Thus, {\justicia} is more robust than the sample-based verifier AIF360.
 		\includegraphics[scale=.4]{figures/fairness/justicia/encoding_runtime_Adult_DT.pdf}
 		\includegraphics[scale=.4]{figures/fairness/justicia/encoding_runtime_Adult_IMLI.pdf}
 		\hfill
-		\caption{Runtime comparison of different encodings while varying total sensitive groups in the Adult dataset. \red{Label `learn' to be `infer'???}}
+		\caption[Runtime of different encodings in {\justicia}]{Runtime comparison of different encodings while varying total sensitive groups in the Adult dataset. \red{Label `learn' to be `infer'???}}
 		\label{fairness_justicia_fig:runtime_diff_encodings}
 	\end{center}
 \end{figure}

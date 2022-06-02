@@ -5,11 +5,11 @@ In this section, we empirically evaluate the performance of {\fvgm}. We first pr
 
 \begin{figure}[t!]
 	\begin{center}		
-		\subfloat{\includegraphics[scale=0.24]{figures/fairness/fvgm/cactus_all_verifiers_LR_time_}}\\
-		\subfloat{\includegraphics[scale=0.24]{figures/fairness/fvgm/cactus_all_verifiers_SVM_time_}}		
+		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/cactus_all_verifiers_LR_time_}}
+		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/cactus_all_verifiers_SVM_time_}}		
 	\end{center}
 	%	\vspace{-2ex}
-	\caption{A cactus plot to present the scalability of different fairness verifiers. The number of solved benchmarks are on the $ X $-axis and the required time is on the $ Y $-axis; a point $ (x,y) $ implies that a verifier takes less than or equal to $ y $ seconds to compute fairness metrics of $ x $ many benchmarks. We consider $ 100 $ benchmarks generated from $ 5 $ real-world datasets using $ 5 $-fold cross-validation. In each fold, we consider $\{25, 50, 75, 100\} $ percent of non-sensitive features.}\label{fvgm_fig:scalability_exp}
+	\caption[Scalability of {\fvgm}]{A cactus plot to present the scalability of different fairness verifiers. The number of solved benchmarks are on the $ X $-axis and the required time is on the $ Y $-axis; a point $ (x,y) $ implies that a verifier takes less than or equal to $ y $ seconds to compute fairness metrics of $ x $ many benchmarks. We consider $ 100 $ benchmarks generated from $ 5 $ real-world datasets using $ 5 $-fold cross-validation. In each fold, we consider $\{25, 50, 75, 100\} $ percent of non-sensitive features.}\label{fvgm_fig:scalability_exp}
 	%	\vspace{-2ex}
 \end{figure}
 
@@ -28,14 +28,14 @@ We compare {\fvgm} with three existing fairness verifiers: Justicia~\cite{ghosh2
 
 \begin{figure}[t!]
 	\begin{center}	
-		\subfloat{\includegraphics[scale=0.24]{figures/fairness/fvgm/sanity_DI_LR_01}}\\
-		\subfloat{\includegraphics[scale=0.24]{figures/fairness/fvgm/sanity_DI_SVM_01}}		
+		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/sanity_DI_LR_01}}
+		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/sanity_DI_SVM_01}}		
 		%		\subfloat[]{\includegraphics[scale=0.25]{figures/fairness/fvgm/sanity_DI_LR_005}}
 		%		\subfloat[]{\includegraphics[scale=0.25]{figures/fairness/fvgm/sanity_DI_SVM_005}}
 		%				
 	\end{center}
 	%	\vspace{-2ex}
-	\caption{Comparing the average accuracy of different verifiers over 100 synthetic benchmarks while varying the number of features. {\fvgm} yields the closest estimation of the analytically calculated \textit{Exact} values of DI for LR and SVM classifiers.}\label{fvgm_fig:sanity_exp}
+	\caption[Accuracy of {\fvgm}]{Comparing the average accuracy of different verifiers over 100 synthetic benchmarks while varying the number of features. {\fvgm} yields the closest estimation of the analytically calculated \textit{Exact} values of DI for LR and SVM classifiers.}\label{fvgm_fig:sanity_exp}
 	%	\vspace{-2ex}
 \end{figure}
 \subsection{Accuracy Analysis}
@@ -64,10 +64,13 @@ using different verifiers.
 
 
 \begin{table}[!t]
+	
+	\caption[Verification of fairness metrics and algorithms using {\fvgm}]{Verification of fairness algorithms using {\fvgm}. $ \sensitive $ denotes sensitive features.  RW and OP refer to reweighing and optimized-preprocessing algorithms. Numbers in bold refer to fairness improvement.   }\label{fvgm_tab:fair_algo_verification}
+	
 		\centering
 		
 		
-		\setlength{\tabcolsep}{0.45em}
+%		\setlength{\tabcolsep}{0.45em}
 		\begin{tabular}{lllrrrrrrrrrrrrr}
 			
 			\toprule
@@ -100,7 +103,7 @@ using different verifiers.
 			\bottomrule
 		\end{tabular}
 	
-	\caption{Verification of fairness algorithms using {\fvgm}. $ \sensitive $ denotes sensitive features.  RW and OP refer to reweighing and optimized-preprocessing algorithms. Numbers in bold refer to fairness improvement.   }\label{fvgm_tab:fair_algo_verification}
+	
 		
 		
 	

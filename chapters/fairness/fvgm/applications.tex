@@ -22,10 +22,10 @@ pre-processing algorithms can be validated by applying {\fvgm} on the unprocesse
 
 \begin{figure}
 	\centering
-	\subfloat{\includegraphics[scale=0.2]{figures/fairness/fvgm/disp_fairness_attack}}
-	\subfloat{\includegraphics[scale=0.2]{figures/fairness/fvgm/stat_fairness_attack}}
+	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/disp_fairness_attack}}
+	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/stat_fairness_attack}}
 	
-	\captionof{figure}{Verifying poisoning attack against fairness using {\fvgm}. The red line denotes the safety margin of the ML model against the attack.}\label{fvgm_fig:fairness_attacks}
+	\caption[Verifying fairness attacks]{Verifying poisoning attack against fairness using {\fvgm}. The red line denotes the safety margin of the ML model against the attack.}\label{fvgm_fig:fairness_attacks}
 \end{figure}
 
 
@@ -91,11 +91,11 @@ $\Pr[\hat{Y} = 1|$age\_0 $\ge$ 0.5]
 \begin{figure}[t!]	
 	\centering
 	\vspace{-2ex}
-	\subfloat{\includegraphics[scale=0.23]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_1}}
-	\subfloat{\includegraphics[scale=0.23]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_0}}
+	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_1}}
+	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_0}}
 	%\vspace{-0.5em}
 %	\vspace{-2ex}
-	\caption{FIF computation for COMPAS dataset. For Female (left plot) and Male, influence of `age' decreases and the probability of positive prediction of the classifier increases  by different magnitudes.}\label{fvgm_fig:influence function}
+	\caption[FIF computation using {\fvgm}]{FIF computation for COMPAS dataset. For Female (left plot) and Male, influence of `age' decreases and the probability of positive prediction of the classifier increases  by different magnitudes.}\label{fvgm_fig:influence function}
 %	\vspace{-2ex}
 \end{figure}
 

@@ -24,7 +24,7 @@ In summary, \textit{{\fairXplainer} achieves significantly less estimation error
 		\centering
 		\subfloat[Equalized odds]{\includegraphics[scale=0.39]{figures/fairness/fif/eo_train_accuracy}}
 	\end{minipage}
-	\caption{Comparing {\fairXplainer} and SHAP on the estimation error of fairness metrics. Lower values on the $ Y $-axis denote a better result. {\fairXplainer} has significantly less error than SHAP.}\label{fig:estimation_error}
+	\caption[Accuracy of {\fairXplainer}]{Comparing {\fairXplainer} and SHAP on the estimation error of fairness metrics. Lower values on the $ Y $-axis denote a better result. {\fairXplainer} has significantly less error than SHAP.}\label{fig:estimation_error}
 %	\vspace{-0.5em}
 \end{figure}
 \noindent\textbf{Accurate Estimation of Bias.} We compare {\fairXplainer} with SHAP in estimating Statistical Parity $(\mathsf{SP})$ and Equalized Odds $(\mathsf{EO})$, where each metric is calculated by summing all FIFs (Axiom~\ref{axm:additivity}). We consider five datasets, each trained on different classifiers by applying five-fold cross-validation. We compute estimation error by taking the absolute difference between the exact and  estimated value of a metric, and present results in Figure~\ref{fig:estimation_error}. In both metrics, {\fairXplainer} demonstrates significantly less error than SHAP. For example, the mean error of {\fairXplainer} in estimating $ \mathsf{SP} $ on Titanic dataset is $ 0.1 $ vs.\ $ 0.42 $ for SHAP. In this context, the error of {\fairXplainer} is often zero in most datasets and only insignificant ($ \le 0.13 $) due to the degenerate cases (Section~\ref{sec:fifs}) with $ \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] \in \{0, 1\} $.  Therefore, \emph{global sensitivity analysis based approach {\fairXplainer} is significantly more accurate in computing FIFs and corresponding fairness metric than local explanation based approach SHAP}.
@@ -42,7 +42,7 @@ In summary, \textit{{\fairXplainer} achieves significantly less estimation error
 		\subfloat[Individual and intersectional FIFs]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight}\label{fig:individual_and_intersectional_fifs}}
 	\end{minipage}
 	\vspace{-0.2em}
-	\caption{FIFs for COMPAS dataset on explaining statistical parity. Intersectional FIFs depict sources of bias in detail than individual FIFs.}\label{fig:individual_vs_intersectional_influence}
+	\caption[Individual vs.\ intersectional FIFs]{FIFs for COMPAS dataset on explaining statistical parity. Intersectional FIFs depict sources of bias in detail than individual FIFs.}\label{fig:individual_vs_intersectional_influence}
 	
 \end{figure}
 \begin{figure}[t!]
@@ -56,7 +56,7 @@ In summary, \textit{{\fairXplainer} achieves significantly less estimation error
 		\subfloat[Fairness enchancing algorithm (affirmative actions)]{\includegraphics[scale=0.345]{figures/fairness/fif/fairness_repair}\label{fig:fairness_repair}}
 	\end{minipage}
 	\vspace{-0.2em}
-	\caption{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing algorithm~\cite{kamiran2012data} on FIFs.}\label{fig:affirmative_punitive_actions}
+	\caption[FIFs under fairness attack and fairness enhancing algorithms]{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing algorithm~\cite{kamiran2012data} on FIFs.}\label{fig:affirmative_punitive_actions}
 %	\vspace{-0.5em}
 \end{figure}
 

@@ -67,11 +67,11 @@ We present the algorithm for mini-batch learning in Algorithm~\ref{interpretabil
 	\caption{MaxSAT-based Mini-batch Learning}
 	\label{interpretability_imli_algo:incremental}
 	\begin{algorithmic}[1]
-		\Function{$ \mathsf{MiniBatchLearning} $}{$ \mathsf{X},\mathbf{y},\lambda, k $}
+		\Function{$ \mathsf{MiniBatchLearning} $}{$ \mathbf{X},\mathbf{y},\lambda, k $}
 		\State $\mathcal{R} = \leftarrow \bigwedge_{i=1}^k\text{false} $ \Comment{Empty CNF formula}
 		\State $ \mathsf{loss}_{\max} \leftarrow \infty$ 
 		\For{$ i \leftarrow 1, \dots, N $} \Comment{$ N $ is the total batch-count}
-		\State $ \mathbf{X}^b, \mathbf{y}^b \leftarrow \mathsf{GetBatch}(\mathsf{X},\mathbf{y}) $
+		\State $ \mathbf{X}^b, \mathbf{y}^b \leftarrow \mathsf{GetBatch}(\mathbf{X},\mathbf{y}) $
 		\State $ Q, \weight{\cdot} \leftarrow \mathsf{MaxSATEncoding}(\Rule, \mathbf{X}^b, \mathbf{y}^b, \lambda, k) $ \Comment{Returns a weighted-partial CNF}
 		\State $ \sigma^* \leftarrow \MaxSAT(Q,\weight{\cdot}) $
 		\State $ \Rule_{\mathsf{new}} \leftarrow \mathsf{ConstructClassifier(\sigma^*)} $

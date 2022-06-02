@@ -39,7 +39,7 @@ To summarize our experimental results, {\imli} achieves the best balance among p
 \begin{table*}[!t]
 	\centering
 	
-	\caption{Comparison of accuracy and rule-size among interpretable classifiers. Each cell from the fourth to the eighth column contains test accuracy (top) and rule-size (bottom). `\textemdash' represents a timeout. Numbers in bold represent the best performing results among different classifiers.}
+	\caption[Accuracy and rule-size of interpretable classifiers]{Comparison of accuracy and rule-size among interpretable classifiers. Each cell from the fourth to the eighth column contains test accuracy (top) and rule-size (bottom). `\textemdash' represents a timeout. Numbers in bold represent the best performing results among different classifiers.}
 	\label{interpretability_imli_table:interpretable_classifiers} 
 	%	\setlength{\tabcolsep}{.2em}
 	\small
@@ -165,10 +165,10 @@ Thus, {\imli} establishes itself as the most scalable classifier compared to oth
 	
 	\centering
 	
-	\subfloat{\includegraphics[scale=0.21]{figures/interpretability/imli/dataset_wdbc_cactus_train_val_fit_time}}
-	\subfloat{\includegraphics[scale=0.21]{figures/interpretability/imli/dataset_adult_cactus_train_val_fit_time}}
-	\subfloat{\includegraphics[scale=0.21]{figures/interpretability/imli/dataset_weatherAUS_cactus_train_val_fit_time}}
-	\subfloat{\includegraphics[scale=0.21]{figures/interpretability/imli/dataset_labor_cactus_train_val_fit_time}}
+	\subfloat{\includegraphics[scale=0.35]{figures/interpretability/imli/dataset_wdbc_cactus_train_val_fit_time}}
+	\subfloat{\includegraphics[scale=0.35]{figures/interpretability/imli/dataset_adult_cactus_train_val_fit_time}}\\
+	\subfloat{\includegraphics[scale=0.35]{figures/interpretability/imli/dataset_weatherAUS_cactus_train_val_fit_time}}
+	\subfloat{\includegraphics[scale=0.35]{figures/interpretability/imli/dataset_labor_cactus_train_val_fit_time}}
 	
 	\caption[Scalability of Interpretable Classifiers]{Comparison of scalability among interpretable classifiers. The plots are arranged in increasing sizes of datasets (from left to right). In each cactus plot, {\imli} solves all $ 1000 $ instances for each dataset, while competitive classifiers often fail to scale, specially in larger datasets.}
 	\label{interpretability_imli_fig:interpretable_classifiers}
@@ -184,7 +184,7 @@ Thus, {\imli} establishes itself as the most scalable classifier compared to oth
 
 \begin{table*}[!t]        
 	\centering
-	\caption{Comparison of {\imli} with non-interpretable classifiers in terms of test accuracy. In the table, `\textemdash' represents a timeout. Numbers in bold represent the best performing results among different classifiers.}
+	\caption[Accuracy of {\imli} and non-interpretable classifiers]{Comparison of {\imli} with non-interpretable classifiers in terms of test accuracy. In the table, `\textemdash' represents a timeout. Numbers in bold represent the best performing results among different classifiers.}
 	\label{interpretability_imli_table:non_interpretable_classifiers}
 	%	\setlength{\tabcolsep}{.2em}
 	\small
@@ -241,22 +241,22 @@ Thus, {\imli} establishes itself as the most scalable classifier compared to oth
 	
 	\centering
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_wdbc_cactus_train_val_fit_time}}	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_wdbc_cactus_test_accuracy}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_wdbc_cactus_predicate_count}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_wdbc_cactus_train_val_fit_time}}	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_wdbc_cactus_test_accuracy}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_wdbc_cactus_predicate_count}}
 		
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_credit_cactus_train_val_fit_time}}	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_credit_cactus_test_accuracy}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_credit_cactus_predicate_count}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_credit_cactus_train_val_fit_time}}	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_credit_cactus_test_accuracy}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_credit_cactus_predicate_count}}
 	
 
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_adult_cactus_train_val_fit_time}}	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_adult_cactus_test_accuracy}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/imli_exp_adult_cactus_predicate_count}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_adult_cactus_train_val_fit_time}}	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_adult_cactus_test_accuracy}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/imli_exp_adult_cactus_predicate_count}}
 
 	
-	\caption{Comparison of training time, test error, and rule-size among different formulations presented in the paper. In each cactus plot, the incremental formulation {\imli} with both mini-batch and iterative learning demonstrates the best performance in training time and test error than compared two formulations: non-incremental MaxSAT formulation {\imli}-$\mathsf{B}$ and incremental formulation with only mini-batch learning {\imli}-$\mathsf{M}$. In terms of rule-size, {\imli} often generates higher size rules than {\imli}-$\mathsf{M}$.}
+	\caption[Training time, test error, and rule-size of different formulations in {\imli}]{Comparison of training time, test error, and rule-size among different formulations presented in the paper. In each cactus plot, the incremental formulation {\imli} with both mini-batch and iterative learning demonstrates the best performance in training time and test error than compared two formulations: non-incremental MaxSAT formulation {\imli}-$\mathsf{B}$ and incremental formulation with only mini-batch learning {\imli}-$\mathsf{M}$. In terms of rule-size, {\imli} often generates higher size rules than {\imli}-$\mathsf{M}$.}
 	\label{interpretability_imli_fig:different_formulations}
 \end{figure}
 
@@ -273,7 +273,7 @@ Moving focus on the rule-size in the rightmost column in Figure~\ref{interpretab
 
 \begin{table*}[!t]        
 	\centering
-	\caption{Comparison of test accuracy (top value) and rule-size (bottom value) among different rule-based representations learned using {\imli}. Numbers in bold denote the best performing results among different representations.}
+	\caption[Accuracy and rule-size of different classification rules learned using {\imli}]{Comparison of test accuracy (top value) and rule-size (bottom value) among different rule-based representations learned using {\imli}. Numbers in bold denote the best performing results among different representations.}
 	\label{interpretability_imli_table:different_representations}
 	%	\setlength{\tabcolsep}{.2em}
 	\small
@@ -372,27 +372,27 @@ We learn all four interpretable representations on twelve datasets, where the CN
 	
 	\centering
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_test_accuracy_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_train_val_accuracy_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_predicate_count_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_train_val_fit_time_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_test_accuracy_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_train_val_accuracy_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_predicate_count_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_train_val_fit_time_wdbc}}
 	
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_test_accuracy_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_train_val_accuracy_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_predicate_count_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_train_val_fit_time_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_test_accuracy_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_train_val_accuracy_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_predicate_count_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_train_val_fit_time_titanic}}
 	
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_test_accuracy_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_train_val_accuracy_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_predicate_count_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/clauses_train_val_fit_time_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_test_accuracy_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_train_val_accuracy_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_predicate_count_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/clauses_train_val_fit_time_adult}}
 	
 	
 	
 	
-	\caption{Effect of the number of clauses $ k $ on accuracy (test and train), rule-size, and training time. As $ k $ increases, both train and test accuracy of {\imli} increase while generating rules with higher size by incurring higher training time. }
+	\caption[Effect of the number of clauses in {\imli}]{Effect of the number of clauses $ k $ on accuracy (test and train), rule-size, and training time. As $ k $ increases, both train and test accuracy of {\imli} increase while generating rules with higher size by incurring higher training time. }
 	\label{interpretability_imli_fig:effect_of_number_of_clauses}
 \end{figure}
 
@@ -412,27 +412,27 @@ We learn all four interpretable representations on twelve datasets, where the CN
 	\centering
 	
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__test_accuracy_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__train_val_accuracy_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__predicate_count_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__train_val_fit_time_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__test_accuracy_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__train_val_accuracy_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__predicate_count_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__train_val_fit_time_wdbc}}
 
 
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__test_accuracy_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__train_val_accuracy_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__predicate_count_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__train_val_fit_time_titanic}}	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__test_accuracy_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__train_val_accuracy_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__predicate_count_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__train_val_fit_time_titanic}}	
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__test_accuracy_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__train_val_accuracy_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__predicate_count_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/lambda__train_val_fit_time_adult}}
-	
-	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__test_accuracy_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__train_val_accuracy_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__predicate_count_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/lambda__train_val_fit_time_adult}}
 	
 	
 	
-	\caption{Effect of regularization $ \lambda $ on accuracy (test and train), rule-size, and training time. As $ \lambda $ increases, lower priority is given to accuracy. As a result, both training and test accuracy decrease with $ \lambda $ by generating smaller rules. }
+	
+	
+	\caption[Effect of regularization $ \lambda $ in {\imli}]{Effect of regularization $ \lambda $ on accuracy (test and train), rule-size, and training time. As $ \lambda $ increases, lower priority is given to accuracy. As a result, both training and test accuracy decrease with $ \lambda $ by generating smaller rules. }
 	\label{interpretability_imli_fig:effect_of_number_of_regularization}
 \end{figure}
 
@@ -442,27 +442,27 @@ We learn all four interpretable representations on twelve datasets, where the CN
 	
 	\centering
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_test_accuracy_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_train_val_accuracy_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_predicate_count_wdbc}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_train_val_fit_time_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_test_accuracy_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_train_val_accuracy_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_predicate_count_wdbc}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_train_val_fit_time_wdbc}}
 	
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_test_accuracy_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_train_val_accuracy_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_predicate_count_titanic}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_train_val_fit_time_titanic}}	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_test_accuracy_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_train_val_accuracy_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_predicate_count_titanic}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_train_val_fit_time_titanic}}	
 	
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_test_accuracy_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_train_val_accuracy_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_predicate_count_adult}}
-	\subfloat{\includegraphics[scale=0.25]{figures/interpretability/imli/batch_size_train_val_fit_time_adult}}
-	
-	
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_test_accuracy_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_train_val_accuracy_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_predicate_count_adult}}
+	\subfloat{\includegraphics[scale=0.3]{figures/interpretability/imli/batch_size_train_val_fit_time_adult}}
 	
 	
 	
-	\caption{Effect of bath size on accuracy (test and train), rule-size, and training time. As we consider more samples in a mini-batch, {\imli} generates more accurate and larger size classification rules.}
+	
+	
+	\caption[Effect of batch-size in {\imli}]{Effect of bath size on accuracy (test and train), rule-size, and training time. As we consider more samples in a mini-batch, {\imli} generates more accurate and larger size classification rules.}
 	\label{interpretability_imli_fig:effect_of_batch_size}
 \end{figure}
 
