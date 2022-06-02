@@ -8,9 +8,9 @@ all:
 	bibtex $(PAPERNAME)
 	pdflatex $(PAPERNAME)
 	pdflatex $(PAPERNAME)
-	rm -f *.ps $(PAPERNAME).dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
+	rm -f *.ps $(PAPERNAME).dvi *.loa *.lof *lot *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
 clean:
-	rm -f *.ps $(PAPERNAME).pdf *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
+	rm -f *.ps $(PAPERNAME).pdf *.loa *.lof *lot *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
 	rm -f $(PAPERNAME).synctex.gz
 #	rm -f *.ps $(PAPERNAME_extended).pdf *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
 #	rm -f $(PAPERNAME_extended).synctex.gz

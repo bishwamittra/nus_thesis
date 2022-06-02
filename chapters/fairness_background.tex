@@ -1,2 +1,143 @@
 \part{Fairness in Machine Learning}
 \chapter{Preliminaries}
+We represent sets/vectors by bold letters, and the corresponding distributions by calligraphic letters. We express random variables in uppercase, and an assignment of a random variable in lowercase.
+
+\subsection*{Dataset and Distribution}
+We consider a dataset $ \mathbf{D} $ as a collection of $n$ triples  $\{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n$ generated from an underlying distribution $\mathcal{D}$. Each non-sensitive data point $\mathbf{x}^{(i)}$ consists of $\numnonsensitive$ features $\{\mathbf{x}^{(i)}_1, \dots, \mathbf{x}^{(i)}_{\numnonsensitive}\} $. Each sensitive data point $\mathbf{a}^{(i)}$ consists of $\numsensitive$ categorical features $\{\mathbf{a}^{(i)}_1, \dots, \mathbf{a}^{(i)}_{\numsensitive}\} $.  $y^{(i)} \in \{0,1\}$ is the binary class corresponding to $(\mathbf{x}^{(i)}, \mathbf{a}^{(i)})$. 
+
+We use $ (\nonsensitive, \sensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, \mathbf{a}, y)$.  Each non-sensitive feature $ X_i \in \nonsensitive $ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each categorical sensitive feature $ A_j \in \sensitive $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. Thus, $ \mathcal{D} $ is the product distribution, $ \mathcal{D} \triangleq \prod_{i=1}^{\numnonsensitive}\mathcal{X}_i \prod_{j=1}^{\numsensitive} \mathcal{A}_j $.
+
+For sensitive features, a valuation vector $ \mathbf{a} = [a_1, .., a_{\numsensitive}] $ is called a \textit{compound sensitive group}. For example, consider $ \sensitive = $ [race, sex] where race $ \in $ \{Asian, Color, White\} and sex $ \in $ \{female, male\}. Thus $ \mathbf{a} = $ [Asian, female]  is a compound sensitive group.
+
+
+We represent a binary classifier trained on the dataset $\mathbf{D}$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $. Here, $\widehat{Y} \in \{0,1\}$ is the class predicted for $ (\nonsensitive, \sensitive) $. Given this setup, we discuss different fairness metrics to compute bias in the prediction of a classifier~\cite{feldman2015certifying,hardt2016equality,nabi2018fair}.
+
+
+\subsection*{Fairness Metrics}
+
+A classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\hat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions: group fairness and causal fairness. To this end, we use $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ given the distribution of features $ \mathcal{D} $. Alternatively, a fairness metric can be computed on a finite sampled dataset instead of the distribution. In that case, we use the notation $ f(\alg, \mathbf{D}) $, which is the bias of the classifier $ \alg $ on a dataset $ \mathbf{D} $. In the following, we discuss different fairness metrics.
+
+
+\paragraph{Statistical Parity ($ \mathsf{SP} $).} Statistical parity belongs to \textit{independence} measuring group fairness metrics, where the prediction $ \widehat{Y} $ is statistically independent of sensitive features $ \sensitive $~\cite{feldman2015certifying}.  The statistical parity of  a classifier is measured as 
+\[ f_{\mathsf{SP}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}], \] which is the difference between the maximum and minimum conditional probability of positive prediction the classifier for different sensitive groups.
+
+
+\paragraph{Disparate impact ($ \mathsf{DI} $).} Disparate impact measures the ratio between the minimum and the maximum probability of positive prediction of the classifier over all sensitive groups, and prescribe the ratio to be close to $1$~\cite{feldman2015certifying}.  Formally, the disparate impact of a classifier is 
+\[
+f_{\mathsf{DI}}(\alg, \mathcal{D}) \triangleq \frac{\min_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]}{\max_{\mathbf{a}} \Pr[\hat{Y} =1 | \mathbf{A} =  \mathbf{a}]}.
+\]
+
+	
+
+\paragraph{Equalized Odds ($ \mathsf{EO} $).} \textit{Separation} measuring group fairness metrics such as equalized odds constrain that $ \widehat{Y} $ is independent of $ \sensitive $ given the ground class $ Y $~\cite{hardt2016equality}.  Formally, for $ Y \in \{0,1\} $, equalized odds is 
+
+\begin{align*}
+	f_{\mathsf{EO}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0], \\ &\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1]).
+\end{align*} 
+	
+	
+\paragraph{Predictive Parity ($ \mathsf{PP} $).} \textit{Sufficiency} measuring group fairness metrics such as predictive parity constrain that the ground class $ Y $ is independent of $ \sensitive $ given the prediction $ \widehat{Y} $~\cite{verma2018fairness}. Formally, 
+
+\begin{align*}
+	f_{\mathsf{PP}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0], \\&\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1]).
+\end{align*}
+
+\paragraph{Path-specific Causal Fairness ($ \mathsf{PCF} $).}
+Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\hat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.   To this end, the path-specific causal fairness, abbreviated as $ \mathsf{PCF} $, of a classifier is \[
+f_{\mathsf{PCF}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\hat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] - \min_{\mathbf{a}} \Pr[\hat{Y} = 1 | \sensitive = \mathbf{a}, \mediator ].
+\]
+
+
+
+Therefore, path-specific cause fairness constrains that the prediction $ \hat{Y} $ is not directly dependent of sensitive features $ \sensitive $ while $ \sensitive $ may indirectly affects $ \hat{Y} $ only through mediator features $ \mediator $. Hence, path-specific causal fairness is a variation of counterfactual fairness and causal fairness without mediator features~\cite{bastani2019probabilistic}. 
+
+
+
+
+\begin{example}
+	Following~\cite{bastani2019probabilistic}, we consider a classifier that decides the hiring of employees based on three features: gender (sensitive), years of experience (non-sensitive), and college-participation (mediator). It is practical to consider that gender $ \in $ \{male, female\} can affect the college-participation of individuals, and all three features are determining factors for the hiring process. Let `male' be the most favored group by the classifier, for instance. Path-specific causal fairness ensures that a female candidate should be given a job offer with similar probability as a male candidate (by constraining $ \epsilon \approx 0 $). She,  however,  went to (participated in) college as if she were a male candidate while other non-mediator features such as  `years of experience' are the same.  Therefore, path-specific causal fairness measures the effect of gender on job offer, but ignores the effect of gender on whether candidates went to college.
+\end{example}	
+
+
+
+\paragraph{Fairness Certification.} We certify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, that quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, predictive parity, and path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier achieves $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
+
+
+
+\subsection*{Stochastic Boolean Satisfiability (SSAT)}\label{fairness_justicia_sec:ssat}
+Let $\mathbf{B}  = \{\bool_1, \dots, \bool_m\}  $ be a set of Boolean variables. A \textit{literal} is a variable $ \bool_i $ or its complement $ \neg \bool_i $. 
+A propositional formula $\phi$ defined over $\mathbf{B}$ is in \textit{Conjunctive Normal Form (CNF)} if $\phi$   is  a conjunction of clauses and each clause is a disjunction of literals. 
+%\red{DNF (disjunctive normal form) is the  complement of CNF where  the formula is a disjunction of clauses and each clause is  a conjunction of literals.} 
+Let $ \sigma $ be a assignment to the  variables $ \bool_i \in \mathbf{B} $  such that $ \sigma(\bool_i) \in \{1, 0\} $. The propositional  \textit{satisfiability} problem (SAT) finds a satisfying assignment $ \sigma^* $ to all $ \bool_i \in  \mathbf{B} $ such that the formula $ \phi $ is evaluated to be $1$ (equivalently, true). 
+In contrast to the SAT problem, the \textit{Stochastic Boolean Satisfiability} (SSAT) problem~\cite{littman2001stochastic} is computes the  probability of the satisfaction of the formula $\phi$ defined on \textit{quantified} Boolean variables. 
+An SSAT formula is of the form
+\begin{equation}\label{fairness_justicia_eq:ssat}
+\Phi = Q_1\bool_1, \dots, Q_m \bool_m,\; \phi, 
+\end{equation}
+where $ Q_i \in \{\exists, \forall, \R^{p_i}\} $ is either of the existential ($\exists$), universal ($\forall$), or randomized ($\R^{p_i}$) quantifiers on $\bool_i$ and $\phi$ is a quantifier-free CNF formula. In case of a randomized quantifier $ \R^{p_i} $, $ p_i \in [0,1] $ is the probability of $ \bool_i $ being assigned to $ 1 $. In the SSAT formula $ \Phi $, the quantifier part $ Q_1\bool_1, \dots, Q_m \bool_m $ is known as the \textit{prefix} of the formula $ \phi $.  Let $ \bool $ be the outermost variable in the prefix. The semantics of SSAT formulas are defined recursively in the following.
+\begin{enumerate}
+	\item $ \Pr[\text{true}] = 1 $,  $ \Pr[\text{false}] = 0 $, 
+	\item $ \Pr [\Phi] = \max_{\bool} \{\Pr[\Phi|_{\bool}], \Pr[\Phi|_{\neg \bool}]\}$ if $ \bool $ is existentially quantified ($ \exists $), 
+	\item $ \Pr [\Phi] = \min_{\bool} \{\Pr[\Phi|_{\bool}], \Pr[\Phi|_{\neg \bool}]\} $ if $ \bool $ is universally quantified ($ \forall $), 
+	\item $ \Pr [\Phi] = p\Pr[\Phi|_{\bool}] + (1-p) \Pr[\Phi|_{\neg \bool}] $ if $ \bool $ is randomized quantified ($\R^{p}$) with probability $p$ of being $\text{true}$,
+\end{enumerate}
+where $ \Phi|_{\bool} $ and $ \Phi|_{\neg \bool} $ denote the SSAT formulas derived by eliminating the outermost quantifier of $ \bool $  by substituting the value of $ \bool $ in the CNF $ \phi $ with $ 1 $ and $ 0 $, respectively. In this paper, we focus on two specific types of SSAT formulas:  \textit{random-exist} (RE) SSAT and \textit{exist-random} (ER) SSAT. In the ER-SSAT (resp.\ RE-SSAT) formula, all existentially (resp.\ randomized) quantified variables are followed by randomized (resp.\ existentially) quantified variables in the prefix.
+
+
+\begin{remark}
+	ER-SSAT problem is $\mathrm{NP}^{\mathrm{PP}}$-hard whereas RE-SSAT problem is $\mathrm{PP}^{\mathrm{NP}}$-complete~\cite{littman2001stochastic}.
+\end{remark}
+
+
+
+The problem of SSAT and its variants have been pursued by theoreticians and practitioners for over three decades~\cite{majercik2005dc,fremont2017maximum,huang2006combining}. We refer the reader to~\cite{lee2017solving,lee2018solving} for a detailed survey. It is worth remarking that the past decade has witnessed a significant performance improvements of SSAT solving, thanks to the close integration of techniques from SAT solving with advances in weighted model counting~\cite{sang2004combining,chakraborty2013scalable,chakraborty2014distribution}. 
+
+
+\subsection*{Stochastic Subset Sum Problem ({\stochastic})} 
+Let $ \mathbf{B} \triangleq \{B_i\}_{i=1}^{|\mathbf{B}|}$ be a set of Boolean variables and $ W_i \in \mathbb{Z} $ be the weight\change{Weight notation $ w $ to $ W $} of $ B_i $. Given a constraint of the form  $\sum_{i = 1}^ {|\mathbf{B}|} W_i B_i = \tau $, for a constant threshold $ \tau \in \mathbb{Z} $, the subset-sum problem seeks to compute an assignment $\mathbf{b} \in \{0,1\}^{|\mathbf{B}|}$ such that the constraint evaluates to true when $\mathbf{B}$ is substituted with $\mathbf{b}$. Subset sum problem is known to be a $ \mathrm{NP} $-complete problem and well-studied in theoretical computer science~\cite{kleinberg2006algorithm}. The \textit{counting} version of the subset-sum problem counts all $ \mathbf{b} $'s for which the above constraint holds; and this problem belongs to the complexity class $ \mathrm{\#P} $. In this thesis, we consider the counting problem for the constraint $\sum_{i = 1}^ {|\mathbf{B}|} W_i B_i \ge \tau $ where variables $ B_i $'s are stochastic. More precisely, we define a \textit{stochastic subset-sum} problem, namely {\stochastic}, that computes $ \Pr[\sum_{i = 1}^ {|\mathbf{B}|} W_iB_i \ge \tau] $.    Details of {\stochastic} are in Section~\ref{fvgm_sec:stochastic_sum_set_sum}.
+
+
+
+\subsection*{Bayesian Network}
+In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and specifically a \textit{Bayesian network}~\cite{pearl1985bayesian,chavira2008probabilistic}, encodes the dependencies and conditional independence between a set of random variables. In this paper, we leverage an access to a Bayesian network on $ \nonsensitive \cup \sensitive $ that represents the joint distribution on them. 	A Bayesian network is denoted by a pair $ (\graph, \theta)$, where $ \graph \triangleq (\mathbf{V}, \mathbf{E}) $ is a DAG (Directed Acyclic Graph), and $\theta$ is a set of parameters encoding the conditional probabilities induced by the joint distribution under investigation. Each vertex $V_i \in \mathbf{V}$ corresponds to a random variable. Edges $ \mathbf{E} \in \mathbf{V} \times \mathbf{V} $ imply conditional dependencies among variables. For each variable $ V_i \in \mathbf{V} $, let $ \parent(V_i) \subseteq \mathbf{V} \setminus \{V_i\} $ denote the set of parents of $ V_i $. Given $\parent(V_i)$ and parameters $\theta$, $ V_i $ is independent of its other non-descendant variables in $\graph$. Thus, for the assignment $ v_i $ of $ V_i $ and $ \mathbf{u} $ of $ \parent(V_i) $, the aforementioned semantics of a Bayesian network encodes the joint distribution of $\mathbf{V}$ as:
+
+\begin{equation}
+\begin{split}
+\Pr[V_1=v_1, \dots, &V_{|\mathbf{V}|}=v_{|\mathbf{V}|}] = \prod_{i=1}^{|\mathbf{V}|} \Pr[V_i = v_i | \parent(V_i) = \mathbf{u}; \theta].
+\end{split}
+\label{fvgm_eq:BN}
+\end{equation}
+
+
+\subsection*{Global Sensitivity Analysis: Variance Decomposition}
+Global sensitivity analysis is a field that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input while considering the whole input domain~\cite{saltelli2008global}.
+Sensitivity analysis is an essential component for quality assurance and impact assessment of models in EU~\cite{eu}, USA~\cite{usepa}, and research communities~\cite{saltelli2020five}.
+%\paragraph{Sensitivity Analysis:}
+\emph{Variance-based sensitivity analysis} is a form of global sensitivity analysis, where variance is considered as the measure of uncertainty~\cite{sobol1990sensitivity,sobol2001global}. To illustrate, let us consider a real-valued function $  \function(\mathbf{Z}) $, where $ \mathbf{Z} $ is a vector of $ \numnonsensitive $ input variables $ \{Z_1, \dots, Z_k\} $.Now, we decompose $ \function(\mathbf{Z}) $ among the subsets of inputs, such that:
+
+\begin{align}
+\function(\mathbf{Z}) &= \function_0 + \sum_{i=1}^{\numnonsensitive} \function_{\{i\}}(Z_i) +  \sum_{i < j}^{\numnonsensitive} \function_{\{i,j\}}(Z_i, Z_j)  + \cdots  + \function_{\{1, 2, \dots, \numnonsensitive\}} (Z_1, Z_2, \dots, Z_{\numnonsensitive})\notag%\label{eq:functional_decomposition}
+\\    
+&= \function_0 +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \function_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}})\label{eq:functional_decomposition_set_notation}
+\end{align}
+
+In this decomposition, $ \function_0 $ is a constant, $ \function_{\{i\}} $ is a function of $ Z_i $, $ \function_{\{i,j\}} $ is a function of $ Z_i $ and $ Z_j $, and so on. Here, $ [\numnonsensitive] \triangleq \{1,2,\dots, \numnonsensitive\} $ and $ \mathbf{S}$ is an ordered subset of $[\numnonsensitive] \setminus \emptyset $.  We denote $ \mathbf{Z}_{\mathbf{S}}  \triangleq \{Z_i | i \in \mathbf{S}\}$ as the input of $ \function_{\mathbf{S}} $, where $ \mathbf{Z}_{\mathbf{S}}$ is a set of variables with indices belonging to $ \mathbf{S} $.  The standard condition of this decomposition is the orthogonality of each term in the right-hand side of Eq.~\eqref{eq:functional_decomposition_set_notation}~\cite{sobol1990sensitivity}. $ \function_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}}) $ is the effect of varying all the features in $\mathbf{Z}_{\mathbf{S}}$ simultaneously. %\unsure{Is this sentence necessary?}  
+For $|\mathbf{S}|=1$, it quantifies an individual variable's effect. For $|\mathbf{S}|>1$, it quantifies the higher-order interactive effect of variables.
+
+Now, if we assume $ \function $ to be square integrable, we obtain the decomposition of the variance of the output~\cite{sobol1990sensitivity}.
+
+\begin{align}\label{eq:variance_decomposition_set_notation}
+\mathsf{Var}[g(\mathbf{Z})] &= \sum_{i=1}^{\numnonsensitive}V_{\{i\}} +  \sum_{i<j}^{\numnonsensitive} V_{\{i,j\}}  + \cdots  + V_{\{1, 2\dots, \numnonsensitive\}}= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} V_{\mathbf{S}} 
+\end{align}
+
+where $ V_{\{i\}} $ is the variance of $ \function_{\{i\}} $, $ V_{\{i,j\}} $ is the variance of $ \function_{\{i,j\}} $ and so on. Formally,  
+
+\[ V_{\mathbf{S}} \triangleq \mathsf{Var} _{\mathbf{Z}_{\mathbf{S}}}\left[\mathbb{E}_{{\textbf {Z}}/\mathbf{Z}_{\mathbf{S}}}[g(\mathbf{Z})\mid \mathbf{Z}_{\mathbf{S}}]\right]- \sum_{\mathbf{S}' \subset \mathbf{S}/\emptyset}{V} _{\mathbf{S}'}.\] 
+
+Here, $\mathbf{S}'$ denotes all the ordered proper subsets of $\mathbf{S}$. %\improvement{Check notations.}
+This variance decomposition shows how the variance of $\function(\mathbf{Z}) $ can be decomposed into terms attributable to each input, as well as the interactive effects among them. Together all terms sum to the total variance of the model output. 
+
+
+
+
+%\todo{End}

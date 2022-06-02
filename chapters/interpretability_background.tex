@@ -36,9 +36,9 @@ The MaxSAT problem is an optimization analog to the SAT problem that finds an op
 
 Given a weighted-CNF formula $F \triangleq \bigvee_i C_i$ with weight $ \weight{C_i} $, the weighted-partial MaxSAT problems finds an optimal assignment $\sigma^*$ that achieves the minimum weight. Formally,  $\sigma^* = \MaxSAT(F,\weight{\cdot})$ if $\forall \sigma \neq \sigma^*, \weight{\sigma^*} \leq \weight{\sigma}$. The optimal weight of the MaxSAT problem $  \weight{\sigma^*} $ is infinity ($ \infty $) when at least one hard clause becomes unsatisfied.  Therefore,  the weighted-partial MaxSAT problem finds $ \sigma^* $ that satisfies all hard clauses and as many soft clauses as possible such that the total weight of unsatisfied soft clauses is minimum. In this paper, we reduce the classification problem  to the solution of a weighted-partial MaxSAT problem. The knowledge of the inner workings of {MaxSAT} solvers is  not required for this paper.  
 
-
-\subsection*{\red{Mixed Integer Linear Programming (MILP)}}
-\red{[Not required]}The MILP problem is an optimization problem operating on both integer and real-valued variables. Given an objective function and a set of constraints, a (minimization) MILP finds an optimal assignment of variables that minimizes the objective function.
+%
+%\subsection*{\red{Mixed Integer Linear Programming (MILP)}}
+%\red{[Not required]}The MILP problem is an optimization problem operating on both integer and real-valued variables. Given an objective function and a set of constraints, a (minimization) MILP finds an optimal assignment of variables that minimizes the objective function.
 
 
 \subsection*{Rule-based Classification}
