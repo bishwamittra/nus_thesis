@@ -1,18 +1,21 @@
 \part{Interpretable Machine Learning}
 
-\chapter{Preliminaries}
 
+In this part of the thesis, we discuss preliminaries on interpretable machine learning in Chapter~\ref{chapter_interpretability_preliminaries}, an incremental learning framework for interpretable classification rules in Chapter~\ref{chapter:imli}, and extend incremental learning to more expressible classification rules in Chapter~\ref{chapter:crr}. 
+
+\chapter{Preliminaries}
+\label{chapter_interpretability_preliminaries}
 %\section{Preliminaries}
 %\label{interpretability_imli_sec:preliminaries}
 
 In this chapter, we discuss preliminaries for learning interpretable rule-based classifiers. Throughout this part of the thesis, we use capital  boldface letters such as $\mathbf{X}$ to denote matrices while lower boldface letters such as $\mathbf{x}$ are reserved for vectors/sets. 
 
-\subsection*{Propositional Satisfiability}
+\subsection{Propositional Satisfiability}
 
-Let $F$ be a Boolean formula defined over Boolean variables $\mathbf{b} = \{b_1,b_2,\dots ,b_m \}$. A literal or predicate $ v $ is a variable $b$ or its complement $\neg b$, and a clause $ C $ is a disjunction ($ \vee $) or a conjunction ($ \wedge $) of literals.\footnote{While \emph{term} is reserved to denote disjunction of literals in the literature, we use clause for both disjunction and conjunction.}  $F$ is in Conjunctive Normal Form (CNF) if $F \triangleq  \bigwedge_i C_i$ is a conjunction of clauses where each clause $C_i \triangleq  \bigvee_j v_j $  is a disjunction of literals. In contrast, $ F $ is in Disjunctive Normal Form (DNF) if $F \triangleq  \bigvee_i C_i$ is a disjunction of clauses where each clause $C_i \triangleq  \bigwedge_j v_j $ is a conjunction of literals. We use $\sigma$ to denote an assignment of variables in  $\mathbf{b}$ where $ \sigma(b_i) \in $ \{true, false\}. A \emph{satisfying assignment} $ \sigma^* $ of $F$ is an assignment  that evaluates $F$  to true and is denoted by $ \sigma^* \models F $. The propositional satisfiability (SAT) problem finds a satisfying assignment $ \sigma^* $ to a CNF formula $ F $  such that $ \forall i, \sigma^* \models C_i $, wherein $ \sigma^*\models C_i $ if and only if $ \exists v_j \in C_i, \sigma^*(v_j) = \text{true} $. Informally, $ \sigma^* $ satisfies at least one literal in each clause of a CNF. 
+Let $F$ be a Boolean formula defined over Boolean variables $\mathbf{b} = \{b_1,b_2,\dots ,b_m \}$. A literal $ v $ is a variable $b$ or its complement $\neg b$, and a clause $ C $ is a disjunction ($ \vee $) or a conjunction ($ \wedge $) of literals.\footnote{While \emph{term} is reserved to denote disjunction of literals in the literature, we use clause for both disjunction and conjunction.}  $F$ is in Conjunctive Normal Form (CNF) if $F \triangleq  \bigwedge_i C_i$ is a conjunction of clauses where each clause $C_i \triangleq  \bigvee_j v_j $  is a disjunction of literals. In contrast, $ F $ is in Disjunctive Normal Form (DNF) if $F \triangleq  \bigvee_i C_i$ is a disjunction of clauses where each clause $C_i \triangleq  \bigwedge_j v_j $ is a conjunction of literals. We use $\sigma$ to denote an assignment of variables in  $\mathbf{b}$ where $ \sigma(b_i) \in $ \{true, false\}. A \emph{satisfying assignment} $ \sigma^* $ of $F$ is an assignment  that evaluates $F$  to true and is denoted by $ \sigma^* \models F $. The propositional satisfiability (SAT) problem finds a satisfying assignment $ \sigma^* $ to a CNF formula $ F $  such that $ \forall i, \sigma^* \models C_i $, wherein $ \sigma^*\models C_i $ if and only if $ \exists v_j \in C_i, \sigma^*(v_j) = \text{true} $. Informally, $ \sigma^* $ satisfies at least one literal in each clause of a CNF. 
 
 
-\subsection*{Relaxation of Logical Formulas}
+\subsection{Relaxation of Logical Formulas}
 
 A hard-OR or a soft-AND clause is a tuple $ (C,\eta) $ with an extra parameter $ \eta $, where $ \eta $ is the threshold on the literals in $ C $. Let $ \mathds{1}[\text{true}]=1 $ and $ \mathds{1}[\text{false}]=0 $. Motivated by \red{Boolean cardinality constraints}, we propose relaxed-CNF formulas, where in addition to $F$, we have two more parameters $\eta_c$ and $\eta_l$. We say that $(F,\eta_c, \eta_l)$ is in relaxed-CNF and $ \sigma^* $ is its satisfying assignment if and only if $\sigma^* \models (F,\eta_c, \eta_l)$ whenever $\sum_{i=1}^k \mathds{1}[\sigma^* \models (C_i,\eta_l)] \ge \eta_c$, where $\sigma^* \models (C_i, \eta_l)$ if and only if $\sum_{v \in C_i} \mathds{1}[\sigma^* \models v] \geq \eta_l$. Informally,  $\sigma^*$ satisfies a clause $(C_i, \eta_l)$ if  at least $\eta_l$ literals in $C_i$ are set to true by $\sigma^*$ and $\sigma^*$ satisfies $(F,\eta_c, \eta_l)$ if at least $\eta_c$  clauses out of all $\{(C_i,\eta_l)\}$ clauses are true. 
 
@@ -23,13 +26,13 @@ A hard-OR or a soft-AND clause is a tuple $ (C,\eta) $ with an extra parameter $
 \end{theorem}
 
 
-\subsection*{Inner Product}
+\subsection{Inner Product}
 In this part of the thesis, we use true as $ 1 $ and false as $ 0 $ interchangeably. Between two vectors  $\mathbf{u}$ and $\mathbf{v}$ of the same length defined over Boolean variables or constants (such as  $ 0 $ and $ 1 $), we define $\mathbf{u} \circ \mathbf{v} $  to refer to  their inner product. Formally, $\mathbf{u} \circ \mathbf{v} \triangleq \bigvee_{i} (u_{i} \wedge v_{i})$ is a disjunction of element-wise conjunction where $u_{i}$ and $v_{i}$ denote the $ i^\text{th} $ variable/constant of $\mathbf{u}$ and $\mathbf{v}$, respectively. In this context, the conjunction ``$\wedge$'' between a variable and a constant follows the standard interpretation: $b \wedge 0 = 0$ and $b \wedge 1 = b$.  For example, if $ \mathbf{u} = [u_1, u_2, u_3] $ and $ \mathbf{v} = [0,1,1] $, then $ \mathbf{u} \circ \mathbf{v} = u_2 \vee u_3 $. Applying numerical interpretation, the inner product can also be expressed as $\mathbf{u} \circ \mathbf{v} \triangleq \sum_{i} (u_{i} \cdot v_{i}) $. Hence, for the running example $ \mathbf{u} = [u_1, u_2, u_3] $ and $ \mathbf{v} = [0,1,1] $, we derive $ \mathbf{u} \circ \mathbf{v} = u_2  + u_3 $. In this part of the thesis, we use Boolean interpretation of the inner product for learning CNF classification rules and numerical interpretation for learning relaxed-CNF classification rules.
 
 
 
 
-\subsection*{MaxSAT}
+\subsection{MaxSAT}
 
 The MaxSAT problem is an optimization analog to the SAT problem that finds an optimal assignment satisfying the maximum number of clauses in a CNF. In interpretable machine learning, we consider a \emph{weighted} variant of the MaxSAT problem\textemdash more specifically, a weighted-partial MaxSAT problem\textemdash that optimizes over a set of hard and soft constraints in the form of a weighted-CNF formula. In a weighted-CNF formula, a weight $ {\weight{C_i}} \in \mathbb{R}^+ \cup \{\infty\} $ is defined over each clause $ C_i $, wherein $C_i$ is called a \emph{hard} clause if $\weight{C_i} = \infty$, and  $C_i$ is  a \emph{soft} clause, otherwise.  To avoid notational clutter, we overload {\weight{\cdot}} to denote the weight of an assignment $ \sigma $. In particular, we define $\weight{\sigma}$ as the sum of the weights of \emph{unsatisfied clauses} in a CNF, formally, $\weight{\sigma} = \Sigma_{i | \sigma \not \models C_i} \weight{C_i}$.
 
@@ -37,11 +40,11 @@ The MaxSAT problem is an optimization analog to the SAT problem that finds an op
 Given a weighted-CNF formula $F \triangleq \bigvee_i C_i$ with weight $ \weight{C_i} $, the weighted-partial MaxSAT problems finds an optimal assignment $\sigma^*$ that achieves the minimum weight. Formally,  $\sigma^* = \MaxSAT(F,\weight{\cdot})$ if $\forall \sigma \neq \sigma^*, \weight{\sigma^*} \leq \weight{\sigma}$. The optimal weight of the MaxSAT problem $  \weight{\sigma^*} $ is infinity ($ \infty $) when at least one hard clause becomes unsatisfied.  Therefore,  the weighted-partial MaxSAT problem finds $ \sigma^* $ that satisfies all hard clauses and as many soft clauses as possible such that the total weight of unsatisfied soft clauses is minimum. In this chapter, we reduce the classification problem  to the solution of a weighted-partial MaxSAT problem. The knowledge of the inner workings of {MaxSAT} solvers is  not required for this chapter.  
 
 %
-%\subsection*{\red{Mixed Integer Linear Programming (MILP)}}
+%\subsection{\red{Mixed Integer Linear Programming (MILP)}}
 %\red{[Not required]}The MILP problem is an optimization problem operating on both integer and real-valued variables. Given an objective function and a set of constraints, a (minimization) MILP finds an optimal assignment of variables that minimizes the objective function.
 
 
-\subsection*{Rule-based Classification}
+\subsection{Rule-based Classification}
 
 We consider a standard binary classification problem where $ \mathbf{X} \in \{0,1\}^{n\times m} $ is a binary feature matrix\footnote{Our framework allows learning on real-valued and categorical features, as discussed in Section~\ref{interpretability_imli_sec:non-binary}.} defined over Boolean features $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$ and $ \mathbf{y} \in \{0,1\}^n $ is a vector of binary class labels.  The $ i^\text{th} $ row of $ \mathbf{X} $, denoted by $ \mathbf{X}_i \in \mathcal{X} $, is called a sample, which is generated from a product distribution $ \mathcal{X} $. Thus, $ \mathbf{X}_i $ is the valuation of features in $ \mathbf{x} $ and $ y_i $ is its class label.  $ \mathbf{X}_i $ is called a positive sample if $ y_i = 1 $, otherwise a negative sample.
 
