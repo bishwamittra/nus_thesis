@@ -58,6 +58,11 @@ Linear classifiers have attracted significant attention from researchers in the 
 While fairness metrics globally quantify bias, they cannot detect or explain the sources of bias~\cite{begley2020explainability,lundberg2020explaining,pan2021explaining}. In order to identify the sources of bias and also the effect of affirmative/punitive actions to alleviate/deteriorate bias, it is important to understand \textit{which factors contribute how much to the bias of a classifier on a dataset}. To this end, we follow a feature-attribution approach to understand the sources of bias~\cite{begley2020explainability,lundberg2020explaining}, where we relate the \emph{influences} of input features towards the resulting bias of the classifier. Particularly, we define and compute \textit{Fairness Influence Function} (FIF) that quantifies the contribution of individual and subset of features to the resulting bias. FIFs do not only allow practitioners to identify the features to act up on but also to quantify the effect of various affirmative~\cite{calmon2017optimized,hardt2016equality,kamiran2012decision,zemel2013learning,zhang2018mitigating,zhang2018fairness,zhang2019faht} or punitive actions~\cite{hua2021human,mehrabi2020exacerbating,solans2020poisoning} on the resulting bias. We also instantiate an algorithm, {\fairXplainer}, that uses variance decomposition among the subset of features and a local regressor to compute FIFs accurately, while also capturing the intersectional effects of the features. Our experimental analysis validates that {\fairXplainer} captures the influences of both individual features and higher-order feature interactions, estimates the bias more accurately than existing local explanation methods, and detects the increase/decrease in bias due to affirmative/punitive actions in the classifier.
 
 \section{Tools}
+	We develop following open-source tools for interpretable and fair machine learning.
+	\begin{itemize}
+		\item \href{https://github.com/meelgroup/MLIC}{{\imli}} for interpretable machine learning
+		\item  \href{https://github.com/meelgroup/justicia}{\justicia} for fairness verification
+	\end{itemize}
 \section{Outline}
 
 
