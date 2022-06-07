@@ -1,5 +1,5 @@
 \section{Applications of {\fvgm}}\label{fvgm_sec:applications}
-In this section, we apply {\fvgm} for verifying fairness-enhancing algorithms and depreciation attacks. We also demonstrate that {\fvgm} facilitates computation of fairness influence functions by enabling the detection of bias due to individual features. 
+In this section, we apply {\fvgm} for verifying fairness-enhancing algorithms and depreciation attacks. We also demonstrate that {\fvgm} facilitates the computation of fairness influence functions by enabling the shift of bias from the original value due to individual features. 
 
 
 \iffalse
@@ -16,7 +16,7 @@ In this section, we apply {\fvgm} for verifying fairness-enhancing algorithms an
 
 
 \paragraph{Verifying Fairness-enhancing Algorithms.} We deploy {\fvgm} in verifying the effectiveness of fairness-enhancing algorithms designed to ameliorate bias. For example, fairness 
-pre-processing algorithms can be validated by applying {\fvgm} on the unprocessed and the processed data separately and comparing different fairness metrics. In Table~\ref{fvgm_tab:fair_algo_verification}, we report the effect of fairness algorithms w.r.t. four fairness metrics: disparate impact (DI), path-specific causal fairness (PCF), statistical parity (SP), and equalized odds (EO). Note that, fairness is improved if DI increases and the rest of the metrics decrease. For instance, in most instances for Adult dataset, reweighing (RW)~\cite{kamiran2012data} and optimized pre-processing (OP)~\cite{calmon2017optimized} algorithms are successful in improving fairness. The exceptional case is the unfairness regarding the sensitive feature `sex', where OP algorithm fails in improving fairness metric EO. Thus, \textit{{\fvgm} verifies the enhancement and decrement in fairness by  fairness-enhancing algorithms. }
+pre-processing algorithms can be validated by applying {\fvgm} on the unprocessed and the processed data separately and comparing different fairness metrics. In Table~\ref{fvgm_tab:fair_algo_verification}, we report the effect of fairness algorithms w.r.t. four fairness metrics: disparate impact ($ \mathsf{DI} $), path-specific causal fairness ($ \mathsf{PCF} $), statistical parity ($ \mathsf{SP} $), and equalized odds ($ \mathsf{EO} $). Note that, fairness is improved if $ \mathsf{DI} $ increases and the rest of the metrics decrease. For instance, in most instances for Adult dataset, reweighing (RW)~\cite{kamiran2012data} and optimized pre-processing (OP)~\cite{calmon2017optimized} algorithms are successful in improving fairness. The exceptional case is the unfairness regarding the sensitive feature `sex', where OP algorithm fails in improving fairness metric $ \mathsf{EO} $. Thus, \textit{{\fvgm} verifies the enhancement and decrement in fairness by  fairness-enhancing algorithms. }
 
 
 
@@ -25,7 +25,7 @@ pre-processing algorithms can be validated by applying {\fvgm} on the unprocesse
 	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/disp_fairness_attack}}
 	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/stat_fairness_attack}}
 	
-	\caption[Verifying fairness attacks]{Verifying poisoning attack against fairness using {\fvgm}. The red line denotes the safety margin of the ML model against the attack.}\label{fvgm_fig:fairness_attacks}
+	\caption[Verifying fairness attacks]{Verifying poisoning attack against fairness using {\fvgm}. The red line denotes the safety margin of the machine learning model against the attack.}\label{fvgm_fig:fairness_attacks}
 \end{figure}
 
 
@@ -86,7 +86,6 @@ FIF allows us to explain the sources of unfairness in the classifier. In practic
 
 In Figure~\ref{fvgm_fig:influence function}, we compute FIF for all features in COMPAS dataset, separately for two sensitive groups: Female (`sex' $ = 1 $) and Male. This dataset concerns the likelihood of a person of re-offending crimes within the next two years. We first observe that the base values of the probability of positive prediction are different for the two groups ($ 0.46 $ vs $ 0.61 $ for Female and Male), thereby showing Male as more probable to re-offend crimes than Female. Moreover, FIF of the feature `age' is comparatively higher in magnitude for Male than Female. 
 This implies that while deciding recidivism the algorithm assumes that Female individuals across different ages re-offend crimes with almost the same probability and the probability of re-offending for Male individuals highly depends on age. Thus, applying {\fvgm} to compute FIF provides us insights about sources of bias and thus, indicators to improve fairness.
-$\Pr[\hat{Y} = 1|$age\_0 $\ge$ 0.5]
 
 \begin{figure}[t!]	
 	\centering
@@ -95,7 +94,7 @@ $\Pr[\hat{Y} = 1|$age\_0 $\ge$ 0.5]
 	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_0}}
 	%\vspace{-0.5em}
 %	\vspace{-2ex}
-	\caption[FIF computation using {\fvgm}]{FIF computation for COMPAS dataset. For Female (left plot) and Male, influence of `age' decreases and the probability of positive prediction of the classifier increases  by different magnitudes.}\label{fvgm_fig:influence function}
+	\caption[FIF computation using {\fvgm}]{FIF computation for COMPAS dataset. For Female (left plot) and Male (right plot) individuals,  the influence of `age' decreases and the probability of positive prediction of the classifier increases  by different magnitudes.}\label{fvgm_fig:influence function}
 %	\vspace{-2ex}
 \end{figure}
 
