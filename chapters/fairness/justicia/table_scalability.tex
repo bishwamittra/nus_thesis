@@ -1,9 +1,10 @@
-\begin{table}
- \caption[Scalability of {\justicia}]{Scalability of different verifiers in terms of execution time (in seconds).  DT and LR refer to decision tree and logistic regression respectively. `\textemdash'~ refers to timeout.}
+\begin{comment}
+\begin{table}[h]
+ \caption[Scalability of {\justicia}]{Scalability of different verifiers in terms of execution time (in seconds).  DT and LR refer to decision tree and logistic regression classifier, respectively. `\textemdash'~ refers to timeout.}
  \label{fairness_justicia_tab:FS_VF_Justicia}
  
     \centering
-        \setlength{\tabcolsep}{.3em}
+%        \setlength{\tabcolsep}{.3em}
 %        \vspace*{-.3em}
             \begin{tabular}{lrrrrrrrr}
                 \toprule
@@ -23,4 +24,48 @@ VeriFair &  $ 5.3  $  &  $ 2.2  $  &  $ 1.2  $  &  $ 0.8  $  &  $ 15.9  $  &  $ 
                 \bottomrule
     \end{tabular}
 %\vspace*{-1em}
+\end{table}
+
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lrrrrrrrr}
+		\toprule
+		Dataset & Classifier & FairSquare & VeriFair & {\justicia} \\
+		\midrule
+		\multirow{2}{*}{Ricci} & Decision Tree & $ 4.8 $ & $ 5.3 $ & $ \mathbf{0.1} $ \\
+		 & Logistic Regression & \textemdash & $ 2.2 $ & $ \mathbf{0.2} $ \\
+		\multirow{2}{*}{Titanic} & Decision Tree & $ 16 $ & $ 1.2 $ & $ \mathbf{0.1} $ \\
+		& Logistic Regression & \textemdash & $ \textbf{0.8} $ & $ 0.9 $ \\
+		\multirow{2}{*}{COMPAS} & Decision Tree & $ 36.9 $ & $ 15.9 $ & $ \mathbf{0.1} $ \\
+		& Logistic Regression & \textemdash & $ 11.3 $ & $ \mathbf{0.2} $ \\
+		\multirow{2}{*}{Adult} & Decision Tree & \textemdash & $ 295.6 $ & $ \mathbf{0.2} $ \\
+		& Logistic Regression & \textemdash & $ 61.1 $ & $ \mathbf{1.0} $ \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+\end{comment}
+
+
+\begin{table}[!t]
+	\caption[Scalability of {\justicia}]{Scalability of different verifiers in terms of execution time (in seconds). The number in bold refers to the best result incurring minimum execution time among competitive verifiers. `\textemdash'~ refers to timeout.}
+	\label{fairness_justicia_tab:FS_VF_Justicia}
+	\centering
+	\begin{tabular}{lrrrrrrrr}
+		\toprule
+		Classifier & Dataset & FairSquare & VeriFair & {\justicia} \\
+		\midrule
+		\multirow{4}{*}{Decision Tree} & Ricci & $ 4.8 $ & $ 5.3 $ & $ \mathbf{0.1} $ \\
+		& Titanic & $ 16 $ & $ 1.2 $ & $ \mathbf{0.1} $ \\
+		& COMPAS & $ 36.9 $ & $ 15.9 $ & $ \mathbf{0.1} $ \\
+		& Adult & \textemdash & $ 295.6 $ & $ \mathbf{0.2} $ \\
+		\\
+		\multirow{4}{*}{Logistic Regression} & Ricci & \textemdash & $ 2.2 $ & $ \mathbf{0.2} $ \\
+		& Titanic & \textemdash & $ \textbf{0.8} $ & $ 0.9 $ \\
+		& COMPAS & \textemdash & $ 11.3 $ & $ \mathbf{0.2} $ \\
+		& Adult & \textemdash & $ 61.1 $ & $ \mathbf{1.0} $ \\
+		
+		\bottomrule
+		
+	\end{tabular}
 \end{table}

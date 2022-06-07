@@ -1,15 +1,15 @@
 \begin{table}
- \caption[Accuracy of {\justicia}]{Results on synthetic benchmark.  `\textemdash'~ refers that the verifier cannot compute the metric. }
+ \caption[Accuracy of {\justicia}]{Results on synthetic benchmark.  `\textemdash'~ refers that the verifier cannot compute the metric. The number in bold denotes the best result, where the estimated fairness metric is closest to the exact value.}
  \label{fairness_justicia_tab:synthetic}
     \centering
 %        \vspace*{-.2em}
-        \setlength{\tabcolsep}{.1em}
+%        \setlength{\tabcolsep}{.1em}
             \begin{tabular}{ccccccc}
                 \toprule
                 Metric & Exact  & {\justicia} & FairSquare & VeriFair & AIF360\\
                  \midrule
-				Disparate impact &  $ 0.26 $  &  $ 0.25 $    &  $ 0.99 $  &  $ 0.99 $  &  $ 0.25 $  \\
-				Stat. parity &  $ 0.53 $  &  $ 0.54 $    & \textemdash & \textemdash &  $ 0.54 $  \\
+				Disparate impact &  $ 0.26 $  &  $ \textbf{0.25} $    &  $ 0.99 $  &  $ 0.99 $  &  $ \textbf{0.25} $  \\
+				Statistical parity &  $ 0.53 $  &  $ \textbf{0.54} $    & \textemdash & \textemdash &  $ \textbf{0.54} $  \\
                 \bottomrule
     \end{tabular}
  
