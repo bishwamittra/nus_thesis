@@ -3,7 +3,7 @@
 
 	\subfloat[Known marginal  probabilities.]{
 %		\centering
-		\scalebox{0.75}{
+		\scalebox{1}{
 		\begin{tikzpicture}[>=stealth',shorten >=1pt, on grid,initial/.style={}]
 			\node[state, align=center, fill=existential] (T1) {$ 1, 2 $\\$ 0.55 $};
 			\node[state, align=center, label={[align=left,right]0:$ 0.85\Pr[Q] + 0.35\Pr[\neg Q] $\\$ =0.55 $}] (T2) [below = 1.6 cm of T1] {$2,1$\\$ 0.55 $};
@@ -37,10 +37,11 @@
 		}
 \label{fvgm_fig:example_dp}}
 %\hspace*{-0.5cm}
+
 \subfloat[Probabilities computed with a Bayesian network.]
 {  
 %		\centering
-		\scalebox{0.75}{
+		\scalebox{1}{
 			\begin{tikzpicture}[>=stealth',shorten >=1pt, on grid,initial/.style={}]
 			\node[state, align=center, fill=existential, accepting] (T1) {$ 1, 2 $\\$ 0.65 $};
 			\node[state, align=center, accepting, label={[align=left,right]0:$ 0.85\Pr[Q|P] + $ \\ $   0.35\Pr[\neg Q|P] $\\$ =0.65 $}] (T2) [below left = 1.6 cm and 2 cm of T1] {$2,1$\\$ 0.65 $};

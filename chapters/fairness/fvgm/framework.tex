@@ -1,47 +1,47 @@
 \section{{\fvgm}: Fairness Verification with Graphical Models}\label{fvgm_sec:fvgm}
 
-In this section, we present {\fvgm}, a fairness verification framework for linear classifiers that accounts for correlated features represented as a graphical model. The core idea of verifying fairness of a classifier is to compute the probability of positive prediction of the classifier with respect to all compound sensitive groups. To this end, {\fvgm} solves a stochastic subset sum problem, {\stochastic}, that is equivalent to computing the probability of positive prediction of the classifier for the most (and the least) favored sensitive group. In this section, we first define {\stochastic} and present an efficient dynamic programming solution for {\stochastic}. We then extend {\stochastic} to consider correlated features as input. Finally, we conclude by discussing fairness verification based on the solution of {\stochastic}.
+In this section, we present {\fvgm}, a fairness verification framework for linear classifiers that accounts for correlated features represented as a graphical model. The core idea of verifying fairness of a classifier is to compute the probability of positive prediction of the classifier with respect to all compound sensitive groups. To this end, {\fvgm} solves a stochastic subset sum problem, {\stochastic}, that is equivalent to computing the probability of positive prediction of the classifier for the most and the least favored sensitive group\footnote{The most (resp.\ least) favored sensitive group obtains the maximum (resp.\ minimum) probability of positive prediction of the classifier.}. In this section, we first define {\stochastic} and present an efficient dynamic programming solution for {\stochastic}. We then extend {\stochastic} to consider correlated features as input. Finally, we conclude by discussing fairness verification based on the solution of {\stochastic}.
 
 
 \textbf{Problem Formulation.}	
-Given a linear classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \hat{Y} $ and a probability distribution $ \mathcal{D} $ of $ \nonsensitive \cup \sensitive $, our objective is to compute $ \max_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}] $ and $ \min_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}] $ with respect to $ \mathcal{D} $. In this study, we express a linear classifier $\mathcal{M}$ as 
+Given a linear classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $ and a probability distribution $ \mathcal{D} $ of $ \nonsensitive \cup \sensitive $, our objective is to compute $ \max_{ \mathbf{a}} \Pr[\widehat{Y} =1 | \sensitive = \mathbf{a}] $ and $ \min_{ \mathbf{a}} \Pr[\widehat{Y} =1 | \sensitive = \mathbf{a}] $ with respect to $ \mathcal{D} $. In this study, we express a linear classifier $\mathcal{M}$ as 
 
-\[	\hat{Y} = \mathds{1}\Big[\sum_{i} w_{X_i}X_i + \sum_{j} w_{A_j}A_j \ge \tau\Big].\]
+\[	\widehat{Y} = \mathds{1}\Big[\sum_{i} W_{X_i}X_i + \sum_{j} W_{A_j}A_j \ge \tau\Big].\]
 
-Here, $ w $ denotes the weight (or coefficients) of a feature, $ \tau $ denotes the bias or the offset parameter of the classifier, and $\mathds{1}$ is an indicator function. Hence, the prediction $ \hat{Y} =1 $ if and only if the inner inequality holds.
-Thus, computing the maximum (resp.\ minimum) probability of positive prediction is equivalent to finding out the assignment of $A_j$'s for which the probability of satisfying the inner inequality is highest (resp.\ lowest). We reduce this computation into an instance of {\stochastic}. To perform this reduction, we assume  weights $ w $ and bias $ \tau $ as integers, and features $\nonsensitive \cup \sensitive $ as Boolean. In Sec.~\ref{fvgm_sec:practical}, we relax these assumptions and extend to the practical settings. 
+Here, $ W $ denotes the weight (or coefficients) of a feature, $ \tau $ denotes the bias or the offset parameter of the classifier, and $\mathds{1}$ is an indicator function. Hence, the prediction $ \widehat{Y} =1 $ if and only if the inner inequality holds.
+Thus, computing the maximum (resp.\ minimum) probability of positive prediction is equivalent to finding out the assignment of $A_j$'s for which the probability of satisfying the inner inequality is highest (resp.\ lowest). We reduce this computation into an instance of {\stochastic}. To perform this reduction, we assume  weight $ W $ and bias $ \tau $ as integers, and features $\nonsensitive \cup \sensitive $ as Boolean. In Sec.~\ref{fvgm_sec:practical}, we relax these assumptions and extend to the practical settings. 
 
 \subsection{$ \stochastic $: Stochastic Subset Sum Problem}\label{fvgm_sec:stochastic_sum_set_sum}
 Now, we formally describe the specification and semantics of {\stochastic}.
-{\stochastic} operates on  a set of Boolean variables $ \mathbf{B} = \{B_i\}_{i=1}^{n} \in \{0,1\}^{n} $, where $ w_i \in \mathbb{Z} $ is the weight of $ B_i $, and $n \triangleq |\mathbf{B}|$. Given a constant threshold $ \tau \in \mathbb{Z} $, {\stochastic} computes the \textit{probability} of a subset of $ \mathbf{B} $ with sum of weights of non-zero variables to be at least $ \tau $. Formally,
+{\stochastic} operates on  a set of Boolean variables $ \mathbf{B} = \{B_i\}_{i=1}^{n} \in \{0,1\}^{n} $, where $ W_i \in \mathbb{Z} $ is the weight of $ B_i $, and $n \triangleq |\mathbf{B}|$. Given a constant threshold $ \tau \in \mathbb{Z} $, {\stochastic} computes the \textit{probability} of a subset of $ \mathbf{B} $ with sum of weights of non-zero variables to be at least $ \tau $. Formally,
 
-\[S(\mathbf{B}, \tau) \triangleq \Pr\Big[\sum_{i} w_iB_i \ge \tau \Big] \in [0,1].\]
+\[S(\mathbf{B}, \tau) \triangleq \Pr\Big[\sum_{i} W_iB_i \ge \tau \Big].\]
 
-Aligning with terminologies in stochastic satisfiability (SSAT)~\cite{littman2001stochastic}, we categorize the variables $ \mathbf{B} $ into two types: (i) \textit{chance variables} that are stochastic and have an associated probability of being assigned to $ 1 $ and (ii) \textit{choice variables} that we  optimize while computing $ S(\mathbf{B}, \tau) $.  To specify the category of variables, we consider a \textit{quantifier} $ q_i \in \{\R^{p_i}, \exists, \forall\} $ for each $ B_i $. Elaborately, $ \R^{p} $ is a \textit{random quantifier} corresponding to a chance variable $ B \in \mathbf{B} $, where  $ p\triangleq \Pr[B = 1]$. In contrast, $ \exists $ is an \textit{existential quantifier} corresponding to a choice variable $ B $ such that a Boolean assignment of $ B $  \textit{maximizes}  $ S(\mathbf{B}, \tau) $. Finally, $ \forall $ is an \textit{universal quantifier} for a choice variable $ B $ that fixes an assignment to $ B $ that \textit{minimizes} $ S(\mathbf{B}, \tau) $. 
+Aligning with terminologies in stochastic satisfiability (SSAT)~\cite{littman2001stochastic}, we categorize the variables $ \mathbf{B} $ into two types: (i) \textit{chance variables} that are stochastic and have an associated probability of being assigned to $ 1 $ and (ii) \textit{choice variables} that we  optimize while computing $ S(\mathbf{B}, \tau) $.  To specify the category of variables, we consider a \textit{quantifier} $ Q_i \in \{\R^{p_i}, \exists, \forall\} $ for each $ B_i $. Elaborately, $ \R^{p} $ is a \textit{random quantifier} corresponding to a chance variable $ B \in \mathbf{B} $, where  $ p\triangleq \Pr[B = 1]$. In contrast, $ \exists $ is an \textit{existential quantifier} corresponding to a choice variable $ B $ such that a Boolean assignment of $ B $  \textit{maximizes}  $ S(\mathbf{B}, \tau) $. Finally, $ \forall $ is an \textit{universal quantifier} for a choice variable $ B $ that fixes an assignment to $ B $ that \textit{minimizes} $ S(\mathbf{B}, \tau) $. 
  
-Now, we formally present the semantics of $ S(\mathbf{B}, \tau) $ provided that each variable $ B_i $ has weight $ w_i $ and quantifier $ q_i $. Let  $ \mathbf{B}[2:n] \triangleq \{B_j\}_{j=2}^{n} $ be the subset of $\mathbf{B}$ without the first variable $ B_1 $. Then $ S(\mathbf{B}, \tau) $ is recursively defined as:
+Now, we formally present the semantics of $ S(\mathbf{B}, \tau) $ provided that each variable $ B_i $ has weight $ W_i $ and quantifier $ Q_i $. Let  $ \mathbf{B}[2:n] \triangleq \{B_j\}_{j=2}^{n} $ be the subset of $\mathbf{B}$ without the first variable $ B_1 $. Then $ S(\mathbf{B}, \tau) $ is recursively defined as:
 
 
 \begin{align}\label{fvgm_eq:semantics_recurse}
   S(\mathbf{B},\tau) =
  \begin{cases}
  \mathds{1}[ \tau \le 0 ], \; \text{if } \textbf{B} = \emptyset \\
- S(\mathbf{B}[2:n],\tau - \max\{w_1, 0\}), \; \text{if } q_1 = \exists\\
- S(\mathbf{B}[2:n],\tau - \min\{w_1, 0\}), \; \text{if } q_1 = \forall\\
- p_1\times S(\mathbf{B}[2:n],\tau - w_1) +\\ (1-p_1)\times S(\mathbf{B}[2:n],\tau),\; \text{if } q_1 = \R^{p_1}
+ S(\mathbf{B}[2:n],\tau - \max\{W_1, 0\}), \; \text{if } Q_1 = \exists\\
+ S(\mathbf{B}[2:n],\tau - \min\{W_1, 0\}), \; \text{if } Q_1 = \forall\\
+ p_1\times S(\mathbf{B}[2:n],\tau - W_1) +\\ (1-p_1)\times S(\mathbf{B}[2:n],\tau),\; \text{if } Q_1 = \R^{p_1}
  \end{cases}
 \end{align} 
 
 
 %\begin{enumerate}
 % 	\item $ S(\mathbf{B},\tau) = \mathds{1}[ \tau \le 0 ] $, if $ \textbf{B} = \emptyset $, %Here $ \mathds{1}[\text{true}] = 1 $ and $ \mathds{1}[\text{false}] = 0 $,
-% 	\item $ S(\mathbf{B},\tau) = S(\mathbf{B}_{-1},\tau - \max\{w_1, 0\}) $, if $ q_1 =  \exists $,
-% 	\item $ S(\mathbf{B},\tau) = S(\mathbf{B}_{-1},\tau - \min\{w_1, 0\}) $, if $ q_1 =  \forall $,
-% 	\item $ S(\mathbf{B},\tau) = p_1S(\mathbf{B}_{-1},\tau - w_1) + (1-p_1) S(\mathbf{B}_{-1},\tau) $, if $ q_1 = \R^{p_1}  $.
+% 	\item $ S(\mathbf{B},\tau) = S(\mathbf{B}_{-1},\tau - \max\{W_1, 0\}) $, if $ Q_1 =  \exists $,
+% 	\item $ S(\mathbf{B},\tau) = S(\mathbf{B}_{-1},\tau - \min\{W_1, 0\}) $, if $ Q_1 =  \forall $,
+% 	\item $ S(\mathbf{B},\tau) = p_1S(\mathbf{B}_{-1},\tau - W_1) + (1-p_1) S(\mathbf{B}_{-1},\tau) $, if $ Q_1 = \R^{p_1}  $.
 %\end{enumerate} 
 %KSM: Don't use semantic 1, semantic 2, -- very confusing
 
-Observe that when $ \textbf{B} $ is empty, $S$ is computed as $ 1 $ if $ \tau \le 0 $, and  $ S = 0 $ otherwise. For  existential and universal quantifiers, we compute $ S $ based on the weight. Specifically, if $ q_1 = \exists $, we decrement the threshold $ \tau $ by the maximum between $ w_1 $ and $ 0 $. For example, if $ w_1 > 0 $, $ B_1 $ is assigned $ 1 $, and assigned $ 0 $ otherwise. Therefore, by solving for an existential variable, we  maximize $ S $. In contrast, when if $ q_1 = \forall $, we fix an assignment of $ B_1 $ that minimizes $ S $ by choosing between the minimum of $ w_1 $ and $ 0 $. Finally, for random quantifiers, we decompose the computation of $S$ into two sub-problems: one sub-problem where $ B_1 = 1 $ and the updated threshold becomes $ \tau - w_1 $ and another sub-problem where $ B_1 = 0 $ and the updated threshold remains the same. Herein, we compute $ S $ as the expected output of both sub-problems.
+Observe that when $ \textbf{B} $ is empty, $S$ is computed as $ 1 $ if $ \tau \le 0 $, and  $ S = 0 $ otherwise. For  existential and universal quantifiers, we compute $ S $ based on the weight. Specifically, if $ Q_1 = \exists $, we decrement the threshold $ \tau $ by the maximum between $ W_1 $ and $ 0 $. For example, if $ W_1 > 0 $, $ B_1 $ is assigned $ 1 $, and assigned $ 0 $ otherwise. Therefore, by solving for an existential variable, we  maximize $ S $. In contrast, when if $ Q_1 = \forall $, we fix an assignment of $ B_1 $ that minimizes $ S $ by choosing between the minimum of $ W_1 $ and $ 0 $. Finally, for random quantifiers, we decompose the computation of $S$ into two sub-problems: one sub-problem where $ B_1 = 1 $ and the updated threshold becomes $ \tau - W_1 $ and another sub-problem where $ B_1 = 0 $ and the updated threshold remains the same. Herein, we compute $ S $ as the expected output of both sub-problems.
 
 %KSM: Lemma is a very strong term for such a straightforward observation
 \begin{remark}
@@ -49,7 +49,7 @@ Observe that when $ \textbf{B} $ is empty, $S$ is computed as $ 1 $ if $ \tau \l
 	$ S(\mathbf{B},\tau) $ does not depend on the order of $ \mathbf{B} $.
 \end{remark}
 
-\textbf{Computing Minimum and Maximum probability of positive prediction of Linear Classifiers Using  {\stochastic}.} For computing $ \max_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}] $ of a linear classifier, we set existential quantifiers $ \exists $ to sensitive features $ A_j $, randomized quantifiers $ \R $ to non-sensitive features $ X_i $ and construct a set $ \mathbf{B} = \sensitive \cup \nonsensitive $.  The coefficients $ w_{A_j} $ and $ w_{X_i} $ of the classifier become weights of $ \mathbf{B} $. Also, we get $n=m_1 +m_2$. For non-sensitive variables $ X_i $, which are chance variables, we derive their marginal probability $ p_i = \Pr[X_i = 1] $ from the distribution $ \mathcal{D} $.  According to semantic of {\stochastic}, setting $ \exists $ quantifiers on $ \sensitive $ computes the maximum value of $ S(\mathbf{B}, \tau) $ that equalizes the maximum probability of positive prediction of the classifier. In this case, the \textit{inferred} assignment of $ \sensitive $ implies the most favored group $ \mathbf{a}_{{\max}} =  \argmax_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}] $. In contrast, to compute the minimum probability of positive prediction, we instead assign each variable  $ A_j $ a universal  quantifier  while keeping random quantifiers over $ X_i $, and infer the least favored group $ \mathbf{a}_{{\min}} =  \argmin_{ \mathbf{a}} \Pr[\hat{Y} =1 | \sensitive = \mathbf{a}] $.
+\textbf{Computing Minimum and Maximum probability of positive prediction of Linear Classifiers Using  {\stochastic}.} For computing $ \max_{ \mathbf{a}} \Pr[\widehat{Y} =1 | \sensitive = \mathbf{a}] $ of a linear classifier, we set existential quantifiers $ \exists $ to sensitive features $ A_j $, randomized quantifiers $ \R $ to non-sensitive features $ X_i $ and construct a set $ \mathbf{B} = \sensitive \cup \nonsensitive $.  The coefficients $ W_{A_j} $ and $ W_{X_i} $ of the classifier become weights of $ \mathbf{B} $. Also, we get $n=m_1 +m_2$. For non-sensitive variables $ X_i $, which are chance variables, we derive their marginal probability $ p_i = \Pr[X_i = 1] $ from the distribution $ \mathcal{D} $.  According to semantic of {\stochastic}, setting $ \exists $ quantifiers on $ \sensitive $ computes the maximum value of $ S(\mathbf{B}, \tau) $ that equalizes the maximum probability of positive prediction of the classifier. In this case, the \textit{inferred} assignment of $ \sensitive $ implies the most favored group $ \mathbf{a}_{{\max}} =  \argmax_{ \mathbf{a}} \Pr[\widehat{Y} =1 | \sensitive = \mathbf{a}] $. In contrast, to compute the minimum probability of positive prediction, we instead assign each variable  $ A_j $ a universal  quantifier  while keeping random quantifiers over $ X_i $, and infer the least favored group $ \mathbf{a}_{{\min}} =  \argmin_{ \mathbf{a}} \Pr[\widehat{Y} =1 | \sensitive = \mathbf{a}] $.
 
 \iffalse
 \red{The decision version of computing the maximum (minimum) \red{\red{probability of positive prediction}} is to decide whether there is an assignment of \textit{sensitive} or \textit{choice variables}, for which the \textit{non-sensitive} or \textit{chance variables} yield a \red{\red{probability of positive prediction}} greater or less than $\alpha \in [0,1]$. Now, we formally state the hardness of verifying linear classifiers followed by an efficient dynamic programming solution.
@@ -75,22 +75,22 @@ Building on this observation, we propose the recursion and terminating condition
 \begin{align}\label{fvgm_eq:dp_recurse}
  \mathsf{dp}(i,\tau)=
  \begin{cases}
- \mathsf{dp}(i+1, \tau-\max\{w_i, 0\}), \; \text{if } q_i = \exists\\
- \mathsf{dp}(i+1, \tau-\min\{w_i, 0\}), \; \text{if } q_i = \forall\\
- p_i \times \mathsf{dp}(i+1, \tau-w_i) + \\ (1- p_i) \times \mathsf{dp}(i+1, \tau) ,\; \text{if } q_i = \R^{p_i}
+ \mathsf{dp}(i+1, \tau-\max\{W_i, 0\}), \; \text{if } Q_i = \exists\\
+ \mathsf{dp}(i+1, \tau-\min\{W_i, 0\}), \; \text{if } Q_i = \forall\\
+ p_i \times \mathsf{dp}(i+1, \tau-W_i) + \\ (1- p_i) \times \mathsf{dp}(i+1, \tau) ,\; \text{if } Q_i = \R^{p_i}
  \end{cases}
 \end{align} 
 
 Eq.~\eqref{fvgm_eq:dp_recurse} shows that $ S(\mathbf{B},\tau) $ can be solved by instantiating $ \mathbf{dp}(1, \tau) $, which includes all the variables in $ \mathbf{B} $. 
 
 \textit{Terminating Condition.} %We now define the \textit{terminating conditions} of the recursion. 
-Let $ w_{neg} $, $ w_{pos} $, and $ w_{all} $ be the sum of negative, positive, and all weights of $ \mathbf{B} $, respectively. We observe that $ w_{neg} \le w_{all} \le w_{pos}$. Thus, for any $ i $, if the {residual} threshold $ \tau \le w_{neg}$, there is always a subset of $ \mathbf{B}[i:n] $ with sum of weights at least $ \tau $. Conversely, when $ \tau > w_{pos}$, there is no subset of $ \mathbf{B}[i:n] $ with sum of weights at least $ \tau $.	We leverage this bound and tighten the terminating conditions of $ \mathsf{dp}(i, \tau) $ in Eq.~\eqref{fvgm_eq:dp_terminus}. 
+Let $ W_{neg} $, $ W_{pos} $, and $ W_{all} $ be the sum of negative, positive, and all weights of $ \mathbf{B} $, respectively. We observe that $ W_{neg} \le W_{all} \le W_{pos}$. Thus, for any $ i $, if the {residual} threshold $ \tau \le W_{neg}$, there is always a subset of $ \mathbf{B}[i:n] $ with sum of weights at least $ \tau $. Conversely, when $ \tau > W_{pos}$, there is no subset of $ \mathbf{B}[i:n] $ with sum of weights at least $ \tau $.	We leverage this bound and tighten the terminating conditions of $ \mathsf{dp}(i, \tau) $ in Eq.~\eqref{fvgm_eq:dp_terminus}. 
 
 \begin{align}\label{fvgm_eq:dp_terminus}
  \mathsf{dp}(i, \tau) =
  \begin{cases}
- 1\text{ if }\tau \le w_{neg}\\
- 0\text{ if } \tau > w_{pos}\\
+ 1\text{ if }\tau \le W_{neg}\\
+ 0\text{ if } \tau > W_{pos}\\
  \mathds{1}[\tau \le 0] \text{ if } i=n + 1
  \end{cases} 
 \end{align}
@@ -98,17 +98,37 @@ Let $ w_{neg} $, $ w_{pos} $, and $ w_{all} $ be the sum of negative, positive, 
 Eq.~\eqref{fvgm_eq:dp_recurse} and~\eqref{fvgm_eq:dp_terminus} together define our dynamic programming algorithm. While deploying the algorithm, we store $ \mathsf{dp}(i, \tau) $ in memory to avoid repetitive computations.  This allows us to achieve a pseudo-polynomial algorithm (Lemma~\ref{fvgm_lemma:complexity_sss}) instead of a na\"ive exponential algorithm enumerating all possible assignments. In particular, the time complexity is pseudo-polynomial for chance (random) variables and linear for choice (existential and universal) variables.
  
 \begin{lemma}\label{fvgm_lemma:complexity_sss}
- 	Let $ n' $ be the number of existential and universal variables in $ \mathbf{B} $. Let $ w_{\exists} = \sum_{B_i \in \mathbf{B} | q_i = \exists} \max\{w_i, 0\}$  and $ w_{\forall} = \sum_{B_i \in \mathbf{B} | q_i = \forall} \min\{w_i, 0\}$ be the considered sum of weights of existential and universal variables, respectively. We can exactly solve {\stochastic} using dynamic programming with time complexity $ \mathcal{O}((n - n')(\tau + |w_{neg}| - w_{\exists} - w_{\forall}) + n') $. The space complexity is  $ \mathcal{O}((n - n')(\tau + |w_{neg}| - w_{\exists} - w_{\forall})) $.
+ 	Let $ n' $ be the number of existential and universal variables in $ \mathbf{B} $. Let $$ W_{\exists} = \sum_{B_i \in \mathbf{B} | Q_i = \exists} \max\{W_i, 0\}\text{ and } W_{\forall} = \sum_{B_i \in \mathbf{B} | Q_i = \forall} \min\{W_i, 0\} $$ be the considered sum of weights of existential and universal variables, respectively. We can exactly solve {\stochastic} using dynamic programming with time complexity $ \mathcal{O}((n - n')(\tau + |W_{neg}| - W_{\exists} - W_{\forall}) + n') $. The space complexity is  $ \mathcal{O}((n - n')(\tau + |W_{neg}| - W_{\exists} - W_{\forall})) $.
 \end{lemma}
+
+\begin{proof}
+	\textbf{Case 1: All $n$ variables in $\mathbf{B}$ have randomized quantifiers.}
+	
+	At step $i$ of the dynamic programming (Eq.~\eqref{fvgm_eq:dp_recurse}), we modify the residual threshold of that step, namely $\tau_i$, either by subtracting $W_i$ or by retaining it.
+	Now, we observe that the residual threshold $\tau_i$ for any $i \in \lbrace1,\ldots,n\rbrace$ will be in $[0, \tau+|W_{neg}|]$. This holds because if $\tau_i$ crosses these bounds, the dynamic programming is terminated as shown in Equation~\eqref{fvgm_eq:dp_terminus}.
+	Since all weights of $\{W_i\}_{i=1}^{n}$ are integers, the maximum number of values that the residual threshold can take, is $ \tau + |W_{neg}| $.
+	Thus, we need to store at most $ n(\tau + |W_{neg}|)$ values in the memory for performing dynamic programming with $n$ variables and $ (\tau + |W_{neg}|) $ number of possible weights.
+	Thus, the space complexity  is $ \mathcal{O}(n(\tau + |W_{neg}|)) $.  
+	
+	In order to construct the dynamic programming table, we have to call the $\mathsf{dp}$ function $ \mathcal{O}(n(\tau + |W_{neg}|)) $ times, in the worst-case.
+	Thus, the time complexity of our method is $ \mathcal{O}(n(\tau + |W_{neg}|) $.
+	
+	
+	\textbf{Case 2: $n'$ variables have existential and universal quantifiers and $n-n'$ variables have randomized quantifiers in $\mathbf{B}$.}
+	
+	According to Eq.~\eqref{fvgm_eq:dp_recurse}, $ W_\exists $ and $ W_\forall $ are the fixed weights of all existential and universal variables, respectively. Therefore, we need to consider at most $ \tau + |W_{neg}| -  W_\exists - W_\forall $ values of residual weights for random variables. By applying analysis in Case 1, the space and time complexity is derived as $ \mathcal{O}((n - n')(\tau + |W_{neg}| - W_{\exists} - W_{\forall})) $. 
+	
+	We note that there is an additional time complexity of $ \mathcal{O}(n') $ for existential and universal variables in Eq.~\eqref{fvgm_eq:dp_recurse}. Thus the time complexity becomes $ \mathcal{O}((n - n')(\tau + |W_{neg}| - W_{\exists} - W_{\forall}) + n') $. We, however, do not require to store any entry for existential and universal variables in $ \mathsf{dp} $  function and thus, the space complexity remains the same as $ \mathcal{O}((n - n')(\tau + |W_{neg}| - W_{\exists} - W_{\forall})) $.
+\end{proof}
  
 
 
 \textbf{A Heuristic for Faster Computation.} 
-We propose two improvements for a faster computation of the dynamic programming solution. Firstly, we observe that in Eq.~\eqref{fvgm_eq:dp_recurse}, existential/universal variables are deterministically  assigned based on their weights. Hence, we reorder $ \mathbf{B} $ such that existential/universal variables appear earlier in $ \mathbf{B} $ than random variables. This allows us to avoid unnecessary repeated exploration of existential/universal variables in $ \mathsf{dp} $. Moreover, according to the remark in Section~\ref{fvgm_lm:property_s3p}, reordering $ \mathbf{B} $ still produces the same exact solution of {\stochastic}. Secondly, to reach the terminating condition of $ \mathsf{dp}(i, \tau) $ more frequently, we sort $ \mathbf{B} $ based on their weights\textemdash more specifically, within each cluster of random, existential, and universal variables. In particular, if $ \tau \le 0.5(w_{pos} - w_{neg}) $, $ \tau $ is closer to $ w_{pos} $ than $ w_{neg} $. Hence, we sort each cluster in descending order of weights. Otherwise,  we sort in ascending order. We illustrate our dynamic programming approach in Example~\ref{fvgm_example:subset-sum}.
+We propose two improvements for a faster computation of the dynamic programming solution. Firstly, we observe that in Eq.~\eqref{fvgm_eq:dp_recurse}, existential/universal variables are deterministically  assigned based on their weights. Hence, we reorder $ \mathbf{B} $ such that existential/universal variables appear earlier in $ \mathbf{B} $ than random variables. This allows us to avoid unnecessary repeated exploration of existential/universal variables in $ \mathsf{dp} $. Moreover, according to the remark in Section~\ref{fvgm_lm:property_s3p}, reordering $ \mathbf{B} $ still produces the same exact solution of {\stochastic}. Secondly, to reach the terminating condition of $ \mathsf{dp}(i, \tau) $ more frequently, we sort $ \mathbf{B} $ based on their weights\textemdash more specifically, within each cluster of random, existential, and universal variables. In particular, if $ \tau \le 0.5(W_{pos} - W_{neg}) $, $ \tau $ is closer to $ W_{pos} $ than $ W_{neg} $. Hence, we sort each cluster in descending order of weights. Otherwise,  we sort in ascending order. We illustrate our dynamic programming approach in Example~\ref{fvgm_example:subset-sum}.
 	
 \begin{example}\label{fvgm_example:subset-sum}
 \normalfont
-We consider a linear classifier $ P + Q + R - S \ge 2$. Herein, $ P $ is a Boolean sensitive feature, and $ Q, R, S $ are Boolean non-sensitive features with $ \Pr[Q] = 0.4,  \Pr[R] = 0.5 $, and $ \Pr[S] = 0.3 $. To compute the maximum probability of positive prediction of the classifier,  we impose an existential quantifier on $P$ and randomized quantifiers on others. This leads us to the observation that $ P = 1 $ is the optimal assignment as $ w_P = 1 > 0 $. We now require to compute $ \Pr[Q + R - S \ge 1] $, which by dynamic programming, is computed as $ 0.55 $. The solution is visualized as a search tree in Figure~\ref{fvgm_fig:example_dp}, where we observe that storing the solution of sub-problems in the memory avoids repetitive computation, such as exploring the node $ (4,0) $. Similarly, the minimum probability of positive prediction  of the classifier is $ 0.14 $ (not shown in Figure~\ref{fvgm_fig:example_dp}) where we impose a universal quantifier on $P$ to obtain $ P = 0 $ as the optimal assignment. 
+We consider a linear classifier $ P + Q + R - S \ge 2$. Herein, $ P $ is a Boolean sensitive feature, and $ Q, R, S $ are Boolean non-sensitive features with $ \Pr[Q] = 0.4,  \Pr[R] = 0.5 $, and $ \Pr[S] = 0.3 $. To compute the maximum probability of positive prediction of the classifier,  we impose an existential quantifier on $P$ and randomized quantifiers on others. This leads us to the observation that $ P = 1 $ is the optimal assignment as $ W_P = 1 > 0 $. We now require to compute $ \Pr[Q + R - S \ge 1] $, which by dynamic programming, is computed as $ 0.55 $. The solution is visualized as a search tree in Figure~\ref{fvgm_fig:example_dp}, where we observe that storing the solution of sub-problems in the memory avoids repetitive computation, such as exploring the node $ (4,0) $. Similarly, the minimum probability of positive prediction  of the classifier is $ 0.14 $ (not shown in Figure~\ref{fvgm_fig:example_dp}) where we impose a universal quantifier on $P$ to obtain $ P = 0 $ as the optimal assignment. 
 \end{example}
 
 	

@@ -124,7 +124,7 @@ For measuring path-specific causal fairness, we compute  $ \max_{ \mathbf{a}} \P
 \label{fairness_justicia_sec:learn_ssat}
 In most practical problems, there can be exponentially many compound sensitive groups due to the combination of categorical sensitive features.  As a result, the enumeration approach may suffer from scalability issues due to an exponential number of calls to the SSAT solver. To this end, we propose an efficient SSAT encoding, where we make two SSAT calls, one for inferring the \emph{the most favored sensitive group} with the maximum conditional probability of positive prediction of the classifier and another for inferring \emph{the least favored sensitive group} with the minimum conditional probability of positive prediction of the same classifier. As discussed above, these two probabilities are sufficient to measure different group and causal fairness metrics.
 
-\todo{End of revision}
+
 
 \subsubsection{Inferring the Most Favored Sensitive Group}
 In the prefix of an SSAT formula $ \Phi $, the order of quantified variables carries distinct interpretation of  $ \Pr[\Phi] $.   In an ER-SSAT formula, $ \Pr[\Phi] $ is the \textit{maximum} satisfying probability of $ \Phi $ over the optimal assignment of existentially quantified variables given the randomized quantified variables (by Semantic 2, Sec.~\ref{fairness_justicia_sec:ssat}). In this chapter, we leverage this property to compute the most favored sensitive group with the highest probability of positive prediction of the classifier. In particular, we consider the following ER-SSAT formula:
