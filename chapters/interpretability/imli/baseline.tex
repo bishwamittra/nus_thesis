@@ -97,7 +97,8 @@ We analyze the complexity of the MaxSAT query in terms of the number of Boolean 
 	The MaxSAT query $ Q $ has $ k m+n $ unit clauses corresponding to the constraints $ E_l $ and $ S_j^i $. For a positive sample, the hard clause $ H_l $ is translated into $ k $  clauses. For each negative sample, the CNF translation requires at most $ k m+1 $ clauses. Let $ n_{pos} $ and $ n_{neg} $ be the number of positive and negative samples in the training set. Therefore, the number of clauses in the MaxSAT Query $ Q $ is $ k m+n+k n_{pos}+(k m+1)n_{neg} \approx \mathcal{O}(k m  n ) $ when $ n_{pos}= n_{neg} =\frac{n}{2} $. 
 \end{proposition}
 
-\subsubsection*{Example of encoding}
+\begin{example}{MaxSAT Encoding.}
+\normalfont
 
 We illustrate the MaxSAT encoding for a toy example consisting of four samples and two binary features. Our goal is to learn a two clause CNF classifier that can approximate the training data. 
 \[ 
@@ -151,6 +152,7 @@ S^2_4 := (\neg b^2_4);\quad\\
 
 In this example, we consider regularizer $ \lambda = 0.1 $, thereby setting the weight on accuracy as $ \weight{E_i} = 1 $ and rule-sparsity weight as $ \weight{S_j^i} = 0.1 $. Intuitively, the penalty for misclassifying a sample is $ 10 $ times more than the penalty for adding a feature in the classifier. For this MaxSAT query, the optimal solution classifies all samples correctly by assigning four feature variables $ \{b^1_1, b^1_4, b^2_2, b^2_3\} $ to true. Therefore, by applying Construction~\ref{interpretability_imli_construction:rule}, the classifier is $ (x_1 \vee \neg x_2)  \wedge (\neg x_1 \vee x_2) $.\footnote{The presented MaxSAT-based formulation does not learn a CNF classifier with both $ x_i $ and $ \neg x_i $ in the same clause. The reason is that a clause with both $ x_i $ and $ \neg x_i $ connected by OR $ (\vee) $ does not increase accuracy but increases rule-size and hence, this is not an optimal classifier.}
 	
+\end{example}
 	
 	
 \subsection{Learning with Non-binary Features}
