@@ -1,6 +1,6 @@
 \section{Incremental Learning with MaxSAT-based formulation}
 \label{interpretability_imli_sec:incremental_learning}
-The complexity of the MaxSAT query in Section~\ref{interpretability_imli_sec:encoding} increases with the number of samples in the training dataset and the number of clauses to learn in a CNF formula. In this section, we discuss an incremental learning technique that along with MaxSAT formulation can generate classification rules efficiently. Our incremental learning is built on two concepts: (i)
+The complexity of the MaxSAT query in Section~\ref{interpretability_imli_sec:encoding} increases with the number of samples in the training dataset and the number of clauses to learn in a CNF formula. In this section, we discuss an incremental learning technique that along with the MaxSAT formulation can generate classification rules efficiently. Our incremental learning is built on two concepts: (i)
 mini-batch learning and (ii) iterative learning. We discuss both in detail in the following.
 
 \subsection{Mini-batch Learning} 
@@ -72,8 +72,8 @@ We present the algorithm for mini-batch learning in Algorithm~\ref{interpretabil
 		\State $ \mathsf{loss}_{\max} \leftarrow \infty$ 
 		\For{$ i \leftarrow 1, \dots, N $} \Comment{$ N $ is the total batch-count}
 		\State $ \mathbf{X}^b, \mathbf{y}^b \leftarrow \mathsf{GetBatch}(\mathbf{X},\mathbf{y}) $
-		\State $ Q, \weight{\cdot} \leftarrow \mathsf{MaxSATEncoding}(\Rule, \mathbf{X}^b, \mathbf{y}^b, \lambda, k) $ \Comment{Returns a weighted-partial CNF}
-		\State $ \sigma^* \leftarrow \MaxSAT(Q,\weight{\cdot}) $
+		\State $ Q, \clauseweight{\cdot} \leftarrow \mathsf{MaxSATEncoding}(\Rule, \mathbf{X}^b, \mathbf{y}^b, \lambda, k) $ \Comment{Returns a weighted-partial CNF}
+		\State $ \sigma^* \leftarrow \MaxSAT(Q,\clauseweight{\cdot}) $
 		\State $ \Rule_{\mathsf{new}} \leftarrow \mathsf{ConstructClassifier(\sigma^*)} $
 		\State $ \mathsf{loss} \leftarrow  |\mathcal{E}_\mathbf{X}| +\lambda |\mathcal{R}_{\mathsf{new}}| $ \Comment{Compute loss}
 		\If{$ \mathsf{loss} < \mathsf{loss}_{\max} $}

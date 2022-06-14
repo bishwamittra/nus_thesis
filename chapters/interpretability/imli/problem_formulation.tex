@@ -2,7 +2,13 @@
 
  \section{Problem Formulation}
  \label{interpretability_imli_sec:problem}
-Given (i) a binary feature matrix $ \mathbf{X} \in \{0,1\}^{n \times m} $ with $ n $ samples and $ m $ features, (ii) a class-label vector $ \mathbf{y} \in \{0,1\}^n $, (iii) a positive integer $ k \ge 1 $ denoting the number of clauses, and (iv) a regularization parameter $ \lambda \in \mathbb{R}^+ $, we learn a classifier $ \Rule $ represented as a $ k $-clause CNF formula that can separate samples of class $ 1 $ from class $ 0 $. 
+Given 
+\begin{enumerate}
+	\item a dataset $ \dataset = \{(\mathbf{x}^{(i)}, y^{(i)})\}_{i=1}^n$ of $ n $ samples, where feature vector $ \mathbf{x}^{(i)} \in \{0, 1\}^m $ contains $ m $ features and class label $ y^{(i)} \in \{0,1\} $,
+	\item a positive integer $ k \ge 1 $ denoting the number of clauses to be learned in the classification rule, and
+	\item a regularization parameter $ \lambda \in \mathbb{R}^+ $,
+\end{enumerate}
+we learn a classifier $ \Rule $ represented as a $ k $-clause CNF formula that can separate samples of class $ 1 $ from class $ 0 $. 
  
  
 
@@ -14,16 +20,16 @@ Given (i) a binary feature matrix $ \mathbf{X} \in \{0,1\}^{n \times m} $ with $
  
 
  \[
- \min\limits_{\mathcal{R}} |\mathcal{R}|\text{ such that }\forall i, y_i=\mathcal{R}(\mathbf{X}_i)
+ \min\limits_{\mathcal{R}} |\mathcal{R}|\text{ such that }\forall i, y^{(i)}=\mathcal{R}(\mathbf{x}^{(i)})
  \]
 
  
 
- In practical classification tasks, perfect classification is unlikely. Hence, we need to balance interpretability with classification error.  Let $ \mathcal{E}_\mathbf{X} = \{(\mathbf{X}_i,y_i) | y_i \ne \mathcal{R}(\mathbf{X}_i) \} $   be  the set of samples in $ \mathbf{X} $ that are misclassified  by $ \mathcal{R} $. Therefore, we balance between classification-accuracy and rule-sparsity and optimize the following function.\footnote{In our formulation, it is  straightforward to add class-conditional weights  (e.g., to penalize  false-alarms more than mis-detects), and to allow instance weights (per sample).}
+ In practical classification tasks, perfect classification is unlikely. Hence, we need to balance interpretability with classification error.  Let $ \mathcal{E}_\dataset = \{(\mathbf{x}^{(i)},y^{(i)}) | y^{(i)} \ne \mathcal{R}(\mathbf{x}^{(i)}) \} $   be  the set of samples in $ \dataset $ that are misclassified  by $ \mathcal{R} $. Therefore, we balance between classification-accuracy and rule-sparsity and optimize the following function.\footnote{In our formulation, it is  straightforward to add class-conditional weights  (e.g., to penalize  false-alarms more than mis-detects), and to allow instance weights (per sample).}
 
  \begin{equation}
   \label{interpretability_imli_eq:obj}
- \min\limits_{\mathcal{R}} \;  |\mathcal{E}_\mathbf{X}| +\lambda |\mathcal{R}|
+ \min\limits_{\mathcal{R}} \;  |\mathcal{E}_\dataset| +\lambda |\mathcal{R}|
  \end{equation}
  
 Higher  values of $ \lambda $ generate a rule with a smaller rule-size but of more training errors, and vice-versa. Thus, $ \lambda $ can be tuned to trade-off between accuracy and interpretability for a rule-based classifier, which we experiment extensively in Section~\ref{interpretability_imli_sec:experiments}.

@@ -1,0 +1,212 @@
+\chapter{Preliminaries}
+
+We represent sets/vectors by bold letters, and the corresponding distributions by calligraphic letters. We express random variables in uppercase, and the valuation or an assignment of a random variable in lowercase.
+
+
+%In this chapter, we discuss preliminaries for learning interpretable rule-based classifiers. Throughout this part of the thesis, we use capital  boldface letters such as $\mathbf{X}$ to denote matrices while lower boldface letters such as $\mathbf{x}$ are reserved for vectors/sets. 
+
+
+\section{Formal Methods}
+
+\subsection{Propositional Satisfiability}
+
+Let $\propformula$ be a Boolean formula defined over a set of Boolean variables $\boolset = \{\bool_1,\bool_2,\dots ,\bool_m \}$. A literal $ \literal $ is a variable $ \bool $ or its complement $\neg \bool$, and a clause $ \propclause $ is a disjunction ($ \vee $) or a conjunction ($ \wedge $) of literals.\footnote{While \emph{term} is reserved to denote disjunction of literals in the literature, we use clause for both disjunction and conjunction.}  $\propformula$ is in Conjunctive Normal Form (CNF) if $\propformula \triangleq  \bigwedge_i \propclause_i$ is a conjunction of clauses where each clause $\propclause_i \triangleq  \bigvee_j \literal_j $  is a disjunction of literals. In contrast, $ \propformula $ is in Disjunctive Normal Form (DNF) if $\propformula \triangleq  \bigvee_i \propclause_i$ is a disjunction of clauses where each clause $\propclause_i \triangleq  \bigwedge_j \literal_j $ is a conjunction of literals. We use $\sigma$ to denote an assignment of variables in  $\boolset$ where $ \sigma(\bool_i) \in $ \{true, false\}. A \emph{satisfying assignment} $ \sigma^* $ of $\propformula$ is an assignment  that evaluates $\propformula$  to true and is denoted by $ \sigma^* \models \propformula $. The propositional satisfiability (SAT) problem finds a satisfying assignment $ \sigma^* $ to a CNF formula $ \propformula $  such that $ \forall i, \sigma^* \models \propclause_i $, wherein $ \sigma^*\models \propclause_i $ if and only if $ \exists \literal_j \in \propclause_i, \sigma^*(\literal_j) = \text{true} $. Informally, $ \sigma^* $ satisfies at least one literal in each clause of a CNF. 
+
+
+\subsection{Relaxation of Logical Formulas}
+
+A hard-OR or a soft-AND clause is a tuple $ (\propclause,\card) $ with an extra parameter $ \card $, where $ \card $ is the threshold on the literals in $ C $. Let $ \mathds{1}[\text{true}]=1 $ and $ \mathds{1}[\text{false}]=0 $. Motivated by Boolean cardinality constraints, we propose relaxed-CNF formulas, where in addition to $\propformula$, we have two more parameters $\card_c$ and $\card_l$. We say that $(\propformula,\card_c, \card_l)$ is in relaxed-CNF and $ \sigma^* $ is its satisfying assignment if and only if $\sigma^* \models (\propformula,\card_c, \card_l)$ whenever $\sum_{i=1}^k \mathds{1}[\sigma^* \models (\propclause_i,\card_l)] \ge \card_c$, where $\sigma^* \models (\propclause_i, \card_l)$ if and only if $\sum_{v \in \propclause_i} \mathds{1}[\sigma^* \models v] \geq \card_l$. Informally,  $\sigma^*$ satisfies a clause $(\propclause_i, \card_l)$ if  at least $\card_l$ literals in $\propclause_i$ are set to true by $\sigma^*$ and $\sigma^*$ satisfies $(\propformula,\card_c, \card_l)$ if at least $\card_c$  clauses out of all $\{(\propclause_i,\card_l)\}$ clauses are true. 
+
+
+\begin{theorem}[\cite{benhamou1994two}]
+	\label{interpretability_crr_thm:succinctness}	
+	Let $ (\propclause,\card) $ be a clause in relaxed-CNF where  $ C $ has $ m  $ literals and $ \card \in \{1,\dots,m\} $ is the threshold on literals.  An equivalent compact encoding of $ (\propclause,\card) $  into a CNF formula $ \propformula= \bigwedge_i \propclause_i $ requires $ {m \choose{m-\card+1}} $  clauses where each clause is distinct and has $ m-\card+1 $ literals of $ (\propclause,\card) $. Therefore,  the total number of literals in $ \propformula $ is $ (m-\card+1){m\choose{m-\card+1}} = m $ when $ \card=1 $, otherwise $ (m-\card+1){m\choose{m-\card+1}} > m $.
+\end{theorem}
+
+
+\subsection{Inner Product}
+In the thesis, we use true as $ 1 $ and false as $ 0 $ interchangeably. Between two vectors  $\mathbf{U}$ and $\mathbf{V}$ of the same length defined over Boolean variables or constants (such as  $ 0 $ and $ 1 $), we define $\mathbf{U} \circ \mathbf{V} $  to refer to  their inner product. Formally, $\mathbf{U} \circ \mathbf{V} \triangleq \bigvee_{i} (U_{i} \wedge V_{i})$ is a disjunction of element-wise conjunction where $U_{i}$ and $V_{i}$ denote the $ i^\text{th} $ variable/constant of $\mathbf{U}$ and $\mathbf{V}$, respectively. In this context, the conjunction ``$\wedge$'' between a variable and a constant follows the standard interpretation: $\bool \wedge 0 = 0$ and $\bool \wedge 1 = \bool$.  
+
+For example, let us consider a vector of variables $ \mathbf{U} = [U_1, U_2, U_3] $ and a vector of constants of the same length $ \mathbf{v} = [0,1,1] $. Then, $ \mathbf{U} \circ \mathbf{v} = U_2 \vee U_3 $. Applying numerical interpretation, the inner product can also be expressed as $\mathbf{U} \circ \mathbf{V} \triangleq \sum_{i} (U_{i} \cdot V_{i}) $. Hence, for the running example $ \mathbf{U} = [U_1, U_2, U_3] $ and $ \mathbf{v} = [0,1,1] $, we derive $ \mathbf{U} \circ \mathbf{v} = u_2  + u_3 $. In the thesis, we use Boolean interpretation of the inner product for learning CNF classification rules in Chapter~\ref{chapter:imli} and numerical interpretation for learning relaxed-CNF classification rules in Chapter~\ref{chapter:crr}.
+
+
+
+
+\subsection{MaxSAT}
+
+The MaxSAT problem is an optimization analog to the SAT problem that finds an optimal assignment satisfying the maximum number of clauses in a CNF. In interpretable machine learning, we consider a \emph{weighted} variant of the MaxSAT problem\textemdash more specifically, a weighted-partial MaxSAT problem\textemdash that optimizes over a set of hard and soft constraints in the form of a weighted-CNF formula. In a weighted-CNF formula, a weight $ {\clauseweight{\propclause_i}} \in \mathbb{R}^+ \cup \{\infty\} $ is defined over each clause $ \propclause_i $, wherein $\propclause_i$ is called a \emph{hard} clause if $\clauseweight{\propclause_i} = \infty$, and  $\propclause_i$ is  a \emph{soft} clause, otherwise.  To avoid notational clutter, we overload {\clauseweight{\cdot}} to denote the weight of an assignment $ \sigma $. In particular, we define $\clauseweight{\sigma}$ as the sum of the weights of \emph{unsatisfied clauses} in a CNF, formally, $$\clauseweight{\sigma} = \sum_{i | \sigma \not \models \propclause_i} \clauseweight{\propclause_i}.$$
+
+
+Given a weighted-CNF formula $\propformula \triangleq \bigvee_i \propclause_i$ with weight $ \clauseweight{\propclause_i} $, the weighted-partial MaxSAT problems finds an optimal assignment $\sigma^*$ that achieves the minimum weight. Formally,  $\sigma^* = \MaxSAT(\propformula,\clauseweight{\cdot})$ if $\forall \sigma \neq \sigma^*, \clauseweight{\sigma^*} \leq \clauseweight{\sigma}$. The optimal weight of the MaxSAT problem $  \clauseweight{\sigma^*} $ is infinity ($ \infty $) when at least one hard clause becomes unsatisfied.  Therefore,  the weighted-partial MaxSAT problem finds $ \sigma^* $ that satisfies all hard clauses\footnote{In our formulation, we assume that there is a satisfying assignment to a CNF formula containing all hard clauses.} and as many soft clauses as possible such that the total weight of unsatisfied soft clauses is minimum. In Chapter~\ref{chapter:imli}, we reduce the classification problem  to the solution of a weighted-partial MaxSAT problem. The knowledge of the inner workings of {MaxSAT} solvers is  not required for this chapter.  
+
+
+\subsection{Stochastic Boolean Satisfiability (SSAT)}\label{fairness_justicia_sec:ssat}
+%Let $\boolset  = \{\bool_1, \dots, \bool_m\}  $ be a set of Boolean variables. A \textit{literal} is a variable $ \bool_i $ or its complement $ \neg \bool_i $. 
+%A propositional formula $\propformula$ defined over $\boolset$ is in \textit{Conjunctive Normal Form} (CNF) if $\propformula$   is  a conjunction of clauses and each clause is a disjunction of literals. 
+%\red{DNF (disjunctive normal form) is the  complement of CNF where  the formula is a disjunction of clauses and each clause is  a conjunction of literals.} 
+%Let $ \sigma $ be a assignment to the  variables $ \bool_i \in \boolset $  such that $ \sigma(\bool_i) \in \{1, 0\} $. The propositional  \textit{satisfiability} problem (SAT) finds a satisfying assignment $ \sigma^* $ to all $ \bool_i \in  \boolset $ such that the formula $ \propformula $ is evaluated to be $1$ (equivalently, true). 
+%In contrast to the SAT problem, 
+
+The stochastic Boolean satisfiability (SSAT) problem~\cite{littman2001stochastic} is a counting analog of the SAT problem concerning with the probability of satisfaction of the formula. The SSAT problem computes the  probability of satisfaction of a CNF formula $\propformula$ defined on the ordered set of \textit{quantified} Boolean variables $ \boolset $. 
+An SSAT formula is of the form
+\begin{equation}\label{fairness_justicia_eq:ssat}
+	\ssatformula = \varquantifier_1\bool_1, \dots, \varquantifier_m \bool_m,\; \propformula, 
+\end{equation}
+where $ \varquantifier_i \in \{\exists, \forall, \R^{p_i}\} $ is either of the existential ($\exists$), universal ($\forall$), or randomized ($\R^{p_i}$) quantifiers on $\bool_i$ and $\propformula$ is a quantifier-free CNF formula. In case of a randomized quantifier $ \R^{p_i} $, $ p_i \triangleq \Pr[\bool_i = 1] \in [0,1] $ is the probability of $ \bool_i $ being assigned to $ 1 $. In the SSAT formula $ \ssatformula $, the quantifier part $ \varquantifier_1\bool_1, \dots, \varquantifier_m \bool_m $ is known as the \textit{prefix} of the formula $ \propformula $.  Let $ \bool $ be the outermost variable in the prefix. The semantics of SSAT formulas are defined recursively in the following.
+
+\begin{enumerate}
+	\item $ \Pr[\text{true}] = 1 $,  $ \Pr[\text{false}] = 0 $, 
+	\item $ \Pr [\ssatformula] = \max_{\bool} \{\Pr[\ssatformula|_{\bool}], \Pr[\ssatformula|_{\neg \bool}]\}$ if $ \bool $ is existentially quantified ($ \exists $), 
+	\item $ \Pr [\ssatformula] = \min_{\bool} \{\Pr[\ssatformula|_{\bool}], \Pr[\ssatformula|_{\neg \bool}]\} $ if $ \bool $ is universally quantified ($ \forall $), 
+	\item $ \Pr [\ssatformula] = p\Pr[\ssatformula|_{\bool}] + (1-p) \Pr[\ssatformula|_{\neg \bool}] $ if $ \bool $ is randomized quantified ($\R^{p}$) with probability $p$ of being $\text{true}$,
+\end{enumerate}
+
+where $ \ssatformula|_{\bool} $ and $ \ssatformula|_{\neg \bool} $ denote the SSAT formulas derived by eliminating the outermost quantifier of $ \bool $  by substituting the value of $ \bool $ in the CNF $ \propformula $ with $ 1 $ and $ 0 $, respectively. In this thesis, we focus on two specific types of SSAT formulas:  \textit{random-exist} (RE) SSAT and \textit{exist-random} (ER) SSAT. In the ER-SSAT (resp.\ RE-SSAT) formula, all existentially (resp.\ randomized) quantified variables are followed by randomized (resp.\ existentially) quantified variables in the prefix.
+
+
+\begin{remark}
+	ER-SSAT problem is $\mathrm{NP}^{\mathrm{PP}}$-hard whereas RE-SSAT problem is $\mathrm{PP}^{\mathrm{NP}}$-complete~\cite{littman2001stochastic}.
+\end{remark}
+
+
+
+The problem of SSAT and its variants have been pursued by theoreticians and practitioners for over three decades~\cite{majercik2005dc,fremont2017maximum,huang2006combining}. We refer the reader to~\cite{lee2017solving,lee2018solving} for a detailed survey. It is worth remarking that the past decade has witnessed a significant performance improvements of SSAT solving, thanks to the close integration of techniques from SAT solving with advances in weighted model counting~\cite{sang2004combining,chakraborty2013scalable,chakraborty2014distribution}. 
+
+
+\subsection{Stochastic Subset Sum Problem ({\stochastic})} 
+Let $ \boolset \triangleq \{\bool_i\}_{i=1}^{|\boolset|}$ be a set of Boolean variables and $ \varweight_i \in \mathbb{Z} $ be the weight of $ \bool_i $. Given a constraint of the form  $\sum_{i = 1}^ {|\boolset|} \varweight_i \bool_i = \tau $, for a constant threshold $ \tau \in \mathbb{Z} $, the subset-sum problem seeks to compute an assignment $\boolset \in \{0,1\}^{|\boolset|}$ such that the constraint evaluates to true when $\boolset$ is substituted with $\boolset$. Subset sum problem is known to be a $ \mathrm{NP} $-complete problem and well-studied in theoretical computer science~\cite{kleinberg2006algorithm}. The \textit{counting} version of the subset-sum problem counts all $ \boolset $'s for which the above constraint holds; and this problem belongs to the complexity class $ \mathrm{\#P} $. In this thesis, we consider the counting problem for the constraint $\sum_{i = 1}^ {|\boolset|} \varweight_i \bool_i \ge \tau $ where variables $ \bool_i $'s are stochastic. More precisely, we define a \textit{stochastic subset-sum} problem, namely {\stochastic}, that computes $ \Pr[\sum_{i = 1}^ {|\boolset|} \varweight_i\bool_i \ge \tau] $.    Details of {\stochastic} are in Chapter~\ref{fvgm_sec:stochastic_sum_set_sum}.
+
+
+
+
+\section{Interpretable Machine Learning}
+\label{chapter_interpretability_preliminaries}
+
+
+We consider a standard binary classification problem where the dataset $ \dataset $ is a collection of $ n $ samples  $\{(\mathbf{x}^{(i)}, y^{(i)})\}_{i=1}^n$ generated from an underlying distribution $\mathcal{D}$.  Here, the feature valuation vector $ \mathbf{x} = [x_1, \dots, x_{m}] \in \{0, 1\}^m $ is a vector of $ m $ Boolean features with $ y \in \{0,1\} $ being the binary class label. Thus, $ (\mathbf{x}, y) $ is called a positive sample if $ y = 1 $, and a negative sample otherwise.  We use $ (\nonsensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, y) $. Hence, each feature $ X_j \in \nonsensitive $ is sampled from a Bernoulli distribution $ \mathcal{X}_j $, and $ \mathcal{D} = \prod_{j=1}^m \mathcal{X}_j  $ is the product distribution of all features. 
+
+
+
+
+
+%$ \mathbf{X} \in \{0,1\}^{n\times m} $ is a binary feature matrix\footnote{Our framework allows learning on real-valued and categorical features, as discussed in Section~\ref{interpretability_imli_sec:non-binary}.} defined over Boolean features $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$ and $ \mathbf{y} \in \{0,1\}^n $ is a vector of binary class labels.  The $ i^\text{th} $ row of $ \mathbf{X} $, denoted by $ \mathbf{X}_i \in \mathcal{X} $, is called a sample generated from a product distribution of all features $ \mathcal{X} $. Thus, $ \mathbf{X}_i $ is the valuation of features in $ \mathbf{x} $ and $ y_i $ is its class label.  $ \mathbf{X}_i $ is called a positive sample if $ y_i = 1 $, and a negative sample otherwise.
+
+\subsection{Rule-based Classification}
+A classifier $ \Rule: \mathbf{X} \rightarrow \widehat{Y} \in  \{0,1\} $ is a  function that takes a feature vector as input and outputs the predicted class label $\widehat{Y}$.  %We define two rules  $ \R_1 $ and $ \R_2 $ to be  equivalent  if $ \forall i,\R_1(\X_i)=\R_2(\X_i) $. 
+In a rule-based classifier, we view $ \mathcal{R} $ as a propositional formula defined over Boolean features $ \mathbf{x} $ such that, if $ \Rule $ becomes true for an input (or an assignment), the prediction $ \widehat{Y} = 1 $ and $ \widehat{Y} = 0 $, otherwise.  The goal is to design $\Rule$ not only to approximate the training data, but also to generalize to unseen samples arising from the same distribution. Additionally, we prefer to learn a \emph{sparse} $ \Rule $ in order to favor interpretability. We define the structural complexity of $ \Rule $, referred to as \emph{rule-size}, in terms of the number of literals it contains. Let $\clause(\Rule,i)$ denote  the  $i^\text{th}$ clause of $\Rule$ and $ |\clause(\Rule,i)| $ be  the number of literals in $\clause(\Rule,i)$. Thus, the size of the classifier is $|\Rule| =  \Sigma_i |\clause(\Rule,i)| $, which is the sum of literals in all clauses in $ \Rule $. 
+
+\begin{example}
+	\normalfont
+	Let $ \Rule \triangleq (X_1 \vee X_3) \wedge (\neg X_2 \vee X_3) $ be a CNF classifier defined over three Boolean features $ [X_1, X_2, X_3] $. For an input $ [0, 1, 1] $, the prediction of $ \Rule  $ is $ 1 $, whereas for an input $ [1, 1, 0] $, the prediction is $ 0 $ because $ \Rule $ is true and false in these two cases, respectively. Moreover, $ |\Rule| = 2 + 2 = 4 $ is the size of $ \Rule $. 
+\end{example}
+
+\subsection{Decision Lists.} A decision list is a rule-based classifier consisting of ``if-then-else'' rules. Formally, a decision list~\cite{rivest1987learning} is an ordered list $ \Rule_L $ pairs $ (C_1, V_1), \dots, (C_k, V_k) $ where the  rule $ C_i $ is a conjunction of literals (alternately, a single clause in a DNF formula) and $ V_i \in \{0,1\} $ is  a Boolean class label\footnote{In a more practical setting, $ V_i \in \{0, \dots, N\} $  can be multi-class for $ N \ge 1 $.}. Additionally, the last clause $ C_k \triangleq  $ true, thereby $ V_k $ is the default class. A decision list is defined as a classifier with the following interpretation: for an input feature vector $ \mathbf{x} $,  $ \Rule_L(\mathbf{x}) $ is equal to $ V_i $ where $ i $ is the least index such that the feature vector satisfies the rule, $ \mathbf{x} \models C_i $. Since the last clause is true, $ \Rule_L(\mathbf{x}) $ always exists. Intuitively, whichever clause (starting from the first) in $ \Rule_L $ is satisfied for an input, the associated class-label is considered as its prediction.
+
+\subsection{Decision sets.} A decision set is a set of \textit{independent} ``if-then'' rules. Formally,  a decision set $ \Rule_S $ is a set of pairs $ \{(C_1, V_1), \dots, (C_{k-1}, V_{k-1})\}  $ and a  default pair $ (C_k, V_k) $, where $ C_i $ is\textemdash similar to a decision list\textemdash a conjunction of literals and $ V_i \in \{0,1\} $ is a Boolean class label. In addition, the last clause $ C_k \triangleq  $ true and $ V_k $ is the default class. For a  decision set, if an input $ \mathbf{x} $ satisfies one clause, say $ C_i $, then the prediction is $ V_i $. If $ \mathbf{x} $ satisfies no clause, then the prediction is the default class $ V_k $. Finally, if $ \mathbf{x} $ satisfies  $ \ge 2 $ clauses, $ \mathbf{x} $ is assigned a class using a tie-breaking~\cite{lakkaraju2016interpretable}. 
+
+
+
+\section{Fairness in Machine Learning}
+\label{chapter_fairness_preliminaries}
+In this section, we discuss preliminaries in fairness in machine learning, followed by methods to verify fairness and identify the sources of unfairness. 
+
+\subsection{Dataset and Distribution}
+We consider a dataset $ \dataset $ as a collection of $n$ triples  $\{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n$ generated from an underlying distribution $\mathcal{D}$. Each non-sensitive data point $\mathbf{x}^{(i)}$ consists of $\numnonsensitive$ features $[x^{(i)}_1, \dots, x^{(i)}_{\numnonsensitive}] $. Each sensitive data point $\mathbf{a}^{(i)}$ consists of $\numsensitive$ categorical features $[a^{(i)}_1, \dots, a^{(i)}_{\numsensitive}] $.  $y^{(i)} \in \{0,1\}$ is the binary class corresponding to $(\mathbf{x}^{(i)}, \mathbf{a}^{(i)})$. 
+
+We use $ (\nonsensitive, \sensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, \mathbf{a}, y)$.  Each non-sensitive feature $ X_i \in \nonsensitive $ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each categorical sensitive feature $ A_j \in \sensitive $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. Thus, $ \mathcal{D} $ is the product distribution of all features, $ \mathcal{D} \triangleq \prod_{i=1}^{\numnonsensitive}\mathcal{X}_i \prod_{j=1}^{\numsensitive} \mathcal{A}_j $.
+
+For sensitive features, a valuation vector $ \mathbf{a} = [a_1, .., a_{\numsensitive}] $ is called a \textit{compound sensitive group}. For example, consider $ \sensitive = $ [race, sex] where race $ \in $ \{Asian, Color, White\} and sex $ \in $ \{female, male\}. Thus $ \mathbf{a} = $ [Asian, female]  is a compound sensitive group.
+
+
+We represent a binary classifier trained on the dataset $\dataset$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $. Here, $\widehat{Y} \in \{0,1\}$ is the class predicted for $ (\nonsensitive, \sensitive) $. Given this setup, we discuss different fairness metrics to compute the bias in the prediction of a classifier~\cite{feldman2015certifying,hardt2016equality,nabi2018fair}.
+
+
+\subsection{Fairness Metrics}
+
+A classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\widehat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions: group fairness and causal fairness. To this end, we use $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ given the distribution of features $ \mathcal{D} $. Alternatively, a fairness metric can be computed on a finite dataset instead of on the distribution. In that case, we use the notation $ f(\alg, \dataset) $, which is the bias of the classifier $ \alg $ on a dataset $ \dataset $. 
+
+\paragraph{Statistical Parity ($ \mathsf{SP} $).} Statistical parity belongs to \textit{independence} measuring group fairness metrics, where the prediction $ \widehat{Y} $ is statistically independent of sensitive features $ \sensitive $~\cite{feldman2015certifying}.  The statistical parity of  a classifier is measured as 
+\[ f_{\mathsf{SP}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}], \] which is the difference between the maximum and minimum conditional probability of positive prediction the classifier for different sensitive groups.
+
+
+\paragraph{Disparate impact ($ \mathsf{DI} $).} Disparate impact also belongs to independence measuring group fairness metrics. Disparate impact measures the ratio between the minimum and the maximum probability of positive prediction of the classifier over all sensitive groups, and prescribe the ratio to be close to $1$~\cite{feldman2015certifying}.  Formally, the disparate impact of a classifier is 
+\[
+f_{\mathsf{DI}}(\alg, \mathcal{D}) \triangleq \frac{\min_{\mathbf{a}} \Pr[\widehat{Y} =1 | \mathbf{A} =  \mathbf{a}]}{\max_{\mathbf{a}} \Pr[\widehat{Y} =1 | \mathbf{A} =  \mathbf{a}]}.
+\]
+
+
+
+\paragraph{Equalized Odds ($ \mathsf{EO} $).} \textit{Separation} measuring group fairness metrics such as equalized odds constrain that $ \widehat{Y} $ is independent of $ \sensitive $ given the ground class $ Y $~\cite{hardt2016equality}.  Formally, for $ Y \in \{0,1\} $, equalized odds is 
+
+\begin{align*}
+	f_{\mathsf{EO}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0], \\ &\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1]).
+\end{align*} 
+
+
+\paragraph{Predictive Parity ($ \mathsf{PP} $).} \textit{Sufficiency} measuring group fairness metrics such as predictive parity constrain that the ground class $ Y $ is independent of $ \sensitive $ given the prediction $ \widehat{Y} $~\cite{verma2018fairness}. Formally, 
+
+\begin{align*}
+	f_{\mathsf{PP}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0], \\&\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1]).
+\end{align*}
+
+\paragraph{Path-specific Causal Fairness ($ \mathsf{PCF} $).}
+Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\widehat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.   To this end, the path-specific causal fairness, abbreviated as $ \mathsf{PCF} $, of a classifier is \[
+f_{\mathsf{PCF}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} = 1 | \sensitive =  \mathbf{a}, \mediator] - \min_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}, \mediator ].
+\]
+
+
+
+Therefore, path-specific cause fairness constrains that the prediction $ \widehat{Y} $ is not directly dependent of sensitive features $ \sensitive $ while $ \sensitive $ may indirectly affects $ \widehat{Y} $ only through mediator features $ \mediator $. Hence, path-specific causal fairness is a variation of counterfactual fairness and causal fairness without mediator features~\cite{bastani2019probabilistic}. 
+
+
+
+
+\begin{example}
+	\normalfont
+	Following~\cite{bastani2019probabilistic}, we consider a classifier that decides the hiring of employees based on three features: gender (sensitive), years of experience (non-sensitive), and college-participation (mediator). It is practical to consider that gender $ \in $ \{male, female\} can affect the college-participation of individuals, and all three features are determining factors for the hiring process. Let `male' be the most favored group by the classifier, for instance. Path-specific causal fairness ensures that a female candidate should be given a job offer with similar probability as a male candidate (by constraining $ \epsilon \approx 0 $). She,  however,  went to (participated in) college as if she were a male candidate while other non-mediator features such as  `years of experience' are the same.  Therefore, path-specific causal fairness measures the effect of gender on job offer, but ignores the effect of gender on whether candidates went to college.
+\end{example}	
+
+
+
+\paragraph{Fairness Certification.} We certify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, that quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, predictive parity, and path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier achieves $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
+
+
+\subsection{Bayesian Network}
+In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and specifically a \textit{Bayesian network}~\cite{pearl1985bayesian,chavira2008probabilistic}, encodes the dependencies and conditional independence between a set of random variables. In fairness verification with correlated features, we leverage an access to a Bayesian network on features $ \nonsensitive \cup \sensitive $ that represents the joint distribution on them. A Bayesian network is denoted by a pair $ (\graph, \theta)$, where $ \graph \triangleq (\graphvertices, \graphedges) $ is a DAG (Directed Acyclic Graph), and $\theta$ is a set of parameters encoding the conditional probabilities induced by the joint distribution under investigation. Each vertex $\graphvertex_i \in \graphvertices$ corresponds to a random variable. Edges $ \graphedges \in \graphvertices \times \graphvertices $ imply conditional dependencies among variables. For each variable $ \graphvertex_i \in \graphvertices $, let $ \parent(\graphvertex_i) \subseteq \graphvertices \setminus \{\graphvertex_i\} $ denote the set of parents of $ \graphvertex_i $. Given $\parent(\graphvertex_i)$ and parameters $\theta$, $ \graphvertex_i $ is independent of its other non-descendant variables in $\graph$. Thus, for the assignment $ v_i $ of $ \graphvertex_i $ and $ \mathbf{u} $ of $ \parent(\graphvertex_i) $, the aforementioned semantics of a Bayesian network encodes the joint distribution of $\graphvertices$ as:
+
+\begin{equation}
+	\begin{split}
+		\Pr[\graphvertex_1=v_1, \dots, &\graphvertex_{|\graphvertices|}=v_{|\graphvertices|}] = \prod_{i=1}^{|\graphvertices|} \Pr[\graphvertex_i = v_i | \parent(\graphvertex_i) = \mathbf{u}; \theta].
+	\end{split}
+	\label{fvgm_eq:BN}
+\end{equation}
+
+
+\subsection{Global Sensitivity Analysis: Variance Decomposition}
+Global sensitivity analysis is a field that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input while considering the whole input domain~\cite{saltelli2008global}.
+Sensitivity analysis is an essential component for quality assurance and impact assessment of models in EU~\cite{eu}, USA~\cite{usepa}, and research communities~\cite{saltelli2020five}.
+%\paragraph{Sensitivity Analysis:}
+\emph{Variance-based sensitivity analysis} is a form of global sensitivity analysis, where variance is considered as the measure of uncertainty~\cite{sobol1990sensitivity,sobol2001global}. To illustrate, let us consider a real-valued function $  \function(\mathbf{Z}) $, where $ \mathbf{Z} $ is a vector of $ \numnonsensitive $ input variables $ \{Z_1, \dots, Z_k\} $.Now, we decompose $ \function(\mathbf{Z}) $ among the subsets of inputs, such that:
+
+\begin{align}
+	\function(\mathbf{Z}) &= \function_0 + \sum_{i=1}^{\numnonsensitive} \function_{\{i\}}(Z_i) +  \sum_{i < j}^{\numnonsensitive} \function_{\{i,j\}}(Z_i, Z_j)  + \cdots  + \function_{\{1, 2, \dots, \numnonsensitive\}} (Z_1, Z_2, \dots, Z_{\numnonsensitive})\notag%\label{eq:functional_decomposition}
+	\\    
+	&= \function_0 +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \function_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}})\label{eq:functional_decomposition_set_notation}
+\end{align}
+
+In this decomposition, $ \function_0 $ is a constant, $ \function_{\{i\}} $ is a function of $ Z_i $, $ \function_{\{i,j\}} $ is a function of $ Z_i $ and $ Z_j $, and so on. Here, $ [\numnonsensitive] \triangleq \{1,2,\dots, \numnonsensitive\} $ and $ \mathbf{S}$ is an ordered subset of $[\numnonsensitive] \setminus \emptyset $.  We denote $ \mathbf{Z}_{\mathbf{S}}  \triangleq \{Z_i | i \in \mathbf{S}\}$ as the input of $ \function_{\mathbf{S}} $, where $ \mathbf{Z}_{\mathbf{S}}$ is a set of variables with indices belonging to $ \mathbf{S} $.  The standard condition of this decomposition is the orthogonality of each term in the right-hand side of Eq.~\eqref{eq:functional_decomposition_set_notation}~\cite{sobol1990sensitivity}. $ \function_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}}) $ is the effect of varying all the features in $\mathbf{Z}_{\mathbf{S}}$ simultaneously. %\unsure{Is this sentence necessary?}  
+For $|\mathbf{S}|=1$, it quantifies an individual variable's effect. For $|\mathbf{S}|>1$, it quantifies the higher-order interactive effect of variables.
+
+Now, if we assume $ \function $ to be square integrable, we obtain the decomposition of the variance of the output~\cite{sobol1990sensitivity}.
+
+\begin{align}\label{eq:variance_decomposition_set_notation}
+	\mathsf{Var}[g(\mathbf{Z})] &= \sum_{i=1}^{\numnonsensitive}V_{\{i\}} +  \sum_{i<j}^{\numnonsensitive} V_{\{i,j\}}  + \cdots  + V_{\{1, 2\dots, \numnonsensitive\}}= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} V_{\mathbf{S}} 
+\end{align}
+
+where $ V_{\{i\}} $ is the variance of $ \function_{\{i\}} $, $ V_{\{i,j\}} $ is the variance of $ \function_{\{i,j\}} $ and so on. Formally,  
+
+\[ V_{\mathbf{S}} \triangleq \mathsf{Var} _{\mathbf{Z}_{\mathbf{S}}}\left[\mathbb{E}_{{\textbf {Z}}/\mathbf{Z}_{\mathbf{S}}}[g(\mathbf{Z})\mid \mathbf{Z}_{\mathbf{S}}]\right]- \sum_{\mathbf{S}' \subset \mathbf{S}/\emptyset}{V} _{\mathbf{S}'}.\] 
+
+Here, $\mathbf{S}'$ denotes all the ordered proper subsets of $\mathbf{S}$. %\improvement{Check notations.}
+This variance decomposition shows how the variance of $\function(\mathbf{Z}) $ can be decomposed into terms attributable to each input, as well as the interactive effects among them. Together all terms sum to the total variance of the model output. 
+
