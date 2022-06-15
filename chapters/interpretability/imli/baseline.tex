@@ -24,7 +24,7 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	
 	\begin{equation}
 		\label{interpretability_imli_soft_clause_error}
-		E_l:=\neg \eta_l;  \qquad \mathsf{wt}(E_l)= 1
+		E_l:=\neg \eta_l;  \qquad \clauseweight{E_l}= 1
 	\end{equation}
 	Intuitively, if a sample is misclassified, the associated error variable becomes true, thereby dissatisfying the soft clause $ E_l $.
 	 
@@ -32,7 +32,7 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	\item \textbf{Soft clauses for minimizing rule-sparsity:} To favor rule-sparsity, {\imli} tries to learn a classifier with as few literals as possible. Hence, for each feature variable $ \bool_j^i $, {\imli} constructs a unit clause as $ \neg \bool_j^i $. Similar to training accuracy, the weight for this clause is derived as $ \lambda $ from Eq.~\eqref{interpretability_imli_eq:obj}.
 	\begin{equation}
 		\label{interpretability_imli_soft_clause_feature}
-		S_j^i:= \neg \bool_j^i; \qquad \mathsf{wt}(S_j^i)= \lambda
+		S_j^i:= \neg \bool_j^i; \qquad \clauseweight{S_j^i}= \lambda
 	\end{equation}
 	
 
@@ -41,7 +41,7 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	
 	\begin{equation}
 			\label{interpretability_imli_hard_clause_rule_consistency}
-		H_l:= \neg \eta_l \rightarrow \Big(y^{(l)}\leftrightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\Big); \qquad  \mathsf{wt}(H_l)=\infty
+		H_l:= \neg \eta_l \rightarrow \Big(y^{(l)}\leftrightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\Big); \qquad  \clauseweight{H_l}=\infty
 	\end{equation}
 	
 	In the hard clause, $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ is a CNF formula including variables $ \bool_j^i $ for which the associated  feature-value is $ 1 $ in  $ \mathbf{x}^{(l)} $. Since $ y^{(l)} \in \{0,1\} $ is a constant, the constraint to the right of the implication ``$ \rightarrow $'' is either  $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ or its complement. Therefore, the hard clause enforces that if the sample is correctly classified (using $ \neg \eta_l $), either  $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ or its complement is true depending on the class-label of the sample.  We highlight that according to the definition of ``$ \rightarrow $'', the left constraint $ \neg \eta_l $ can  be false while the right constraint of 	``$ \rightarrow $'' is true.  This, however, incurs unnecessarily dissatisfying the soft clause $ E_l $, which is a sub-optimal solution and hence this solution is not returned by the MaxSAT solver. Therefore, the single-implication ``$ \rightarrow $'' in the hard clause $ H_l $ acts as a double-implication ``$ \leftrightarrow $''  due to the soft clause $ E_l $. 

@@ -13,44 +13,44 @@ Our first improvement is to implement a mini-batch learning technique tailored f
 	d_{H}(\Rule, \Rule') = \sum_{i=1}^k \Big(\sum_{v\in C_i} \mathds{1}(v \not\in C'_i) +  \sum_{v\in C'_i} \mathds{1}(v \not\in C_i) \Big), 
 \]
  
- where $ C_i $ and $ C'_i $ are the $ i^\text{th} $ clause in $ \Rule $ and $ \Rule' $, respectively and $ \mathds{1} $ is an indicator function that returns $ 1 $ if the input is true and returns $ 0 $ otherwise.  Intuitively, $ d_{H}(\Rule', \Rule) $ calculates the total number of different literals in each (ordered) pair of clauses in $ \Rule $  and $ \Rule' $.  For example, consider $ \Rule = (x_1 \vee x_2) \wedge (\neg x_1) $ and $ \Rule' = (\neg x_1 \vee x_2) \wedge (\neg x_1) $. Then $ 	d_{H}(\Rule, \Rule') = 2 + 0 = 2 $ because in the first clause, the  literals in $ \{x_1, \neg x_1\} $ are absent in either formulas, and the second clause is identical for both $ \Rule $ and $ \Rule' $. In the following, we discuss a modified objective function for mini-batch learning.
+ where $ C_i $ and $ C'_i $ are the $ i^\text{th} $ clause in $ \Rule $ and $ \Rule' $, respectively and $ \mathds{1} $ is an indicator function that returns $ 1 $ if the input is true and returns $ 0 $ otherwise.  Intuitively, $ d_{H}(\Rule', \Rule) $ calculates the total number of different literals in each (ordered) pair of clauses in $ \Rule $  and $ \Rule' $.  For example, consider $ \Rule = (X_1 \vee X_2) \wedge (\neg X_1) $ and $ \Rule' = (\neg X_1 \vee X_2) \wedge (\neg X_1) $. Then $ 	d_{H}(\Rule, \Rule') = 2 + 0 = 2 $ because in the first clause, the  literals in $ \{X_1, \neg X_1\} $ are absent in either formulas, and the second clause is identical for both $ \Rule $ and $ \Rule' $. In the following, we discuss a modified objective function for mini-batch learning.
 
 
 
 \paragraph{Objective Function.}
 \label{interpretability_imli_sec:obj_incremental}
-In mini-batch learning, we design an objective function to penalize both classification errors on the current batch and the Hamming distance between new and previous classifiers. Let $ (\mathbf{X}^b, \mathbf{y}^b) $ be the current mini-batch. The objective function in mini-batch learning is
+In mini-batch learning, we design an objective function to penalize both classification errors on the current batch and the Hamming distance between new and previous classifiers. Let $ \dataset_b \subset \dataset $ be the current mini-batch, where $ |\dataset_b| \ll |\dataset| $. The objective function in mini-batch learning is
 
 
-%\red{Moreover, $ (\mathbf{X}, \mathbf{y}) $ is the training dataset, on which we measure the performance of $ \Rule $ after completing incremental learning\textemdash we will expand shortly on how we measure the performance. 
+%\red{Moreover, $ (\red{\dataset}, \mathbf{y}) $ is the training dataset, on which we measure the performance of $ \Rule $ after completing incremental learning\textemdash we will expand shortly on how we measure the performance. 
 %}
 
 
 \begin{align}
 \label{interpretability_imli_eq:obj_incr}
-\min_{\Rule} |\mathcal{E}_{\mathbf{X}_b}|+\lambda d_{H}(\Rule, \Rule').
+\min_{\Rule} |\mathcal{E}_{\dataset_b}|+\lambda d_{H}(\Rule, \Rule').
 \end{align}
 
-In the objective function, $ \mathcal{E}_{\mathbf{X}_b} $ is the misclassified subset of samples in the current batch $ (\mathbf{X}^b, \mathbf{y}^b) $. Unlike controlling the rule-sparsity in the non-incremental approach in the earlier section, in Eq.~\eqref{interpretability_imli_eq:obj_incr}, $ \lambda $ controls the trade-off between classification errors and the syntactic differences between consecutive classifiers. We next discuss how to encode the modified objective function as a MaxSAT query. 
+In the objective function, $ \mathcal{E}_{\dataset_b} $ is the misclassified subset of samples in the current batch $ \dataset_b $. Unlike controlling the rule-sparsity in the non-incremental approach in the earlier section, in Eq.~\eqref{interpretability_imli_eq:obj_incr}, $ \lambda $ \emph{controls the trade-off between classification errors and the syntactic differences between consecutive classifiers}. We next discuss how to encode the modified objective function as a MaxSAT query. 
  
 
 \paragraph{MaxSAT Encoding of Mini-batch Learning.}
 \label{interpretability_imli_sec:encoding_incremental}
-In order to account for the modified objective function, we only modify the soft clause $ S_j^i $ in the MaxSAT query $ Q $. In particular, we define $ S_j^i $ to penalize for the complemented assignment  of the feature variable $ b_j^i $ in $ \Rule $ compared to $ \Rule' $.
+In order to account for the modified objective function, we only modify the soft clause $ S_j^i $ in the MaxSAT query $ Q $. In particular, we define $ S_j^i $ to penalize for the complemented assignment  of the feature variable $ \bool_j^i $ in $ \Rule $ compared to $ \Rule' $.
 \[
 S_j^i:=
 \begin{cases}
-b_j^i& \text{if }  x_j \in  \clause(\Rule',i)  \\
-\neg b_j^i & \text{otherwise}
-\end{cases};\qquad \mathsf{wt}(S_j^i)=\lambda
+\bool_j^i& \text{if }  X_j \in  \clause(\Rule',i)  \\
+\neg \bool_j^i & \text{otherwise}
+\end{cases};\qquad \clauseweight{S_j^i}=\lambda
 \]
 
-$ S_j^i $ is either a unit clause $ b_j^i $ or $ \neg b_j^i $ depending on whether the associated feature $ x_j $ appears in the previous classifier $ \Rule' $ or not. In this encoding, the Hamming distance of $ \Rule $ and $ \Rule' $ is minimized while attaining minimum classification errors on the current batch (using soft clause $ E_l $ in Eq.~\eqref{interpretability_imli_soft_clause_error}) To this end,  mini-batch learning starts with an empty CNF formula as $ \Rule' $ with no feature, and thus $ S_j^i := \neg b_j^i $ for the first batch. We next analyze the complexity of the MaxSAT encoding for mini-batch learning. 
+$ S_j^i $ is either a unit clause $ \bool_j^i $ or $ \neg \bool_j^i $ depending on whether the associated feature $ X_j $ appears in the previous classifier $ \Rule' $ or not. In this encoding, the Hamming distance of $ \Rule $ and $ \Rule' $ is minimized while attaining minimum classification errors on the current batch (using soft clause $ E_l $ in Eq.~\eqref{interpretability_imli_soft_clause_error}) To this end,  mini-batch learning starts with an empty CNF formula as $ \Rule' $ with no feature, and thus $ S_j^i := \neg \bool_j^i $ for the first batch. We next analyze the complexity of the MaxSAT encoding for mini-batch learning. 
 
 
 \begin{proposition}
 	\label{interpretability_imli_prop:maxsat_complexity_incremental}
-	Let $ n' \triangleq |\mathbf{X}_b| \ll |\mathbf{X}| $ be the size of a mini-batch, $ n'_{neg} \le n' $ be the number of negative samples in the batch, and $ m $ be the number of Boolean features. According to Proposition~\ref{interpretability_imli_prop:maxsat_variables}, to learn a $ k $-clause CNF classifier in mini-batch learning, the MaxSAT encoding for each batch has $ km + n' $ Boolean variables and $ kn'_{neg} $ auxiliary variables. Let $ n'_{pos} = n' - n'_{neg} $ be the number of positive samples in the batch. Then, according to Proposition~\ref{interpretability_imli_prop:maxsat_clauses}, the number of clauses in the MaxSAT query is $ k m+n'+k n'_{pos}+(k m+1)n'_{neg} \approx \mathcal{O}(k m  n' ) $ when $ n'_{pos}= n'_{neg} =\frac{n'}{2} $.
+	Let $ n' \triangleq |\dataset_b| \ll |\dataset| $ be the size of a mini-batch, $ n'_{neg} \le n' $ be the number of negative samples in the batch, and $ m $ be the number of Boolean features. According to Proposition~\ref{interpretability_imli_prop:maxsat_variables}, to learn a $ k $-clause CNF classifier in mini-batch learning, the MaxSAT encoding for each batch has $ km + n' $ Boolean variables and $ kn'_{neg} $ auxiliary variables. Let $ n'_{pos} = n' - n'_{neg} $ be the number of positive samples in the batch. Then, according to Proposition~\ref{interpretability_imli_prop:maxsat_clauses}, the number of clauses in the MaxSAT query is $ k m+n'+k n'_{pos}+(k m+1)n'_{neg} \approx \mathcal{O}(k m  n' ) $ when $ n'_{pos}= n'_{neg} =\frac{n'}{2} $.
 \end{proposition}
 
 
@@ -60,22 +60,22 @@ $ S_j^i $ is either a unit clause $ b_j^i $ or $ \neg b_j^i $ depending on wheth
 %\red{Can be put in experiments.}
 %We construct mini-batches in several ways: (i) randomly sampling a fixed number of samples from the training data, and (ii) sequentially partitioning the training data into batches of fixed size. In our experiments, we have focused on the later approach. Additionally, to ignore the effect of batch-order, we repeat the mini-batch learning multiple times.
 
-\paragraph{Assessing  the Performance of $ \Rule $.} Since we apply a heuristic objective in mini-batch learning,  $ \Rule $ may be optimized for the current batch while generalizing poorly on the full training data. To tackle this, after learning on each batch, we decide whether to keep $ \Rule $ or not by assessing the performance of $ \Rule $ on the training data and keep $ \Rule $ if it achieves higher performance. We measure the performance of $ \Rule $ on the full training data $ (\mathbf{X}, \mathbf{y}) $ using a weighted combination of classification errors and rule-size. In particular, we compute a combined loss function $ \mathsf{loss}(\Rule) \triangleq |\mathcal{E}_\mathbf{X}| +\lambda |\mathcal{R}| $ on the training data $ (\mathbf{X}, \mathbf{y}) $, which is indeed the value of the objective function that we minimize in the non-incremental learning in Section~\ref{interpretability_imli_sec:problem}. Additionally, we  discard the current classifier $ \Rule $ when the loss does not decrease ($ \mathsf{loss}(\Rule) > \mathsf{loss}(\Rule') $). 
+\paragraph{Assessing  the Performance of $ \Rule $.} Since we apply a heuristic objective in mini-batch learning,  $ \Rule $ may be optimized for the current batch while generalizing poorly on the full training data. To tackle this, after learning on each batch, we decide whether to keep $ \Rule $ or not by assessing the performance of $ \Rule $ on the training data and keep $ \Rule $ if it achieves higher performance. We measure the performance of $ \Rule $ on the full training data $ \dataset $ using a weighted combination of classification errors and rule-size. In particular, we compute a combined loss function $ \mathsf{loss}(\Rule) \triangleq |\mathcal{E}_\dataset| +\lambda |\mathcal{R}| $ on the training data $ \dataset $, which is indeed the value of the objective function that we minimize in the non-incremental learning in Section~\ref{interpretability_imli_sec:problem}. Additionally, we  discard the current classifier $ \Rule $ when the loss does not decrease ($ \mathsf{loss}(\Rule) > \mathsf{loss}(\Rule') $). 
 
 We present the algorithm for mini-batch learning in Algorithm~\ref{interpretability_imli_algo:incremental}. 
 \begin{algorithm}
 	\caption{MaxSAT-based Mini-batch Learning}
 	\label{interpretability_imli_algo:incremental}
 	\begin{algorithmic}[1]
-		\Function{$ \mathsf{MiniBatchLearning} $}{$ \mathbf{X},\mathbf{y},\lambda, k $}
+		\Function{MiniBatchLearning}{$ \dataset, \lambda, k $}
 		\State $\mathcal{R} = \leftarrow \bigwedge_{i=1}^k\text{false} $ \Comment{Empty CNF formula}
 		\State $ \mathsf{loss}_{\max} \leftarrow \infty$ 
 		\For{$ i \leftarrow 1, \dots, N $} \Comment{$ N $ is the total batch-count}
-		\State $ \mathbf{X}^b, \mathbf{y}^b \leftarrow \mathsf{GetBatch}(\mathbf{X},\mathbf{y}) $
-		\State $ Q, \clauseweight{\cdot} \leftarrow \mathsf{MaxSATEncoding}(\Rule, \mathbf{X}^b, \mathbf{y}^b, \lambda, k) $ \Comment{Returns a weighted-partial CNF}
+		\State $ \dataset_b \leftarrow \textsc{GetBatch}(\dataset) $
+		\State $ Q, \clauseweight{\cdot} \leftarrow \textsc{MaxSATEncoding}(\Rule, \dataset_b, \lambda, k) $ \Comment{Returns a weighted-partial CNF}
 		\State $ \sigma^* \leftarrow \MaxSAT(Q,\clauseweight{\cdot}) $
-		\State $ \Rule_{\mathsf{new}} \leftarrow \mathsf{ConstructClassifier(\sigma^*)} $
-		\State $ \mathsf{loss} \leftarrow  |\mathcal{E}_\mathbf{X}| +\lambda |\mathcal{R}_{\mathsf{new}}| $ \Comment{Compute loss}
+		\State $ \Rule_{\mathsf{new}} \leftarrow \textsc{ConstructClassifier}(\sigma^*) $
+		\State $ \mathsf{loss} \leftarrow  |\mathcal{E}_\dataset| +\lambda |\mathcal{R}_{\mathsf{new}}| $ \Comment{Compute loss}
 		\If{$ \mathsf{loss} < \mathsf{loss}_{\max} $}
 		\State $ \mathsf{loss}_{\max} \leftarrow \mathsf{loss} $
 		\State $ \Rule \leftarrow \Rule_{\mathsf{new}} $
