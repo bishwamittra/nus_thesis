@@ -179,18 +179,18 @@
 %		Relaxed CNF
 			\newcommand{\Rule}{\ensuremath{{\mathcal{R}}}}
 			\newcommand{\clauseweight}[1]{\ensuremath{W \! \left( #1 \right)}}
-			\newcommand{\X}{{\mathbf{X}}}
+%			\newcommand{\X}{{\mathbf{X}}}
 			\newcommand{\MaxSAT}{\ensuremath{\textsc{MaxSAT}}}
 			\newcommand{\noise}{\xi}
 			\newcommand{\card}{\eta}
 			\newcommand{\noclause}{k}
 			\newcommand{\crr}{\ensuremath{\mathsf{CRR}}}
 			\newcommand{\CNF}{\ensuremath{\mathsf{Card2CNF}}}
-			\newcommand{\B}{\mathbf{b}}
+%			\newcommand{\B}{\mathbf{b}}
 			\newcommand{\clause}{\ensuremath{\mathsf{clause}}}
 			\newcommand{\MLIC}{\ensuremath{\mathsf{MLIC}}}
 			\newcommand{\IMLI}{\ensuremath{\mathsf{IMLI}}}
-			\newcommand{\ILP}{\ensuremath{\mathsf{ILP}}}
+			\newcommand{\ILP}{\ensuremath{\textsc{ILP}}}
 			
 			
 %		Logic
@@ -296,61 +296,61 @@
 %%
 %%
 %%
-%%%		Relaxed CNF
-%			\chapter{Classification Rules in Relaxed Logical Form}
-%%				\input{chapters/interpretability/relaxed-cnf/abstract.tex}
-%				\input{chapters/interpretability/relaxed-cnf/introduction.tex}
-%%				\input{chapters/interpretability/relaxed-cnf/related_work.tex}
-%%				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
-%				\input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
-%				\input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
-%				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
-%				\input{chapters/interpretability/relaxed-cnf/experiment.tex}
-%				\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
+%%		Relaxed CNF
+			\chapter{Classification Rules in Relaxed Logical Form}
+%				\input{chapters/interpretability/relaxed-cnf/abstract.tex}
+				\input{chapters/interpretability/relaxed-cnf/introduction.tex}
+%				\input{chapters/interpretability/relaxed-cnf/related_work.tex}
+%				\input{chapters/interpretability/relaxed-cnf/preliminaries.tex}
+				\input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
+				\input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
+				\input{chapters/interpretability/relaxed-cnf/incremental_ilp.tex}
+				\input{chapters/interpretability/relaxed-cnf/experiment.tex}
+				\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
 %				
 %			
 %
 %
 %
-%\part{Fairness in Machine Learning}
-%
-%In this part of the thesis, we discuss fairness verification for classifiers represented as Boolean formulas in Chapter~\ref{chapter:justicia} and linear classifiers in Chapter~\ref{chapter:fvgm}. Finally, we discuss identification of sources of unfairness in Chapter~\ref{chapter:fif}.
-%%	
-%%%	Fairness
-%%	\input{chapters/fairness_background.tex}	
-%
-%%%		Justicia
-%			\chapter{A Stochastic SAT Approach to Formally Verify Fairness}
-%%				\input{chapters/fairness/justicia/abstract.tex}
-%				\input{chapters/fairness/justicia/introduction.tex}
-%%				\input{chapters/fairness/justicia/preliminaries.tex}
-%				\input{chapters/fairness/justicia/framework.tex}
-%				\input{chapters/fairness/justicia/practical.tex}
-%				\input{chapters/fairness/justicia/experiments.tex}
-%				\input{chapters/fairness/justicia/discussion.tex}
-%%				
-%%				
-%%%		FVGM
-%			\chapter{Algorithmic Fairness Verification with Graphical Models}
-%%				\input{chapters/fairness/fvgm/abstract}
-%				\input{chapters/fairness/fvgm/introduction}
-%%				\input{chapters/fairness/fvgm/background}
-%				\input{chapters/fairness/fvgm/framework}
-%				\input{chapters/fairness/fvgm/framework2}
-%				\input{chapters/fairness/fvgm/evaluations}
-%				\input{chapters/fairness/fvgm/applications}
-%				\input{chapters/fairness/fvgm/conclusion}
-%%				
-%%				
-%%%		FairXplainer
-%			\chapter{Computing Fairness Influence Functions with Global Sensitivity Analysis}				
-%%				\input{chapters/fairness/fif/abstract.tex}
-%				\input{chapters/fairness/fif/introduction.tex}
-%%				\input{chapters/fairness/fif/preliminaries.tex}
-%				\input{chapters/fairness/fif/framework.tex}
-%				\input{chapters/fairness/fif/fairxplainer.tex}
-%				\input{chapters/fairness/fif/experiments.tex}
-%				\input{chapters/fairness/fif/conclusion.tex}	
+\part{Fairness in Machine Learning}
+
+In this part of the thesis, we discuss fairness verification for classifiers represented as Boolean formulas in Chapter~\ref{chapter:justicia} and linear classifiers in Chapter~\ref{chapter:fvgm}. Finally, we discuss identification of sources of unfairness in Chapter~\ref{chapter:fif}.
+%	
+%%	Fairness
+%	\input{chapters/fairness_background.tex}	
+
+%%		Justicia
+			\chapter{A Stochastic SAT Approach to Formally Verify Fairness}
+%				\input{chapters/fairness/justicia/abstract.tex}
+				\input{chapters/fairness/justicia/introduction.tex}
+%				\input{chapters/fairness/justicia/preliminaries.tex}
+				\input{chapters/fairness/justicia/framework.tex}
+				\input{chapters/fairness/justicia/practical.tex}
+				\input{chapters/fairness/justicia/experiments.tex}
+				\input{chapters/fairness/justicia/discussion.tex}
+%				
+%				
+%%		FVGM
+			\chapter{Algorithmic Fairness Verification with Graphical Models}
+%				\input{chapters/fairness/fvgm/abstract}
+				\input{chapters/fairness/fvgm/introduction}
+%				\input{chapters/fairness/fvgm/background}
+				\input{chapters/fairness/fvgm/framework}
+				\input{chapters/fairness/fvgm/framework2}
+				\input{chapters/fairness/fvgm/evaluations}
+				\input{chapters/fairness/fvgm/applications}
+				\input{chapters/fairness/fvgm/conclusion}
+%				
+%				
+%%		FairXplainer
+			\chapter{Computing Fairness Influence Functions with Global Sensitivity Analysis}				
+%				\input{chapters/fairness/fif/abstract.tex}
+				\input{chapters/fairness/fif/introduction.tex}
+%				\input{chapters/fairness/fif/preliminaries.tex}
+				\input{chapters/fairness/fif/framework.tex}
+				\input{chapters/fairness/fif/fairxplainer.tex}
+				\input{chapters/fairness/fif/experiments.tex}
+				\input{chapters/fairness/fif/conclusion.tex}	
 			
 		\part{Epilogue}
 	\backmatter				 

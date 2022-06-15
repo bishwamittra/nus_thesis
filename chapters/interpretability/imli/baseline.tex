@@ -10,7 +10,7 @@ conclude this section by learning $ \Rule $ with non-binary features in Section~
 \label{interpretability_imli_sec:variables} 
 We initially preprocess feature vector $ \mathbf{x} $  to account for the negation of  Boolean features while learning a classifier.\footnote{This preprocessing is similarly applied in  \cite{malioutov2013exact}.} In the preprocessing step, we negate each feature in $ \mathbf{x} $ to a new feature and append it to $ \mathbf{x} $. For example, if ``$ \text{age }\ge 25 $'' is a Boolean feature, we add another feature ``$ \text{age }< 25 $'' in  $ \mathbf{x} $ by negating the feature ``$ \text{age }\ge 25 $''. Hence, in the rest of the chapter, we refer $ m $ as the modified number of features in $ \mathbf{x} $. We next discuss the variables in the MaxSAT problem. 
 
-We consider two types of Boolean variables: (i) \emph{feature} variables $ \bool $ corresponding to input features and (ii) \emph{error} variables $ \eta $ corresponding to the classification error of samples. We define a Boolean variable $ \bool^i_j $ that becomes true if feature $ X_j $ appears in the $ i^\text{th} $ clause of $ \Rule $, thereby contributing to an increase in the rule-size of $ \Rule $, and $ \bool^i_j $ is assigned false, otherwise. Moreover, we define an error variable $ \eta_l $ to attribute to whether the $ l^\text{th} $ sample $ (\mathbf{x}^{(l)}, y^{(l)}) $ is classified correctly or not. Specifically, $ \eta_l $ becomes true if $ (\mathbf{x}^{(l)}, y^{(l)}) $ is misclassified, and becomes false otherwise.  We next discuss the MaxSAT encoding to solve the classification problem.   
+We consider two types of Boolean variables: (i) \emph{feature} variables $ \bool $ corresponding to input features and (ii) \emph{error} variables $ \noise $ corresponding to the classification error of samples. We define a Boolean variable $ \bool^i_j $ that becomes true if feature $ X_j $ appears in the $ i^\text{th} $ clause of $ \Rule $, thereby contributing to an increase in the rule-size of $ \Rule $, and $ \bool^i_j $ is assigned false, otherwise. Moreover, we define an error variable $ \noise_l $ to attribute to whether the $ l^\text{th} $ sample $ (\mathbf{x}^{(l)}, y^{(l)}) $ is classified correctly or not. Specifically, $ \noise_l $ becomes true if $ (\mathbf{x}^{(l)}, y^{(l)}) $ is misclassified, and becomes false otherwise.  We next discuss the MaxSAT encoding to solve the classification problem.   
 
 
 
@@ -20,11 +20,11 @@ We consider two types of Boolean variables: (i) \emph{feature} variables $ \bool
 We consider a partial-weighted MaxSAT formula, where we encode the objective function in Eq.~\eqref{interpretability_imli_eq:obj} as soft clauses and the learning constraints as hard clauses. We next discuss the MaxSAT encoding in detail.
 
 \begin{itemize}
-	\item \textbf{Soft clauses for maximizing training accuracy:} For each training sample, {\imli} constructs a soft unit\footnote{A unit clause has a single literal.} clause $ \neg \eta_l $ to account for a penalty for misclassification. Since the penalty for misclassification of a sample is $ 1 $  in Eq.~\eqref{interpretability_imli_eq:obj},  the weight of this soft clause is also $ 1 $. 
+	\item \textbf{Soft clauses for maximizing training accuracy:} For each training sample, {\imli} constructs a soft unit\footnote{A unit clause has a single literal.} clause $ \neg \noise_l $ to account for a penalty for misclassification. Since the penalty for misclassification of a sample is $ 1 $  in Eq.~\eqref{interpretability_imli_eq:obj},  the weight of this soft clause is also $ 1 $. 
 	
 	\begin{equation}
 		\label{interpretability_imli_soft_clause_error}
-		E_l:=\neg \eta_l;  \qquad \clauseweight{E_l}= 1
+		E_l:=\neg \noise_l;  \qquad \clauseweight{E_l}= 1
 	\end{equation}
 	Intuitively, if a sample is misclassified, the associated error variable becomes true, thereby dissatisfying the soft clause $ E_l $.
 	 
@@ -41,10 +41,10 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	
 	\begin{equation}
 			\label{interpretability_imli_hard_clause_rule_consistency}
-		H_l:= \neg \eta_l \rightarrow \Big(y^{(l)}\leftrightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\Big); \qquad  \clauseweight{H_l}=\infty
+		H_l:= \neg \noise_l \rightarrow \Big(y^{(l)}\leftrightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\Big); \qquad  \clauseweight{H_l}=\infty
 	\end{equation}
 	
-	In the hard clause, $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ is a CNF formula including variables $ \bool_j^i $ for which the associated  feature-value is $ 1 $ in  $ \mathbf{x}^{(l)} $. Since $ y^{(l)} \in \{0,1\} $ is a constant, the constraint to the right of the implication ``$ \rightarrow $'' is either  $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ or its complement. Therefore, the hard clause enforces that if the sample is correctly classified (using $ \neg \eta_l $), either  $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ or its complement is true depending on the class-label of the sample.  We highlight that according to the definition of ``$ \rightarrow $'', the left constraint $ \neg \eta_l $ can  be false while the right constraint of 	``$ \rightarrow $'' is true.  This, however, incurs unnecessarily dissatisfying the soft clause $ E_l $, which is a sub-optimal solution and hence this solution is not returned by the MaxSAT solver. Therefore, the single-implication ``$ \rightarrow $'' in the hard clause $ H_l $ acts as a double-implication ``$ \leftrightarrow $''  due to the soft clause $ E_l $. 
+	In the hard clause, $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ is a CNF formula including variables $ \bool_j^i $ for which the associated  feature-value is $ 1 $ in  $ \mathbf{x}^{(l)} $. Since $ y^{(l)} \in \{0,1\} $ is a constant, the constraint to the right of the implication ``$ \rightarrow $'' is either  $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ or its complement. Therefore, the hard clause enforces that if the sample is correctly classified (using $ \neg \noise_l $), either  $ \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}\ $ or its complement is true depending on the class-label of the sample.  We highlight that according to the definition of ``$ \rightarrow $'', the left constraint $ \neg \noise_l $ can  be false while the right constraint of 	``$ \rightarrow $'' is true.  This, however, incurs unnecessarily dissatisfying the soft clause $ E_l $, which is a sub-optimal solution and hence this solution is not returned by the MaxSAT solver. Therefore, the single-implication ``$ \rightarrow $'' in the hard clause $ H_l $ acts as a double-implication ``$ \leftrightarrow $''  due to the soft clause $ E_l $. 
 	
 
 	
@@ -55,9 +55,9 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	  We next discuss the translation of soft and hard clauses into a CNF formula, which can be invoked by any MaxSAT solver. 
 
 \paragraph{Translating $ E_l, S^i_j, H_l $ to a CNF formula.} 
-The soft clauses $ E_l $ and $ S_j^i $ are unit clauses and hence, no translation is required for them.  In the hard clause, when $ y^{(l)}=1 $, the simplification is $ H_l:= \neg \eta_l \rightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}  $. In this case, we apply the equivalence rule in propositional logic $ (a \rightarrow b) \equiv (\neg a \vee b) $  to encode $ H_l $ into  CNF. In contrast, when $ y_i=0 $, we simplify the hard clause as $ H_l:= \neg \eta_l \rightarrow \neg (\bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}) \Rightarrow  \neg \eta_l \rightarrow \bigvee_{i=1}^k \neg({\mathbf{x}^{(l)}} \circ {\boolset_{i}})$. Since $ \mathbf{x}^{(l)} \circ \boolset_{i} $ constitutes a disjunction of literals, we apply Tseytin transformation to encode  $ \neg (\mathbf{x}^{(l)} \circ \boolset_{i}) $ into CNF. More specifically, we introduce an auxiliary variable $ z_{l,i} $ corresponding to the clause $ \neg ({\mathbf{x}^{(l)}} \circ {\boolset_{i}}) $. Formally, we replace $ H_l := \neg \eta_l \rightarrow  \bigvee_{i=1}^k \neg ({\mathbf{x}^{(l)}} \circ {\boolset_{i}}) $ with   $ \bigwedge_{i=0}^k H_{l,i} $,  where $ H_{l,0}:= (\neg \eta_l \rightarrow  \bigvee_{i=1}^k  z_{l,i}) $  and  $  H_{l,i}:= z_{l,i} \rightarrow  \neg({\mathbf{x}^{(l)}} \circ {\boolset_{i}})  $ for $ i=\{1,\dots,k\} $. Finally, we  apply the equivalence of $ (a \rightarrow b) \equiv (\neg a \vee b) $ on $ H_{l,i} $ to translate them into CNF. For either value of $ y^{(l)} $, the weight of each translated hard clause in the CNF formula is $ \infty $.
+The soft clauses $ E_l $ and $ S_j^i $ are unit clauses and hence, no translation is required for them.  In the hard clause, when $ y^{(l)}=1 $, the simplification is $ H_l:= \neg \noise_l \rightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}  $. In this case, we apply the equivalence rule in propositional logic $ (a \rightarrow b) \equiv (\neg a \vee b) $  to encode $ H_l $ into  CNF. In contrast, when $ y_i=0 $, we simplify the hard clause as $ H_l:= \neg \noise_l \rightarrow \neg (\bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}) \Rightarrow  \neg \noise_l \rightarrow \bigvee_{i=1}^k \neg({\mathbf{x}^{(l)}} \circ {\boolset_{i}})$. Since $ \mathbf{x}^{(l)} \circ \boolset_{i} $ constitutes a disjunction of literals, we apply Tseytin transformation to encode  $ \neg (\mathbf{x}^{(l)} \circ \boolset_{i}) $ into CNF. More specifically, we introduce an auxiliary variable $ z_{l,i} $ corresponding to the clause $ \neg ({\mathbf{x}^{(l)}} \circ {\boolset_{i}}) $. Formally, we replace $ H_l := \neg \noise_l \rightarrow  \bigvee_{i=1}^k \neg ({\mathbf{x}^{(l)}} \circ {\boolset_{i}}) $ with   $ \bigwedge_{i=0}^k H_{l,i} $,  where $ H_{l,0}:= (\neg \noise_l \rightarrow  \bigvee_{i=1}^k  z_{l,i}) $  and  $  H_{l,i}:= z_{l,i} \rightarrow  \neg({\mathbf{x}^{(l)}} \circ {\boolset_{i}})  $ for $ i=\{1,\dots,k\} $. Finally, we  apply the equivalence of $ (a \rightarrow b) \equiv (\neg a \vee b) $ on $ H_{l,i} $ to translate them into CNF. For either value of $ y^{(l)} $, the weight of each translated hard clause in the CNF formula is $ \infty $.
 
-% Now,  the hard clause can be simplified as $ H_l:= \neg \eta_l \rightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}  $ when $ y^{(l)}=1 $, otherwise  $ H_l:= \neg \eta_l \rightarrow \neg (\bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}) \Rightarrow  \neg \eta_l \rightarrow \bigvee_{i=1}^k \neg({\mathbf{x}^{(l)}} \circ {\boolset_{i}})$. 
+% Now,  the hard clause can be simplified as $ H_l:= \neg \noise_l \rightarrow \bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}  $ when $ y^{(l)}=1 $, otherwise  $ H_l:= \neg \noise_l \rightarrow \neg (\bigwedge_{i=1}^k {\mathbf{x}^{(l)}} \circ {\boolset_{i}}) \Rightarrow  \neg \noise_l \rightarrow \bigvee_{i=1}^k \neg({\mathbf{x}^{(l)}} \circ {\boolset_{i}})$. 
 
 
 
@@ -73,7 +73,7 @@ Q:= \bigwedge_{l=1}^n E_l \wedge  \bigwedge_{i=1,j=1}^{i=k,j=m} S_j^i \wedge \bi
 Any off-the-shelf MaxSAT solver can output an optimal assignment $ \sigma^* $ of the MaxSAT query $ (Q, \clauseweight{\cdot}) $. We extract $ \sigma^* $ to construct the classifier $ \Rule $ and compute training errors as follows.
 \begin{construction}
 	\label{interpretability_imli_construction:rule}
-	Let $\sigma^* = \MaxSAT(Q,\clauseweight{\cdot})$. Then $X_j \in {\clause(\Rule,i)}$ if and only if $\sigma^*(\bool_{j}^{i}) = 1$. Additionally, $ (\mathbf{x}^{(l)}, y^{(l)}) $ is misclassified if and only if $ \sigma^*(\eta_l) = 1 $.
+	Let $\sigma^* = \MaxSAT(Q,\clauseweight{\cdot})$. Then $X_j \in {\clause(\Rule,i)}$ if and only if $\sigma^*(\bool_{j}^{i}) = 1$. Additionally, $ (\mathbf{x}^{(l)}, y^{(l)}) $ is misclassified if and only if $ \sigma^*(\noise_l) = 1 $.
 \end{construction}
 
 
@@ -123,14 +123,14 @@ X_1 & \neg X_1 & X_2  & \neg X_2 & Y\\
 \end{block}
 \end{blockarray}
 \]
-In the preprocessing step, we negate the features in $ \dataset_\mathsf{orig} $ and add complemented features $ \{\neg X_1, \neg X_2\} $ in $ \dataset $. In the MaxSAT encoding, we define $ 8 $ feature variables ($ 4 $ features $ \times $ $ 2 $ clauses in the classifier) and $ 4 $ error variables. For example, for feature $ X_2 $, introduced feature variables are $ \{\bool^1_3, \bool^2_3\} $ and for feature $ \neg X_2 $, introduced variables are $ \{\bool^1_4, \bool^2_4\} $. For four samples, error variables are $ \{\eta_1, \eta_2, \eta_3, \eta_4\} $. We next show the soft and hard clauses in the MaxSAT encoding
+In the preprocessing step, we negate the features in $ \dataset_\mathsf{orig} $ and add complemented features $ \{\neg X_1, \neg X_2\} $ in $ \dataset $. In the MaxSAT encoding, we define $ 8 $ feature variables ($ 4 $ features $ \times $ $ 2 $ clauses in the classifier) and $ 4 $ error variables. For example, for feature $ X_2 $, introduced feature variables are $ \{\bool^1_3, \bool^2_3\} $ and for feature $ \neg X_2 $, introduced variables are $ \{\bool^1_4, \bool^2_4\} $. For four samples, error variables are $ \{\noise_1, \noise_2, \noise_3, \noise_4\} $. We next show the soft and hard clauses in the MaxSAT encoding
 
 
 \[
 \begin{split}
-&E_1:= (\neg \eta_1); \quad
-E_2:= (\neg \eta_2); \quad E_3:= (\neg \eta_3); \quad
-E_4:= (\neg \eta_4)\\
+&E_1:= (\neg \noise_1); \quad
+E_2:= (\neg \noise_2); \quad E_3:= (\neg \noise_3); \quad
+E_4:= (\neg \noise_4)\\
 & S_1^1 := (\neg \bool_1^1);\quad 
  S^1_2 := (\neg \bool^1_2);\quad 
  S^1_3 := (\neg \bool^1_3);\quad
@@ -139,10 +139,10 @@ E_4:= (\neg \eta_4)\\
 S^2_2 := (\neg \bool^2_2);\quad 
 S^2_3 := (\neg \bool^2_3);\quad 
 S^2_4 := (\neg \bool^2_4);\quad\\ 
-& H_1:= (\neg \eta_1 \rightarrow ((\bool_2^1 \vee \bool_4^1)\wedge (\bool_2^2 \vee \bool_4^2)));\\
-& H_2:= (\neg \eta_2 \rightarrow (\neg(\bool_2^1 \vee \bool_3^1) \vee \neg(\bool_2^2 \vee \bool_3^2)));\\
-& H_3:= (\neg \eta_3 \rightarrow (\neg (\bool_1^1 \vee \bool_4^1) \vee \neg(\bool_1^2 \vee \bool_4^2)));\\
-& H_4:= (\neg \eta_4 \rightarrow ((\bool_1^1 \vee \bool_3^1) \wedge (\bool_1^2 \vee \bool_3^2)));\\
+& H_1:= (\neg \noise_1 \rightarrow ((\bool_2^1 \vee \bool_4^1)\wedge (\bool_2^2 \vee \bool_4^2)));\\
+& H_2:= (\neg \noise_2 \rightarrow (\neg(\bool_2^1 \vee \bool_3^1) \vee \neg(\bool_2^2 \vee \bool_3^2)));\\
+& H_3:= (\neg \noise_3 \rightarrow (\neg (\bool_1^1 \vee \bool_4^1) \vee \neg(\bool_1^2 \vee \bool_4^2)));\\
+& H_4:= (\neg \noise_4 \rightarrow ((\bool_1^1 \vee \bool_3^1) \wedge (\bool_1^2 \vee \bool_3^2)));\\
 \end{split}
 \]
 
