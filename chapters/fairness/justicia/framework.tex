@@ -1,6 +1,6 @@
 \section{{\justicia}: An SSAT-based Fairness Verifier}
 \label{fairness_justicia_sec:framework}
-In this section, we present the primary contribution of this chapter, {\justicia}, which is an SSAT-based framework for verifying group and causal fairness metrics. Given a binary classifier $\alg$, a probability distribution over features $(\nonsensitive,\sensitive,Y) \sim \mathcal{D} $, and a target fairness metric $ f(\alg, \mathcal{D}) $, our goal is to estimate the fairness $ f(\alg, \mathcal{D}) $ of the classifier $ \alg $ given the distribution $ \mathcal{D} $ according to the fairness definition. Additionally, if a fairness threshold $ \epsilon \in [0,1] $ is provided, {\justicia} verifies whether the classifier is $ \epsilon $-fair by comparing $ f $ with $ \epsilon $. In {\justicia}, we focus on classifiers that can be represented as a CNF formula defined over a set of Boolean variables. Additionally, for each variable, we query the distribution $ \mathcal{D} $ to derive the marginal probability of the variable to be assigned to $ 1 $. In this section, we discuss two equivalent approaches for fairness verification based on SSAT-based encodings: \emph{enumeration} approach and \emph{inference} approach. In both approaches, we verify fairness with the presence of compound sensitive groups.  We then provide a theoretical analysis for a high-probability error bound on the fairness metric and conclude with an extension of {\justicia} in practical settings.
+In this section, we present the primary contribution of this chapter, {\justicia}, which is an SSAT-based framework for verifying group and causal fairness metrics. Given a binary classifier $\alg$, a probability distribution over features $(\nonsensitive,\sensitive,Y) \sim \mathcal{D} $, and a target fairness metric $ f(\alg, \mathcal{D}) $, our goal is to estimate the fairness $ f(\alg, \mathcal{D}) $ of the classifier $ \alg $ given the distribution $ \mathcal{D} $ according to the fairness definition. Additionally, if a fairness threshold $ \epsilon \in [0,1] $ is provided, {\justicia} verifies whether the classifier is $ \epsilon $-fair by comparing $ f $ with $ \epsilon $ (refer to Chapter~\ref{chapter:preliminaries}). In {\justicia}, we focus on classifiers that can be represented as a CNF formula defined over a set of Boolean variables. Additionally, for each variable, we query the distribution $ \mathcal{D} $ to derive the marginal probability of the variable to be assigned to $ 1 $. In this section, we discuss two equivalent approaches for fairness verification based on SSAT-based encodings: \emph{enumeration} approach and \emph{inference} approach. In both approaches, we verify fairness with the presence of compound sensitive groups.  We then provide a theoretical analysis for a high-probability error bound on the fairness metric and conclude with an extension of {\justicia} in practical settings.
 
 
 
@@ -51,7 +51,7 @@ For simplicity, we have described the computation of conditional probability $ \
 	\[ \Phi_{\neg A} := \R^{0.41}F, \R^{0.93}I, \R^{0.09}J, \exists A, \; (\neg F \vee I) \wedge (F \vee J) \wedge \neg A \]
 	
 	For $ \Phi_{\neg A} $, the solution $ \Pr[\Phi_{\neg A}] = 0.43 $ is similarly derived from an SSAT solver. 
-	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of the sensitive feature $A$, both age groups demonstrate equal probability of positive prediction as the sensitive feature is not explicitly present in the classifier. 
+	Therefore, if $\Pr[F], \Pr[I], \Pr[J]$ are computed independently of the sensitive feature $A$, both age groups achieve an equal probability of positive prediction as the sensitive feature is not explicitly present in the classifier. 
 
 	However, there is an implicit bias in the data distribution for different sensitive groups and the classifier unintentionally learns it. To capture this implicit bias, we calculate conditional probabilities  $ \Pr[F|A] = 0.01, \Pr[I|A] = 0.99 $, and $ \Pr[J|A] = 0.18 $ from the distribution for group age $ \ge 40 $ in Figure~\ref{fairness_justicia_fig:fair_example}. Providing the conditional probabilities, we construct a modified SSAT formula $\Phi'_A $ and compute $ \Pr[\Phi'_A] = 0.18 $ for age $ \ge 40 $. 
 	
@@ -81,7 +81,7 @@ As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\widehat{Y} = 1 | \sensitive = \mathb
 	\begin{algorithmic}[1]
 		\Function{{\justiciaenum}}{$ \nonsensitive, \sensitive,\widehat{Y} $}
 		\label{fairness_justicia_algo:justicia_enum_begin}
-		\State $ \phi_{\widehat{Y}} := \mathsf{CNF}(\widehat{Y} = 1) $
+		\State $ \phi_{\widehat{Y}} := \textsc{CNF}(\widehat{Y} = 1) $
 		%\State $ p_{i} = \mathsf{CalculateProb}(X_i), \forall X_i \in X $
 		\ForAll{$\mathbf{a} \in \sensitive$ }
 		\State $ p_{i} \leftarrow \Pr[X_i = 1|\sensitive = \mathbf{a}], \forall X_i \in \nonsensitive $
@@ -98,7 +98,7 @@ As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\widehat{Y} = 1 | \sensitive = \mathb
 		
 		\Function{{\justicialearn}}{$ \nonsensitive, \sensitive,\widehat{Y} $}
 		\label{fairness_justicia_algo:justicia_learn_begin}
-		\State $ \phi_{\widehat{Y}} := \mathsf{CNF}(\widehat{Y}  = 1) $
+		\State $ \phi_{\widehat{Y}} := \textsc{CNF}(\widehat{Y}  = 1) $
 		\State $ p_{i} \leftarrow \Pr[X_i=1], \forall X_i \in \nonsensitive $
 		\State $  \Phi_\mathsf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \phi_{\widehat{Y}} $
 		\State $  \Phi'_\mathsf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \neg \phi_{\widehat{Y}} $
@@ -122,7 +122,7 @@ For measuring path-specific causal fairness, we compute  $ \max_{ \mathbf{a}} \P
 
 \subsection{Inference Approach using ER-SSAT Encoding}
 \label{fairness_justicia_sec:learn_ssat}
-In most practical problems, there can be exponentially many compound sensitive groups due to the combination of categorical sensitive features.  As a result, the enumeration approach may suffer from scalability issues due to an exponential number of calls to the SSAT solver. To this end, we propose an efficient SSAT encoding, where we make two SSAT calls, one for inferring the \emph{the most favored sensitive group} with the maximum conditional probability of positive prediction of the classifier and another for inferring \emph{the least favored sensitive group} with the minimum conditional probability of positive prediction of the same classifier. As discussed above, these two probabilities are sufficient to measure different group and causal fairness metrics.
+In most practical problems, there can be exponentially many compound sensitive groups due to the combination of categorical sensitive features.  As a result, the enumeration approach may suffer from scalability issues due to the exponential number of calls to the SSAT solver. To this end, we propose an efficient SSAT encoding, where we make two SSAT calls, one for inferring the \emph{the most favored sensitive group} with the maximum conditional probability of positive prediction of the classifier and another for inferring \emph{the least favored sensitive group} with the minimum conditional probability of positive prediction of the same classifier. As discussed above, these two probabilities are sufficient to measure different group and causal fairness metrics.
 
 
 
@@ -147,7 +147,7 @@ In order to infer the least favored sensitive group of the classifier, we  compu
 \end{equation}
 %By solving $ \Phi_{\mathsf{UR}} $, we find the optimal assignment to the universally quantified variables $ A_1 = a^{\min}_1, \dots,A_{\numsensitive} = a^{\min}_{\numsensitive} $ for which the probability of satisfaction of the UR-SSAT formula $ \Pr[\Phi_{\mathsf{UR}}] $ becomes minimum. Thus, $ \red{\mathbf{a}_{\min}} \triangleq [ a^{\min}_1, \dots, a^{\min}_{\numsensitive} ] $ becomes the least favored sensitive group achieving the lowest probability of positive prediction of the classifier. 
 
-Solving an UR-SSAT formula raises several practical issues and thus, there is an unavailability of a UR-SSAT solver. To resolve this problem, we leverage the \textit{duality} between UR-SSAT  and ER-SSAT formulas, where we solve an UR-SSAT formula on the CNF $ \phi $ using the solution of an ER-SSAT formula on the complemented CNF $ \neg \phi $~\cite{littman2001stochastic}. More specifically, we solve the following ER-SSAT formula for finding the least favored sensitive group.
+Solving an UR-SSAT formula raises several practical issues and thus, there is an unavailability of an UR-SSAT solver. To resolve this problem, we leverage the \textit{duality} between UR-SSAT  and ER-SSAT formulas, where we solve an UR-SSAT formula on the CNF $ \phi $ using the solution of an ER-SSAT formula on the complemented CNF $ \neg \phi $~\cite{littman2001stochastic}. More specifically, we solve the following ER-SSAT formula for finding the least favored sensitive group.
 
 \begin{equation}
 	\Phi'_{\mathsf{ER}} := \exists A_1,\dots, \exists A_{\numsensitive},
@@ -287,7 +287,7 @@ We next prove the equivalence of {\justiciaenum} and {\justicialearn} in Lemma~\
 \red{Let $ \bool_i $ and $ \bool_j $ be two Boolean (non-sensitive) features and we want to encode their pair-wise correlation in {\justicia}. For an assignment to $ \bool_i, \bool_j $, we consider a new Boolean variable $ v $ and add a constraint $ v \leftrightarrow \bool_i \wedge \bool_j $ in the CNF $ \phi $ of the SSAT formula $ \Phi $. Additionally, $ v $ is given a randomized quantification in the prefix of $ \Phi $ and the probability of $ v $ is calculated as the probability of both $ \bool_i $ and $ \bool_j $ assigning to $ 1 $ in the distribution $ \mathcal{D} $. Note that, to encode the total correlation of all Boolean features, the mentioned approach introduces exponentially (with the number of features) many new variables and add an exponential number of constraints to $ \phi $ with an aim of computing a more precise satisfying probability of $ \Phi $. Optionally, one can encode the correlation among a selected set of features of interest in {\justicia}. }
 \end{comment}
 
-
+\begin{comment}
 \subsection{Theoretical Analysis: Error Bounds}\label{fairness_justicia_sec:theory}
 For practical fairness problems, we do not have access to the distribution of features rather to a finite-sample dataset. Since the input of {\justicia} is the distribution of features, we compute the distribution from the dataset. The finite-sample dataset introduces errors in the computed probabilities of randomized quantified features being assigned to $1$. These finite-sample errors in computed probabilities induce further errors in the computed probability of positive prediction of the classifier and corresponding fairness metrics. We next provide a bound on this finite-sample error.
 
@@ -379,4 +379,5 @@ with probability $1-\delta$.
 \end{corollary}
 \fi
 
+\end{comment}
 

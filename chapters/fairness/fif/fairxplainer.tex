@@ -13,7 +13,7 @@ We propose an algorithm, {\fairXplainer}, that leverages the variance decomposit
 \end{align}
 
 \begin{algorithm}
-	\caption{{\fairXplainer}}\label{algo:framework}
+	\caption{{\fairXplainer}: A Framework for Computing  Fairness Influence Function (FIF)}\label{algo:framework}
 	\hspace*{\algorithmicindent} \textbf{Input:} $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y},  \mathbf{D} = \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n, f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}, \lambda $  \\
 	\hspace*{\algorithmicindent} \textbf{Output:} $ w_{\mathbf{S}}$ 
 	\begin{algorithmic}[1]
