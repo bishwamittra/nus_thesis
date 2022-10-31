@@ -182,6 +182,15 @@ In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and 
 \end{equation}
 
 
+\blue{The complexity $ \bncomplexity(\graph) $ of a Bayesian network $ (\graph, \theta) $ with discrete random variables $ \graphvertices $ is defined as the number of independent parameters used to define the probability distribution of $ \graphvertices $~\cite{murakonda2021quantifying}. Let $ \bnnumdiscrete(\graphvertex) $ denote the number of distinct values that a random variable $ \graphvertex $ can take. As such, for each conditional probability $ \Pr[\graphvertex_i = v_i | \parent(\graphvertex_i) = \mathbf{u}; \theta] $, we need $ \bnnumdiscrete(\parent(\graphvertex_i))(\bnnumdiscrete(\graphvertex_i) - 1) $ independent parameters. Thus, the total complexity of a Bayesian network is:}
+
+\blue{
+\begin{align}
+	\bncomplexity(\graph) = \sum_{i=1}^{|\graphvertices|} \bnnumdiscrete(\parent(\graphvertex_i))(\bnnumdiscrete(\graphvertex_i) - 1)
+\end{align}
+}
+
+
 \subsection{Global Sensitivity Analysis: Variance Decomposition}
 Global sensitivity analysis is a field that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input while considering the whole input domain~\cite{saltelli2008global}.
 Sensitivity analysis is an essential component for quality assurance and impact assessment of models in EU~\cite{eu}, USA~\cite{usepa}, and research communities~\cite{saltelli2020five}.
