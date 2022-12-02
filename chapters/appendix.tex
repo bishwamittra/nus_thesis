@@ -1,0 +1,56 @@
+\appendix
+
+\chapter{Feature Correlations in SSAT-based Fairness Verifier: {\justicia}}
+\label{sec:CNF_feature_correlation}
+In Chapter~\ref{chapter:justicia}, {\justicia} verifies the fairness of CNF classifiers without considering correlation among features. In this chapter, we address fairness verification of CNF classifiers with correlated features. In particular, we present the encoding of conditional probabilities from a Bayesian network into the SSAT formulation in {\justicia}. 
+
+
+
+
+
+
+
+\subsection*{Methodology}
+For CNF classifiers, SSAT is a natural choice as it computes the probability of satisfaction of a CNF formula  given quantified Boolean variables, where quantifiers distinguish between (random) non-sensitive variables and (existential or universal) sensitive variables. Let $ \phi_{\widehat{Y}} $ be a CNF classifier such that a satisfying assignment of $ \phi_{\widehat{Y}} $ denotes the positive prediction of the classifier $ \widehat{Y} = 1 $. We consider another CNF formula $ \phi_\BN $ to encode the conditional dependencies among variables in the Bayesian Network $ \BN $, which is given as the input distribution. $ \phi_\BN $ contains auxiliary variables to encode the conditional dependencies, which we discuss shortly. The outline of our methodology is to construct a conjoined CNF formula $ \phi_{\widehat{Y}} \wedge \phi_\BN $, assign appropriate quantifiers to the variables, and solve an SSAT problem on quantified formula $ \phi_{\widehat{Y}} \wedge \phi_\BN $ to answer queries such as $ \max_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] $ and $ \min_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] $\textemdash the maximum and minimum conditional positive prediction of the classifiers with correlated features, respectively.
+
+
+
+
+\paragraph{Encoding a Bayesian Network as a CNF Formula.}\label{sec:BN_to_CNF}
+Our goal is to encode the Bayesian network $ \BN = (\graph, \factors) $ into a CNF formula $ \phi_\BN $ such that \textit{the weighted model count} of $ \phi_\BN $ exactly computes the joint probability distribution in $ \BN $~\cite{chavira2008probabilistic}.  In this context, an SSAT formula trivially does not allow conditional probabilities of randomized quantified variables. Hence, $ \phi_\BN $ contains additional \textit{auxiliary variables} to capture the conditional probabilities, as discussed next.
+
+
+Let  $ G = (\mathbf{V}, \mathbf{E}) $ where $  $  $ \mathbf{V} \subseteq \nonsensitive \cup \sensitive $, $ \mathbf{E} \subseteq \mathbf{V} \times \mathbf{V} $, and each variable $ V_i \in \mathbf{V} $ is Boolean. For each network variable $ V_i \in \mathbf{V} $, we define a Boolean \textit{indicator}  variable $ \lambda_{V_i} $ such that $ \Pr[\lambda_{V_i}] \triangleq \Pr[V_i] $. We add following constraint in $ \phi_\BN $ to establish the relation between $ \lambda_{V_i} $ and $ V_i $. 
+\begin{align}
+\lambda_{V_i} \leftrightarrow V_i,
+\label{eq:indicator_constraint}
+\end{align}
+Intuitively, both $ \lambda_{V_i} $ and $ V_i $ are either true or false. This constraint can be trivially translated to clauses in CNF using the equivalence rule $ A \leftrightarrow B \equiv (\neg A \vee B)  \wedge (A \vee \neg B) $ for Boolean variables $ A, B$.
+
+We now present the encoding of conditional probabilities induced by parameters in the network $ \theta $. Let $ V_i \in  \mathbf{V}  $  be a vertex in $ G $ where $ \parent(V_i) \ne \emptyset $ be $ V_i $'s parents and $ |\parent(V_i)| = k $. Additionally, let $ v $ and $ \mathbf{u} \triangleq [u_1,.., u_k] $ be an assignment of  $ V_i $ and $ \parent(V_i)  $, respectively.  To encode $ \Pr[V_i = v| \parent(V_i) = \mathbf{u}]$, we introduce auxiliary variable $ \lambda_{v,\mathbf{u}} $ and add following constraints in $ \phi_{\BN} $.
+\begin{align}
+\lambda_{v,\mathbf{u}}  \wedge \bigwedge_{j=1}^{k} \lambda_{u_j} \rightarrow \lambda_v
+\label{eq:factor_pos}
+\end{align}
+\begin{align}
+\neg \lambda_{v,\mathbf{u}}  \wedge \bigwedge_{j=1}^{k} \lambda_{u_j} \rightarrow \neg \lambda_v
+\label{eq:factor_neg}
+\end{align}
+
+where $ \lambda_v \equiv \lambda_{V_i} $. Moreover, $ \lambda_{u_j} $ is the indicator variable corresponding to the $ j^\text{th} $ parent in $ \parent(V_i) $. In the above two constraints,	for a fixed assignment $ \mathbf{u} $ of parents $ \parent(V_i) $, both $ \lambda_v $ and $ \lambda_{v,\mathbf{u}} $ are either true or false.  Hence, these two constraints encode the conditional probability of $ V_i = v $ given $ \parent(V_i) = \mathbf{u} $ using $ \Pr[\lambda_{v,\mathbf{u}}] = \Pr[V_i = v| \parent(V_i) = \mathbf{u}]$. Both constraints can be translated to CNF clauses trivially. For example, Eq.~\ref{eq:factor_pos} is translated as $ \neg \lambda_{v,\mathbf{u}}  \vee \bigvee_{j=1}^{k} \neg \lambda_{u_j} \vee \lambda_v $. We next analyze the complexity of $ \phi_\BN $ in terms of the number of variables and clauses.
+
+\begin{lemma}
+	For a Bayesian network $ \BN = (\graph, \factors) $ defined over $ n $ Boolean variables and $ \bncomplexity(\graph) $ network complexity, the encoded CNF formula $ \phi_\BN $ has $ n + \bncomplexity(\graph) $  variables and $ 2(n + \bncomplexity(\graph)) $ clauses. 
+\end{lemma}
+\begin{proof}
+	Since the DAG in the Bayesian network has $ n $ vertices, we consider $ n $ indicator variables. Moreover, for encoding conditional probabilities, we consider $ \bncomplexity(\graph) $ auxiliary variables where $ \bncomplexity(\graph) $ denotes the the number of independent parameters in the network (ref. Chapter~\ref{chapter_fairness_preliminaries_BN}). Hence, total variables in $ \phi_\BN $ is $ n + \bncomplexity(\graph)  $.
+	
+	According to Eq.~\eqref{eq:indicator_constraint},~\eqref{eq:factor_pos},~\eqref{eq:factor_neg}, there are $2( n + \bncomplexity(\graph)) $ clauses in $ \phi_\BN $.
+	
+	
+\end{proof}
+
+
+
+\paragraph{Quantifiers in $ \phi_{\widehat{Y}} \wedge \phi_\BN $.}
+We now discuss the quantifiers in $ \phi_{\widehat{Y}} \wedge \phi_\BN $, the SSAT solution of which  constitutes the maximum (minimum) probability of positive prediction of a CNF classifier. $ \phi_{\widehat{Y}} \wedge \phi_\BN $ contains four  categories of variables : (i) sensitive variables $ \sensitive $, (ii) non-sensitive variables $ \nonsensitive $, (iii) indicator variables $  \lambda_{V_i} $, and (iv) auxiliary variables $ \lambda_{v,\mathbf{u}} $. Among them, (iii) and (iv) are associated with $ \phi_\BN $ and the rest for $ \phi_{\widehat{Y}} $. For computing the maximum probability of positive prediction of the classifier, we construct  an exists-random-exists (ERE) SSAT formula with following quantifiers: we set sensitive features $ \sensitive $ with existential quantifiers in the beginning of the prefix of the SSAT formula followed by $  \lambda_{V_i}, \lambda_{v,\mathbf{u}} $, and $ X_j \in \nonsensitive \setminus \mathbf{V} $ with randomized quantifiers. The remaining variables  $ X_i \in \mathbf{V} $ are existentially quantified as their assignment is fixed by indicator variables $ \lambda_{V_i} $. In contrast, for computing the minimum probability of positive prediction of the classifier, we consider an universal-random-exists (URE) SSAT formula  where we set sensitive features $ \sensitive $ as universal quantifiers with all other quantifiers remaining same.
