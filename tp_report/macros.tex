@@ -1,0 +1,102 @@
+% Packages
+\usepackage{amsmath}
+\usepackage{amsthm,dsfont,amssymb}
+\theoremstyle{definition}
+\usepackage[utf8]{inputenc} 
+\usepackage{graphicx}
+\usepackage{multirow}
+%\usepackage{color}
+\usepackage{microtype}
+%\usepackage{wrapfig}
+%\usepackage{hyperref,url}
+\usepackage{subfig}
+\usepackage{booktabs}
+%\usepackage{caption}
+\usepackage{enumitem}%,kantlipsum}
+%\usepackage{algorithm}
+%\usepackage[noend]{algpseudocode}
+\usepackage{blkarray}
+\usepackage{adjustbox}
+
+
+
+% Todo packages
+\usepackage{xargs}
+\usepackage[pdftex,dvipsnames]{xcolor}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
+
+% Theorem
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{property}[theorem]{Property}
+\newtheorem*{remark}{Remark}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}{Example}[section]
+\newtheorem{corollary}{Corollary}
+\newtheorem{construction}[theorem]{Construction}
+
+\newtheorem{lemmarep}{Lemma} %for appendix
+\newtheorem{theoremrep}[lemmarep]{Theorem} %for appendix
+\newtheorem{corollaryrep}[lemmarep]{Corollary} %for appendix
+
+%\usepackage{fonttable}
+%\xfonttable{OT1}{cmr}{m}{n}
+%\xfonttable{OML}{cmm}{m}{it}
+%\xfonttable{OMS}{cmsy}{m}{n}
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{automata}
+\usetikzlibrary{bayesnet,arrows}
+\usetikzlibrary{shapes,fit,calc,positioning}
+\tikzset{box/.style={draw, diamond, thick, text centered, minimum height=0.5cm, minimum width=1cm, text width=0.9cm}}
+\tikzset{line/.style={draw, thick, -latex'}}
+\allowdisplaybreaks
+\usepackage{pgfplots}
+
+
+
+
+% Definitions
+\newcommand{\BN}{\ensuremath{\mathsf{BN}}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\R}{\ensuremath{\raisebox{\depth}{\rotatebox{180}{R}}}}
+\newcommand{\framework}{\ensuremath{\mathsf{FairXplainer}}}
+\newcommand{\parent}{\ensuremath{\mathrm{Pa}}}
+\newcommand{\numnonsensitive}{\ensuremath{k}}
+\newcommand{\numsensitive}{\ensuremath{m}}
+\newcommand{\nonsensitive}{\ensuremath{\mathbf{X}}}
+\newcommand{\sensitive}{\ensuremath{\mathbf{A}}}
+\newcommand{\mediator}{\ensuremath{\mathbf{Z}}}
+\newcommand{\stochastic}{\ensuremath{\mathsf{S3P}}}
+\newcommand{\function}{\ensuremath{g}}
+
+\newcommand{\bool}{\ensuremath{B}}
+\newcommand{\alg}{\mathcal{M}}
+\newcommand{\graph}{\ensuremath{G}}
+\newcommand{\factors}{\ensuremath{\theta}}
+\newcommand\dbcomment[1]{{\color{blue}{[DB: \texttt{#1}]}}}
+
+%\definecolor{terminate}{gray}{0.8}
+%\definecolor{collision}{rgb}{0.2,1,0.3}
+%\definecolor{existential}{rgb}{0.9,0.9, 0.1}
+\definecolor{affirmative}{rgb}{0.2,1,0.3}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+% Comments
+\usepackage{comment}
+% Special commment in gray color
+\specialcomment{comment}{\begingroup\color{gray}}{\endgroup}
+\excludecomment{comment}  %do not show comments

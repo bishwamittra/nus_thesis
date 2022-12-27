@@ -1,0 +1,66 @@
+\documentclass[10pt]{article}
+% Define margins
+\setlength{\topmargin}{-1.0cm}
+\setlength{\oddsidemargin}{0.2cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{23.0cm}
+
+
+
+\input{macros}
+
+\begin{document}
+	We thank the reviewers for their constructive feedback during the doctoral seminar. In this report, we discuss our ongoing research to be added to the thesis along with explaining some questions during the presentation.
+	
+	
+	\section*{Fairness Influence Functions}  The goal of this project is to interpret group fairness of classifiers by identifying (subset of) non-sensitive features responsible for the bias/unfairness of the classifier with respect to a dataset. Since both sensitive and non-sensitive features may be correlated in a dataset containing historical bias, such an identification of malicious features will guide a future endeavor to design a fairness improvement algorithm. Therefore, we propose a method to compute the fairness influence function (FIF) of features. Intuitively, FIF of non-sensitive features implies how much those features contribute to the bias of the classifier\textemdash a well known measure of bias is the maximum difference in the positive prediction of the classifier conditioned on all sensitive groups. 
+	
+	
+	\paragraph{Problem Statement.} Let $ \nonsensitive \in \mathbb{R}^k $ and $ \sensitive \in \mathbb{N}^m $ denote non-sensitive and sensitive features, respectively. We are given a binary classifier  $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $, a dataset $ \mathbf{D} = \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n $, and a  fairness metric\footnote{Statistical parity belongs to \textit{independence} measuring group fairness metrics, where the prediction $ \widehat{Y} $ is statistically independent of sensitive features $ \sensitive $.  The statistical parity of  a classifier is measured as $ f_{\mathsf{SP}}(\alg, \mathbf{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] $, which is the difference between the maximum and minimum conditional probability of positive prediction the classifier for different sensitive groups.} $ f(\alg, \mathbf{D}) \in [0, 1] $.  Our objective is to compute the influences of non-sensitive features on $ f $. Particularly, we compute the influence of each subset of non-sensitive features $ \mathbf{X}_{\mathbf{S}} $, where $ \mathbf{S} = \{S_i | 1 \le S_i \le \numnonsensitive\} \subseteq [\numnonsensitive] \setminus \emptyset $ is a non-empty subset of indices. 
+	
+	\begin{definition}[Fairness Influence Function]
+		Fairness Influence Function (FIF) $ w_{\mathbf{S}}: (\alg, \mathbf{X}_{\mathbf{S}}) \rightarrow \mathbb{R} $ measures the quantitative contribution of the subset of features $ \mathbf{X}_{\mathbf{S}} \subseteq \mathbf{X}_{[k]}$ on the incurred bias $ f(\alg, \mathbf{D}) $ of the classifier $ \alg $ for dataset $\mathbf{D}$. 
+		\begin{equation}\label{eq:fif_decompose}
+			w_{\mathbf{S}}  \triangleq \frac{\mathsf{Var}_{\nonsensitive_{\mathbf{S}}}[\widehat{Y} = 1|\sensitive = \mathbf{a}_{\max}]}{1 - \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\max}]} - \frac{\mathsf{Var}_{\nonsensitive_{\mathbf{S}}}[\widehat{Y} = 1|\sensitive = \mathbf{a}_{\min}] }{1 - \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\min}]}
+		\end{equation}
+	
+	\end{definition}	
+		
+	\paragraph{Interpretation of FIFs.} In the definition of $ w_{\mathbf{S}} $, $ \mathsf{Var}_{\nonsensitive_{\mathbf{S}}}[\widehat{Y} = 1|\sensitive = \mathbf{a}] $ is the decomposed variance  of the conditional variance of classifier's prediction $ \mathsf{Var}[\widehat{Y} = 1|\sensitive = \mathbf{a}] $ with respect to features $ \nonsensitive_{\mathbf{S}} $; and  sensitive group $ \mathbf{a}_{\max} $ (resp.\ $ \mathbf{a}_{\min} $) obtains the maximum (resp.\ minimum) conditional probability of positive prediction by the classifier, e.g., $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}] $. Intuitively, between two specific sensitive groups $ \mathbf{a}_{\max} $ and $ \mathbf{a}_{\min} $, the FIF $ w_{\mathbf{S}} $ implies the difference in the normalized\footnote{The numerator in each term of $ w_{\mathbf{S}} $ is a constant, which is in proportion to classifier's positive prediction conditioned on the sensitive group.} conditional variance of classifier's prediction attributed for features  $ \nonsensitive_{\mathbf{S}} $. Thus, FIF of features is non-zero when the variance-difference of prediction between sensitive groups is non-zero for those features, and vice versa. Our definition of $ w_{\mathbf{S}} $ results in the following property of FIFs.
+	
+	
+	\paragraph{Additivity of FIFs.} FIF provides a non-trivial way to decompose the bias $ f(\alg, \mathbf{D}) $ of the classifier on dataset $ \mathbf{D} $ among all possible subsets of non-sensitive features. 
+	
+	\begin{theorem}
+		\label{thm:fif}
+		Let $ f(\alg, \mathbf{D}) $ be the bias/unfairness of the classifier $ \alg $ on dataset $ \mathbf{D} $ according to linear fairness metrics such as statistical parity. Let $ w_{\mathbf{S}}  $ be the FIF of a subset of non-sensitive features $ \nonsensitive_{\mathbf{S}} $ as defined in Eq.~\eqref{eq:fif_decompose}. Therefore, the sum of FIFs of all subset of non-sensitive features is equal to the bias of the classifier. 
+		\begin{align}\label{eq:constraint_framework}
+			f(\alg, \mathbf{D}) = \sum\nolimits_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} w_{\mathbf{S}}
+		\end{align}
+	\end{theorem}
+
+	\begin{proof}
+	The proof-sketch of Theorem~\ref{thm:fif} is to first view fairness metrics in terms of the variance of classifier's prediction and then apply variance decomposition to derive FIFs of features. For statistical parity fairness metric, the derivation is the following. 
+	
+	\begin{align*}
+		f_{\mathsf{SP}}(\alg, \mathbf{D}) &\triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] \\ 
+		&= \Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}_{\max}] - \Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}_{\min}] \\
+		& = \frac{\mathsf{Var}[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}_{\max}]}{1 - \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\max}]} - \frac{\mathsf{\mathsf{Var}[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}_{\min}]}}{1 - \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\min}]}
+	\end{align*}
+
+	Next, we decompose the total variance with respect to all non-sensitive  into the sum of variances of  all subsets of non-sensitive features based on global sensitivity analysis (GSA).
+	
+	\[ \mathsf{Var}[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] = \sum_{\mathbf{S} \subseteq [k] \setminus \emptyset} \mathsf{Var}_{\nonsensitive_{\mathbf{S}}}[\widehat{Y} =1 | \mathbf{A}= \mathbf{a}]
+	\]
+	
+	From this decomposition, term associated with features $ \nonsensitive_{\mathbf{S}} $ constitutes the FIF of those features in Eq.~\eqref{eq:fif_decompose}. 
+
+
+	\end{proof}
+	
+	
+	
+	\section*{Revised Experiments on Fairness Quantification} In the earlier experimental setup for comparing different fairness quantifiers, our method Justicia considers Bernoulli distributions of features. Competitive methods FairSquare and VeriFair, however, consider Gaussian distributions along with Bernoulli distributions. To make a fair comparison, we are designing an experimental setup where all three methods take the same Bernoulli distributions of features as input. We add the experimental findings in the thesis.
+	
+	\section*{Accuracy of  Interpretable Rule-based Classifiers} Our motivation for proposing an incremental MaxSAT encoding for interpretable rule-based classification learning is to improve \emph{the scalability of learning} than the existing non-incremental and direct MaxSAT encoding. Since the priority is only on scalability, we do not claim to improve prediction accuracy using the incremental learning method. As pointed out by the reviewers that the experimental result on accuracy is not statistically significant, we are working on a detailed experimental comparison between the incremental and non-incremental encodings and add the results to the thesis.
+\end{document}
