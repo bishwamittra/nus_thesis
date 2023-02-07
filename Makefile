@@ -1,4 +1,4 @@
-PAPERNAME=main
+PAPERNAME=main_template
 #PAPERNAME_extended=draft_extended
 #PAPERNAME_response=response
 TEXFILES =  *.tex *.bib *.sty
@@ -10,8 +10,9 @@ all:
 	pdflatex $(PAPERNAME)
 	rm -f *.ps $(PAPERNAME).dvi *.loa *.lof *lot *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
 clean:
-	rm -f *.ps $(PAPERNAME).pdf *.loa *.lof *lot *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
-	rm -f $(PAPERNAME).synctex.gz
+	rm -f *.ps $(PAPERNAME).pdf *.loa *.lof *lot *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in *.bcf *.xml *.toc
+	rm -f $(PAPERNAME).synctex*
+	rm -f $(PAPERNAME)*-blx.bib
 #	rm -f *.ps $(PAPERNAME_extended).pdf *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in
 #	rm -f $(PAPERNAME_extended).synctex.gz
 #	rm -f *.ps $(PAPERNAME_response).pdf *.dvi *.aux *.log *.blg *.bbl *~ *.ilg *.idx *.out *.in

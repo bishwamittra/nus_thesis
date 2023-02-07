@@ -1,0 +1,35 @@
+\ifdefined\DoubleSided
+  \documentclass[twoside,openright,a4paper]{nusthesis}
+\else
+  \documentclass[a4paper]{nusthesis}
+\fi
+
+\dsp % pseudo double spacing
+
+%%% The abstract of the thesis is titled as "Abstract" by default. 
+%%% However, the Graduate Division may require you to name it as "Summary".
+%\renewcommand{\abstractname}{Summary}
+
+%%% Depth of section numbering
+\setcounter{secnumdepth}{3}
+
+%%% Depth of numbering in table of content
+\setcounter{tocdepth}{2}
+
+\usepackage{indentfirst} % indent the first paragraph of a section
+
+\usepackage{silence} % ignore trivial warnings
+\WarningFilter{biblatex}{File 'english-ieee.lbx'}
+
+\usepackage{bookmark}
+\usepackage[
+  backend=bibtex,
+  style=ieee,
+  citestyle=numeric,
+  giveninits=true,
+  sorting=nyt,
+  maxbibnames=99,
+  dashed=false,
+  doi=false]{biblatex}
+\DeclareFieldFormat*{title}{``#1''\newunitpunct} % move comma outside the quotation mark
+\addbibresource{ref.bib}

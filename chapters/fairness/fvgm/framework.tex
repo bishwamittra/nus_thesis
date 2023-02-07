@@ -1,4 +1,4 @@
-\section{{\fvgm}: Fairness Verification with Graphical Models}\label{fvgm_sec:fvgm}
+\section{Fairness Verification with Graphical Models}\label{fvgm_sec:fvgm}
 
 In this section, we present {\fvgm}, a fairness verification framework for linear classifiers that accounts for correlated features represented as a graphical model. The core idea of verifying fairness of a classifier is to compute the probability of positive prediction of the classifier with respect to all compound sensitive groups. To this end, {\fvgm} solves a stochastic subset sum problem, {\stochastic}, that is equivalent to computing the probability of positive prediction of the classifier for the most and the least favored sensitive group\footnote{The most (resp.\ least) favored sensitive group obtains the maximum (resp.\ minimum) probability of positive prediction of the classifier.}. In this section, we first define {\stochastic} and present an efficient dynamic programming solution for {\stochastic}. We then extend {\stochastic} to consider correlated features as input. Finally, we conclude by discussing fairness verification based on the solution of {\stochastic}.
 
@@ -11,7 +11,7 @@ Given a linear classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \wideh
 Here, $ W $ denotes the weight (or coefficients) of a feature, $ \tau $ denotes the bias or the offset parameter of the classifier, and $\mathds{1}$ is an indicator function. Hence, the prediction $ \widehat{Y} =1 $ if and only if the inner inequality holds.
 Thus, computing the maximum (resp.\ minimum) probability of positive prediction is equivalent to finding out the assignment of $A_j$'s for which the probability of satisfying the inner inequality is highest (resp.\ lowest). We reduce this computation into an instance of {\stochastic}. To perform this reduction, we assume  weight $ W $ and bias $ \tau $ as integers, and features $\nonsensitive \cup \sensitive $ as Boolean. In Sec.~\ref{fvgm_sec:practical}, we relax these assumptions and extend to the practical settings. 
 
-\subsection{$ \stochastic $: Stochastic Subset Sum Problem}\label{fvgm_sec:stochastic_sum_set_sum}
+\subsection{Stochastic Subset Sum Problem}\label{fvgm_sec:stochastic_sum_set_sum}
 Now, we formally describe the specification and semantics of {\stochastic}.
 {\stochastic} operates on  a set of Boolean variables $ \mathbf{B} = \{B_i\}_{i=1}^{n} \in \{0,1\}^{n} $, where $ W_i \in \mathbb{Z} $ is the weight of $ B_i $, and $n \triangleq |\mathbf{B}|$. Given a constant threshold $ \tau \in \mathbb{Z} $, {\stochastic} computes the \textit{probability} of a subset of $ \mathbf{B} $ with sum of weights of non-zero variables to be at least $ \tau $. Formally,
 
@@ -61,7 +61,7 @@ Observe that when $ \textbf{B} $ is empty, $S$ is computed as $ 1 $ if $ \tau \l
 
  
  
- \subsection{A Dynamic Programming Solution for {\stochastic}}
+ \subsection{A Dynamic Programming Solution}
  \label{fvgm_sec:dp_formulation}
  %\dbcomment{Use $ \mathsf{dp}(i, \tau) $ given $ B $}
 
