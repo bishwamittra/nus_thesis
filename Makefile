@@ -1,4 +1,4 @@
-PAPERNAME=main_template
+PAPERNAME=main
 #PAPERNAME_extended=draft_extended
 #PAPERNAME_response=response
 TEXFILES =  *.tex *.bib *.sty
