@@ -1,105 +1,89 @@
-\section{\fairXplainer: An Algorithm to Compute Fairness Influence Functions}\label{sec:fairxplainer}
+\section{ An Algorithm to Estimate Fairness Influence Functions}\label{fairness_fairXplainer_sec:fairxplainer}
 \begin{comment}
 Represent the algorithm as a sequence of two blocks: (1) Component function learning (2) Covariance computation of component functions. 
 \end{comment}
-We propose an algorithm, {\fairXplainer}, that leverages the variance decomposition of Eq.~\eqref{eq:fif_decompose} to compute the Fairness Influence Functions (FIFs) of all the subset of features. {\fairXplainer} has two algorithmic blocks: (i) local regression to decompose the classifier into component functions and (ii) computing the variance (or covariance) of each component. We describe the schematic of \fairXplainer{} in Algorithm~\ref{algo:framework}.
+We propose an algorithm, {\fairXplainer}, that leverages the variance decomposition of CPPs to estimate the FIFs of all subsets of features. {\fairXplainer} has two algorithmic blocks: (i) local regression to decompose the classifier into component functions taking distinct subsets of features as input and (ii) computing the variance (or covariance) of each component function. We describe the schematic of {\fairXplainer} in Algorithm~\ref{fairness_fairXplainer_algo:framework}.
 \setlength{\textfloatsep}{12pt}% Remove \textfloatsep
 
-\paragraph{A Set-additive Representation of the Classifier.} To apply variance decomposition (Eq.~\eqref{eq:variance_decomposition_set_notation}), we learn a set-additive representation of the classifier (Eq.~\eqref{eq:functional_decomposition_set_notation}). Let us denote the classifier $ \alg $ conditioned on a sensitive group $ \mathbf{a} $ as $ \function_{\mathbf{a}}(\nonsensitive) \triangleq \alg(\nonsensitive, \sensitive = \mathbf{a}) $. We express $ \function_{\mathbf{a}} $ as a set-additive model:
-
+\paragraph{A Set-additive Representation of the Classifier.} To apply variance decomposition (Eq.~\eqref{fairness_fairXplainer_eq:variance_decomposition_set_notation}), we learn a set-additive representation of the classifier (Eq.~\eqref{fairness_fairXplainer_eq:functional_decomposition_set_notation}) with input $ \feature \equiv (\nonsensitive, \sensitive) $. Let us denote the classifier $ \alg $ conditioned on a sensitive group $ \mathbf{a} $ as $ \fiffunc_{\mathbf{a}}(\feature) \triangleq \alg(\nonsensitive, \sensitive = \mathbf{a}) $. We express $ \fiffunc_{\mathbf{a}} $ as a set-additive model:
 \begin{align}
-\label{eq:set_additive_classifier}
-\function_{\mathbf{a}}(\mathbf{X}) = \function_{\mathbf{a}, 0} +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}| \le \lambda} \function_{\mathbf{a},\mathbf{S}}(\mathbf{X}_{\mathbf{S}}) + \delta
+\label{fairness_fairXplainer_eq:set_additive_classifier}
+\fiffunc_{\mathbf{a}}(\feature) = \fiffunc_{\mathbf{a}, 0} +  \sum_{\mathbf{S} \subseteq [\numfeatures] , |\mathbf{S}| \le \lambda} \fiffunc_{\mathbf{a},\mathbf{S}}(\feature_{\mathbf{S}}) + \delta
 \end{align}
 
-\begin{algorithm}
-	\caption{{\fairXplainer}: A Framework for Computing  Fairness Influence Function (FIF)}\label{algo:framework}
-	\hspace*{\algorithmicindent} \textbf{Input:} $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y},  \mathbf{D} = \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n, f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}, \lambda $  \\
-	\hspace*{\algorithmicindent} \textbf{Output:} $ w_{\mathbf{S}}$ 
+%\iffalse
+\begin{algorithm}[t!]
+	\caption{{\fairXplainer}}\label{fairness_fairXplainer_algo:framework}
+	\begin{flushleft}
+	\hspace*{\algorithmicindent}\textbf{Input:} Classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y}$, Dataset $\mathbf{D} = \{(\mathbf{z}^{(i)}, y^{(i)})\}_{i=1}^n$, Fairness metric $f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}$, Maximum order of intersectional influence $\lambda $\\
+	\hspace*{\algorithmicindent}\textbf{Output:} FIF $ w_{\mathbf{S}}$ for the subsets of features $\{\feature_{\mathbf{S}}\}$
+	\end{flushleft}
+
 	\begin{algorithmic}[1]
-		\State $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}], \mathbf{a}_{\min} = \argmin_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}], k \gets    |\nonsensitive| $
-		\label{algo_line:fif_computation_start}
+		\State $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}], \mathbf{a}_{\min} = \argmin_{\mathbf{a}} \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}], \numfeatures \gets    |\feature|, \feature \equiv (\nonsensitive, \sensitive) $
+		\label{fairness_fairXplainer_algo_line:fif_computation_start}
 		
 		\For{$ \mathbf{a} \in \{\mathbf{a}_{\max}, \mathbf{a}_{\min}\} $} \Comment{Enumerate for specific sensitive groups}
-		\State $ \function_{\mathbf{a}, \mathbf{S}},\function_{\mathbf{a}, 0} \gets \textsc{LocalRegression}(\alg(\nonsensitive, \sensitive = \mathbf{a}), \{\mathbf{x}^{(i)}\}_{i=1}^n, \lambda, k) $
+		\State $ \fiffunc_{\mathbf{a}, \mathbf{S}},\fiffunc_{\mathbf{a}, 0} \gets \textsc{LocalRegression}(\alg(\nonsensitive, \sensitive = \mathbf{a}), \{\mathbf{z}^{(i)}\}_{i=1}^n, \lambda, m) $
 		
-		\State $ V_{\mathbf{a}, \mathbf{S}} \gets \textsc{Covariance}(\function_{\mathbf{a}},  \{\mathbf{x}^{(i)}\}_{i=1}^n, \function_{\mathbf{a}, \mathbf{S}},\function_{\mathbf{a}, 0}) $
+		\State $ V_{\mathbf{a}, \mathbf{S}} \gets \textsc{Covariance}(\fiffunc_{\mathbf{a}},  \{\mathbf{z}^{(i)}\}_{i=1}^n, \fiffunc_{\mathbf{a}, \mathbf{S}},\fiffunc_{\mathbf{a}, 0}) $
 		\EndFor
-		\State Compute $ w_{\mathbf{S}}$ using  $V_{\mathbf{a}_{\max},\mathbf{S}}$ and $V_{\mathbf{a}_{\min},\mathbf{S}}$ as in Equation~\eqref{eq:fif_decompose}
+		\State Compute $ w_{\mathbf{S}}$ using  $V_{\mathbf{a}_{\max},\mathbf{S}}$ and $V_{\mathbf{a}_{\min},\mathbf{S}}$ as in Equation~\eqref{fairness_fairXplainer_eq:fif_decompose}
 		%\State $ w_{\mathbf{S}}  = (V_{\mathbf{a}_{\max},\mathbf{S}} - V_{\mathbf{a}_{\min},\mathbf{S}})/(1 - (\Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\max}] + \Pr[\widehat{Y} = 1 |  \sensitive = \mathbf{a}_{\min}])) $
-		\label{algo_line:fif_computation_end}
-		\Comment{Theorem~\ref{lemma:fif}}
+		\label{fairness_fairXplainer_algo_line:fif_computation_end}
 		
-%		\Statex
-		\Function{LocalRegression}{$ g_\mathbf{a}, \{\mathbf{x}^{(i)}\}_{i=1}^n, \lambda, k $}
-		\label{algo_line:local_regression_start}
-		\State \textbf{Initialize}: $ \function_{\mathbf{a}, 0} \leftarrow \textsc{Mean}(\{g(\mathbf{x}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n), \widehat{\function}_{\mathbf{a}, \mathbf{S}} \leftarrow 0, \forall \mathbf{S} \in [k]\setminus\emptyset, |\mathbf{S}|\le \lambda$ \label{alg_line:initialization}
-		\While{each $ \widehat{\function}_{\mathbf{a},\mathbf{S}} $ does not converge}
+		\Statex
+		\Function{LocalRegression}{$ g_\mathbf{a}, \{\mathbf{z}^{(i)}\}_{i=1}^n, \lambda, m $}
+		\label{fairness_fairXplainer_algo_line:local_regression_start}
+		\State \textbf{Initialize}: $ \fiffunc_{\mathbf{a}, 0} \leftarrow \textsc{Mean}(\{g(\mathbf{z}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n), \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}} \leftarrow 0, \forall \mathbf{S} \in [m], \mathbf{S} \ne \emptyset, |\mathbf{S}|\le \lambda$ \label{fairness_fairXplainer_alg_line:initialization}
+		\While{each $ \widehat{\fiffunc}_{\mathbf{a},\mathbf{S}} $ does not converge}
 		\For{each $\mathbf{S}$}
-		\State $ \widehat{\function}_{\mathbf{a}, \mathbf{S}} \leftarrow \textsc{Smooth}[\{\function_{\mathbf{a}}(\mathbf{x}^{(i)}) - \function_{\mathbf{a}, 0} - \sum_{\mathbf{S} \ne \mathbf{S}'} \widehat{\function}_{\mathbf{a}, \mathbf{S}'}(\mathbf{x}_{\mathbf{S}}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n] 
-		$\label{alg_line:backfitting_step} \Comment{Backfitting}
-		\State $\widehat{\function}_{\mathbf{a}, \mathbf{S}}  \leftarrow \widehat{\function}_{\mathbf{a}, \mathbf{S}} - \textsc{Mean}(\{\widehat{\function}_{\mathbf{a}, \mathbf{S}}(\mathbf{x}_{\mathbf{S}}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n)$ \label{alg_line:mean_centered} \Comment{Mean centering}
+		\State $ \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}} \leftarrow \textsc{Smooth}\big(\{\fiffunc_{\mathbf{a}}(\mathbf{z}^{(i)}) - \fiffunc_{\mathbf{a}, 0} - \sum_{\mathbf{S} \ne \mathbf{S}'} \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}'}(\mathbf{z}_{\mathbf{S}}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\big)
+		$\label{fairness_fairXplainer_alg_line:backfitting_step} \Comment{Backfitting}
+		\State $\widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}}  \leftarrow \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}} - \textsc{Mean}\big(\{\widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}}(\mathbf{z}_{\mathbf{S}}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\big)$ \label{fairness_fairXplainer_alg_line:mean_centered} \Comment{Mean centering}
 		\EndFor
 		\EndWhile
-		\State \Return $ \function_{\mathbf{a}, \mathbf{S}},\function_{\mathbf{a}, 0} $
-		\label{algo_line:local_regression_end} 
+		\State \Return $ \fiffunc_{\mathbf{a}, \mathbf{S}},\fiffunc_{\mathbf{a}, 0} $
+		\label{fairness_fairXplainer_algo_line:local_regression_end} 
 		\EndFunction
 		
 		
-		\Function{Covariance}{$\function_{\mathbf{a}},  \{\mathbf{x}^{(i)}\}_{i=1}^n, \function_{\mathbf{a}, \mathbf{S}},\function_{\mathbf{a}, 0}$}
-		\label{algo_line:covariance_computation_start}
-		\State \Return $ \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n \function_{\mathbf{a}, \mathbf{S}}(\mathbf{x}_{\mathbf{S}}^{(i)})(g_\mathbf{a}(\mathbf{x}^{(i)}) - \function_{\mathbf{a}, 0}) $
-		\label{algo_line:covariance_computation_end}
-		%		 \Comment{Eq.~\eqref{eq:covariance_computation}}
+		\Function{Covariance}{$\fiffunc_{\mathbf{a}},  \{\mathbf{z}^{(i)}\}_{i=1}^n, \fiffunc_{\mathbf{a}, \mathbf{S}},\fiffunc_{\mathbf{a}, 0}$}
+		\label{fairness_fairXplainer_algo_line:covariance_computation_start}
+		\State \Return $ \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n \fiffunc_{\mathbf{a}, \mathbf{S}}(\mathbf{z}_{\mathbf{S}}^{(i)})(g_\mathbf{a}(\mathbf{z}^{(i)}) - \fiffunc_{\mathbf{a}, 0}) $
+		\label{fairness_fairXplainer_algo_line:covariance_computation_end}
+		%		 \Comment{Eq.~\eqref{fairness_fairXplainer_eq:covariance_computation}}
 		\EndFunction
 	\end{algorithmic}
 \end{algorithm}
-Here, $ \function_{\mathbf{a}, 0} $ is a constant and $ \function_{\mathbf{a},\mathbf{S}} $ is a \emph{component function} of $ \function_{\mathbf{a}} $ taking  $ \nonsensitive_{\mathbf{S}} $ as input, and $ \delta $ is the approximation error. For computational tractability, we consider only components of \emph{maximum order} $ \lambda $. {\fairXplainer} deploys backfitting algorithm for learning component functions in Eq.~\eqref{eq:set_additive_classifier}. 
+%\fi
+Here, $ \fiffunc_{\mathbf{a}, 0} $ is a constant, $ \fiffunc_{\mathbf{a},\mathbf{S}} $ is a \emph{component function} of $ \fiffunc_{\mathbf{a}} $ taking  a non-empty subset of features $ \feature_{\mathbf{S}} $ as input, and $ \delta $ is the approximation error. For computational tractability, we consider only components of \emph{maximum order} $ \lambda $, denoting the maximum order of intersectionality. {\fairXplainer} deploys backfitting algorithm for learning component functions in Eq.~\eqref{fairness_fairXplainer_eq:set_additive_classifier}, as discussed in the following.
 
 
-\paragraph{Local Regression with Backfitting.} We perform local regression with backfitting algorithm to learn the component functions up to order $ \lambda $ (Line~\ref{algo_line:local_regression_start}--\ref{algo_line:local_regression_end}). Backfitting algorithm is an iterative algorithm, where in each iteration one component function, say $ \function_{\mathbf{a}, \mathbf{S}} $, is learned while keeping other component functions fixed. Specifically, $ \function_{\mathbf{a}, \mathbf{S}} $ is learned as a smoothed function of $ g $ and rest of the components $ \function_{\mathbf{a}, \mathbf{S}'} $, where $ \mathbf{S}' \ne \mathbf{S} $ is a non-empty subset of $ [k]\setminus \emptyset $. To keep every component function mean centered, backfitting requires to impose the constraints $ \function_{\mathbf{a}, 0} = \textsc{Mean}(\{g(\mathbf{x}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n) $ (Line~\ref{alg_line:initialization}), which is the mean of $ \function_{\mathbf{a}} $ evaluated on samples belonging to the sensitive group $ \sensitive = \mathbf{a} $;  and $ \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\function_{\mathbf{a}, \mathbf{S}}(\mathbf{x}_{\mathbf{S}}^{(i)}) = 0$ (Line~\ref{alg_line:mean_centered}), where $ \mathbf{x}_{\mathbf{S}}^{(i)} $ be the subset of feature values associated with feature indices $ \mathbf{S} $ for the $ i $-th sample $ \mathbf{x}^{(i)} $. These constraints assign the expectation of $ \function_{\mathbf{a}} $ on the constant term $ \function_{\mathbf{a}, 0} $ and the variance of $ \function_{\mathbf{a}} $ to the component functions.                                       
+\paragraph{Local Regression with Backfitting.} We perform local regression with backfitting algorithm to learn the component functions up to a given order $ \lambda $ (Line~\ref{fairness_fairXplainer_algo_line:local_regression_start}--\ref{fairness_fairXplainer_algo_line:local_regression_end}). Backfitting algorithm is an iterative algorithm, where in each iteration one component function, say $ \fiffunc_{\mathbf{a}, \mathbf{S}} $, is learned while keeping other component functions fixed. Specifically, $ \fiffunc_{\mathbf{a}, \mathbf{S}} $ is learned as a smoothed function of $ g $ and rest of the components $ \fiffunc_{\mathbf{a}, \mathbf{S}'} $, where $ \mathbf{S}' \ne \mathbf{S} $ is a non-empty subset of $ [\numfeatures] $. To keep every component function mean centered, backfitting requires to impose two constraints: (i) $ \fiffunc_{\mathbf{a}, 0} = \textsc{Mean}\big(\{g(\mathbf{z}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\big) $ (Line~\ref{fairness_fairXplainer_alg_line:initialization}), which is the mean of $ \fiffunc_{\mathbf{a}} $ evaluated on data points belonging to the sensitive group $ \mathbf{a} $;  and (ii) $ \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\fiffunc_{\mathbf{a}, \mathbf{S}}(\mathbf{z}_{\mathbf{S}}^{(i)}) = 0$ (Line~\ref{fairness_fairXplainer_alg_line:mean_centered}), where $ \mathbf{z}_{\mathbf{S}}^{(i)} $ is the subset of feature values associated with feature indices $ \mathbf{S} $ for the $ i $-th data point $  \mathbf{z}^{(i)} $. These constraints assign the expectation of $ \fiffunc_{\mathbf{a}} $ on the constant term $ \fiffunc_{\mathbf{a}, 0} $ and the variance of $ \fiffunc_{\mathbf{a}} $ to the component functions.                                       
 
 
-While performing local regression, backfitting uses a smoothing operator~\cite{loader2012smoothing} over the set of samples (Line~\ref{alg_line:backfitting_step}). A smoothing operator, referred as $ \textsc{Smooth} $, allows us to learn a global representation of a component function by smoothly interpolating the local curves obtained by local regression~\cite{loader2012smoothing}. In this chapter, we apply cubic spline smoothing~\cite{li2010global} to learn each component function. Cubic spline is a piecewise polynomial of degree $ 3 $ with $ C^2 $ continuity. Hence, up to the second derivatives of each piecewise term are zero at the endpoints of intervals. 
-%\red{We refer to Appendix(ref{sec:smoothing}) for further details}.%\todo{Add pseudo-code of {\fairXplainer}}
-
-
-\begin{comment}
-\begin{algorithm}[!t]
-	\caption{Local Regression with Backfitting Algorithm}
-	\label{algo:backfitting_algorithm}
-%	\hspace*{\algorithmicindent} \textbf{Input:} $ g_\mathbf{a}(\mathbf{X}), \{\mathbf{x}^{(i)}\}_{i=1}^n, \lambda $ \\
-%	\hspace*{\algorithmicindent} \textbf{Output:} $ \function_{\mathbf{a}, 0}, \function_{\mathbf{a}, \mathbf{S}} $ 
-	\begin{algorithmic}[1]
-		\Procedure{LocalRegression}{$ g_\mathbf{a}, \{\mathbf{x}^{(i)}\}_{i=1}^n, \lambda, k $}
-		\State \textbf{Initialize}: $ \function_{\mathbf{a}, 0} \leftarrow \frac{1}{n}\sum_{i=1}^n\function_{\mathbf{a}}(\mathbf{x}^{(i)}), \widehat{\function}_{\mathbf{a}, \mathbf{S}} \leftarrow 0, \forall \mathbf{S} \in [k]\setminus\emptyset, |\mathbf{S}|\le \lambda$ \label{alg_line:initialization}
-		\While{each $ \widehat{\function}_{\mathbf{a},\mathbf{S}} $ does not converge}
-		\For{each $\mathbf{S}$}
-		\State $ \widehat{\function}_{\mathbf{a}, \mathbf{S}} \leftarrow \mathsf{Smooth}[\{\function_{\mathbf{a}}(\mathbf{x}^{(i)}) - \function_{\mathbf{a}, 0} - \sum_{\mathbf{S} \ne \mathbf{S}'} \widehat{\function}_{\mathbf{a}, \mathbf{S}'}(\mathbf{x}_{\mathbf{S}}^{(i)})\}_{i=1}^n] $\label{alg_line:backfitting_step} \Comment{Backfitting step}
-		\State $\widehat{\function}_{\mathbf{a}, \mathbf{S}}  \leftarrow \widehat{\function}_{\mathbf{a}, \mathbf{S}} - \frac{1}{n}\sum_{i=1}^n \widehat{\function}_{\mathbf{a}, \mathbf{S}}(\mathbf{x}_{\mathbf{S}}^{(i)})$ \label{alg_line:mean_centered} \Comment{Mean centering}
-		\EndFor
-		\EndWhile
-		\State \Return $ \function_{\mathbf{a}, 0}, \function_{\mathbf{a}, \mathbf{S}} $ 
-		\EndProcedure
-	\end{algorithmic}
-\end{algorithm}
-\end{comment}
+While performing local regression, backfitting uses a smoothing operator~\cite{loader2012smoothing} over the set of data points (Line~\ref{fairness_fairXplainer_alg_line:backfitting_step}). A smoothing operator, referred as $ \textsc{Smooth} $, allows us to learn a global representation of a component function by smoothly interpolating $\tau + 2$ local points obtained by local regression~\cite{loader2012smoothing}. In this paper, we apply cubic spline smoothing~\cite{li2010global} to learn each component function. Cubic spline is a piecewise polynomial of degree $ 3 $ with $ C^2 $ continuity interpolating local points in $ \tau $ intervals. Hence, the first and second derivatives of each piecewise term are zero at the endpoints of intervals. We refer to Appendix~\ref{fairness_fairXplainer_sec:smoothing} for details of implementation. An ablation study demonstrating the impacts of the hyperparameters $\tau$ and $\lambda$ on the performance of {\fairXplainer} is in Appendix~\ref{fairness_fairXplainer_sec:additional_experiments}. %\todo{Mention $ \tau $ as the number of spline intervals. mentioned in appendix. makes sense to include there if the ablation study is not in the main.}
 
 
 
 
 
-\paragraph{Variance and Covariance Computation.} Once each component function $ \function_{\mathbf{a}, \mathbf{S}} $ is learned with $ \textsc{LocalRegression} $ (Line~\ref{algo_line:local_regression_start}--\ref{algo_line:local_regression_end}), we compute variances of the component functions and their covariances with $ \function_{\mathbf{a}} $. Since each component function is mean centered (Line~\ref{alg_line:mean_centered}), we compute the variance of $ \function_{\mathbf{a}, \mathbf{S}} $ on the dataset as
-$  \mathsf{Var}[\function_{\mathbf{a}, \mathbf{S}}] = \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n (\function_{\mathbf{a}, \mathbf{S}}(\mathbf{x}_{\mathbf{S}}^{(i)}))^2 $. Hence, variance captures the independent effect of $ \function_{\mathbf{a}, \mathbf{S}} $.
-%$ V_{\mathbf{a}, \mathbf{S}} $ is the variance of $ \function_{\mathbf{a}, \mathbf{S}} $ evaluated on each $ \mathbf{x}_{\mathbf{S}}^{(i)} $ in the dataset. 
-Covariance is computed to account for the correlation among features $ \nonsensitive $. We compute the covariance of $ \function_{\mathbf{a}, \mathbf{S}} $ with $ \function_{\mathbf{a}} $ on the dataset as
-$
-\label{eq:covariance_computation}
-	 \mathsf{Cov}[\function_{\mathbf{a}, \mathbf{S}}, \function_{\mathbf{a}}] = \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n \function_{\mathbf{a}, \mathbf{S}}(\mathbf{x}_{\mathbf{S}}^{(i)})(g_\mathbf{a}(\mathbf{x}^{(i)}) - \function_{\mathbf{a}, 0}). 
-$
-Here, $ g_\mathbf{a}(\cdot) - \function_{\mathbf{a}, 0} $ is the mean centered form of $ \function_{\mathbf{a}} $. Covariance of $ \function_{\mathbf{a}, \mathbf{S}} $ can be both positive and negative depending on whether the features $ \nonsensitive_{\mathbf{S}} $ are positively or negatively correlated with $ \function_{\mathbf{a}} $. Specifically, under the set additive model, we obtain $ \mathsf{Cov}[\function_{\mathbf{a}, \mathbf{S}}, \function_{\mathbf{a}}] = \mathsf{Var}[\function_{\mathbf{a}, \mathbf{S}}] + \mathsf{Cov}[\function_{\mathbf{a}, \mathbf{S}}, \sum_{\mathbf{S} \ne \mathbf{S}'} \function_{\mathbf{a}, \mathbf{S}'}] $. Now, we use $ V_{\mathbf{a}, \mathbf{S}} =  \mathsf{Cov}[\function_{\mathbf{a}, \mathbf{S}}, \function_{\mathbf{a}}] $ as the effective variance of $ \nonsensitive_{\mathbf{S}} $ for a given sensitive group $ \sensitive = \mathbf{a} $ (Line~\ref{algo_line:covariance_computation_start}--\ref{algo_line:covariance_computation_end}). In Line~\ref{algo_line:fif_computation_start}--\ref{algo_line:fif_computation_end}, we compute $ V_{\mathbf{a}, \mathbf{S}} $ for the most and the least favored groups, and plug them in Theorem~\ref{lemma:fif} to compute FIF of $ \nonsensitive_{\mathbf{S}} $.
+
+\paragraph{Variance and Covariance Computation.} Once each component function $ \fiffunc_{\mathbf{a}, \mathbf{S}} $ is learned with $ \textsc{LocalRegression} $ (Line~\ref{fairness_fairXplainer_algo_line:local_regression_start}--\ref{fairness_fairXplainer_algo_line:local_regression_end}), we compute variances of the component functions and their covariances using $g_\mathbf{a}(\cdot)$. Since each component function is mean centered (Line~\ref{fairness_fairXplainer_alg_line:mean_centered}), we compute the variance of $ \fiffunc_{\mathbf{a}, \mathbf{S}} $ for the dataset $\mathbf{D}$ as
+$  \mathsf{Var}[\fiffunc_{\mathbf{a}, \mathbf{S}}] = \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n (\fiffunc_{\mathbf{a}, \mathbf{S}}(\mathbf{z}_{\mathbf{S}}^{(i)}))^2 $. Hence, variance captures the independent effect of $ \fiffunc_{\mathbf{a}, \mathbf{S}} $. Covariance is computed to account for the correlation among features $ \feature $. We compute the covariance of $ \fiffunc_{\mathbf{a}, \mathbf{S}} $ with $ \fiffunc_{\mathbf{a}} $ on the dataset as
+\[
+\label{fairness_fairXplainer_eq:covariance_computation}
+	 \mathsf{Cov}[\fiffunc_{\mathbf{a}, \mathbf{S}}, \fiffunc_{\mathbf{a}}] = \sum_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n \fiffunc_{\mathbf{a}, \mathbf{S}}(\mathbf{z}_{\mathbf{S}}^{(i)})(g_\mathbf{a}(\mathbf{z}^{(i)}) - \fiffunc_{\mathbf{a}, 0}). 
+\]
+Here, $ g_\mathbf{a}(\cdot) - \fiffunc_{\mathbf{a}, 0} $ is the mean centered form of $ \fiffunc_{\mathbf{a}} $. Covariance of $ \fiffunc_{\mathbf{a}, \mathbf{S}} $ can be both positive and negative depending on whether the features $ \feature_{\mathbf{S}} $ are positively or negatively correlated with $ \fiffunc_{\mathbf{a}} $. Specifically, under the set additive model, we obtain $ \mathsf{Cov}[\fiffunc_{\mathbf{a}, \mathbf{S}}, \fiffunc_{\mathbf{a}}] = \mathsf{Var}[\fiffunc_{\mathbf{a}, \mathbf{S}}] + \mathsf{Cov}[\fiffunc_{\mathbf{a}, \mathbf{S}}, \sum_{\mathbf{S} \ne \mathbf{S}'} \fiffunc_{\mathbf{a}, \mathbf{S}'}] $. Now, we use $ V_{\mathbf{a}, \mathbf{S}} =  \mathsf{Cov}[\fiffunc_{\mathbf{a}, \mathbf{S}}, \fiffunc_{\mathbf{a}}] $ as the effective variance of $ \feature_{\mathbf{S}} $ for a given sensitive group $ \mathbf{a} $ (Line~\ref{fairness_fairXplainer_algo_line:covariance_computation_start}--\ref{fairness_fairXplainer_algo_line:covariance_computation_end}). In Line~\ref{fairness_fairXplainer_algo_line:fif_computation_start}--\ref{fairness_fairXplainer_algo_line:fif_computation_end}, we compute $ V_{\mathbf{a}, \mathbf{S}} $ for the most and the least favored groups, and plug them in Eq.~\eqref{fairness_fairXplainer_eq:fif_decompose} to yield an estimate of FIF of $ \feature_{\mathbf{S}} $.
+%\todo{Any error bound?}  
+
+%Here, we provide the runtime complexity of \framework.
+\begin{proposition}[Time Complexity of {\fairXplainer}] Let $ t $ be the number of iterations of the backfitting algorithm, $ \numfeatures $ be the number of features, $ \lambda $ be the maximum order of intersectional features, and $ s $ be the runtime complexity of the smoothing oracle\footnote{Typically, the runtime complexity of smoothing oracles, particularly of cubic splines, is linear with respect to $ n $, i.e. the number of samples~\cite{toraichi1987computational}.}.	Then, the runtime complexity of Algorithm~\ref{fairness_fairXplainer_algo:framework} is $ \mathcal{O}\Big(ts\sum_{i=1}^{\lambda} {\numfeatures \choose i}\Big)$.  For example, if we are interested in up to first and second order intersectional features, the runtime complexities are $\mathcal{O}(ts\numfeatures)$ and $\mathcal{O}(ts\numfeatures^2)$, respectively. 
+\end{proposition}
  
-%In both variance and covariance decomposition, $ \mathsf{Var}[\function_{\mathbf{a}}] = \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}| \le \lambda} V_{\mathbf{a}, \mathbf{S}}$. The difference between variance and covariance decomposition is that $ V_{\mathbf{a}, \mathbf{S}} \in \mathbb{R}^{\ge 0} $ is positive in  variance decomposition, while $ V_{\mathbf{a}, \mathbf{S}} \in \mathbb{R} $ may also be negative in covariance decomposition. In covariance decomposition, we can separate between the structural and correlative effects of $ \function_{\mathbf{a}, \mathbf{S}} $. Formally, $ \mathsf{Cov}[\function_{\mathbf{a}, \mathbf{S}}, \function_{\mathbf{a}}] = \mathsf{Var}[\function_{\mathbf{a}, \mathbf{S}}] + \mathsf{Cov}[\function_{\mathbf{a}, \mathbf{S}}, \sum_{\mathbf{S}' \subseteq [\numnonsensitive] \setminus \emptyset, |\mathbf{S}'| \le \lambda, \mathbf{S} \ne \mathbf{S}'} \function_{\mathbf{a}, \mathbf{S}'}] $, where  to the right side of equality, first term refers to the structural effect and the second term refers to correlative effect of $ \function_{\mathbf{a}, \mathbf{S}} $. 
+%In both variance and covariance decomposition, $ \mathsf{Var}[\fiffunc_{\mathbf{a}}] = \sum_{\mathbf{S} \subseteq [\numfeatures] , |\mathbf{S}| \le \lambda} V_{\mathbf{a}, \mathbf{S}}$. The difference between variance and covariance decomposition is that $ V_{\mathbf{a}, \mathbf{S}} \in \mathbb{R}^{\ge 0} $ is positive in  variance decomposition, while $ V_{\mathbf{a}, \mathbf{S}} \in \mathbb{R} $ may also be negative in covariance decomposition. In covariance decomposition, we can separate between the structural and correlative effects of $ \fiffunc_{\mathbf{a}, \mathbf{S}} $. Formally, $ \mathsf{Cov}[\fiffunc_{\mathbf{a}, \mathbf{S}}, \fiffunc_{\mathbf{a}}] = \mathsf{Var}[\fiffunc_{\mathbf{a}, \mathbf{S}}] + \mathsf{Cov}[\fiffunc_{\mathbf{a}, \mathbf{S}}, \sum_{\mathbf{S}' \subseteq [\numfeatures] , |\mathbf{S}'| \le \lambda, \mathbf{S} \ne \mathbf{S}'} \fiffunc_{\mathbf{a}, \mathbf{S}'}] $, where  to the right side of equality, first term refers to the structural effect and the second term refers to correlative effect of $ \fiffunc_{\mathbf{a}, \mathbf{S}} $. 
 
 
 
@@ -107,10 +91,9 @@ Here, $ g_\mathbf{a}(\cdot) - \function_{\mathbf{a}, 0} $ is the mean centered f
 
 
 
-\paragraph{Extension of {\fairXplainer} to Equalized Odds and Predictive Parity.} 
-We extend {\fairXplainer} in computing FIF of group fairness metrics beyond statistical parity, namely equalized odds and predictive parity. For equalized odds, we deploy {\fairXplainer} twice, one for computing FIFs on a subset of samples in the dataset where $ Y = 1 $ and another on samples with $ Y = 0 $. Then, the maximum of the sum of FIFs between $ Y = 1 $ and $ Y = 0 $ quantifies the equalized odds of the classifer.  
 
 
-To compute FIFs for predictive parity, we condition the dataset by the predicted class $ \widehat{Y} $ and separate into two sub-datasets: $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $. For each sub-dataset, we deploy $ \fairXplainer $ by setting the ground-truth class $ Y $ as label. This contrasts the computation for  statistical parity and equalized odds, where the predicted class $ \widehat{Y} $ is considered as label. Finally, the maximum of the sum of FIFs between two sub-datasets for $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $ quantifies the predictive parity of the classifier.
+
+%To compute FIFs for predictive parity, we condition the dataset by the predicted class $ \widehat{Y} $ and separate into two sub-datasets: $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $. For each sub-dataset, we deploy $ \framework $ by setting the ground-truth class $ Y $ as label. This contrasts the computation for  statistical parity and equalized odds, where the predicted class $ \widehat{Y} $ is considered as label. Finally, the maximum of the sum of FIFs between two sub-datasets for $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $ measures the predictive parity. % of the classifier.
 
  

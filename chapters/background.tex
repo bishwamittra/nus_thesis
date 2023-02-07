@@ -192,31 +192,29 @@ In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and 
 }
 
 
-\subsection{Global Sensitivity Analysis: Variance Decomposition}
-Global sensitivity analysis is a field that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input while considering the whole input domain~\cite{saltelli2008global}.
+\subsection{Global Sensitivity Analysis (GSA): Variance Decomposition}
+Global sensitivity analysis is an active field of research that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input variables~\cite{saltelli2008global}.
 Sensitivity analysis is an essential component for quality assurance and impact assessment of models in EU~\cite{eu}, USA~\cite{usepa}, and research communities~\cite{saltelli2020five}.
 %\paragraph{Sensitivity Analysis:}
-\emph{Variance-based sensitivity analysis} is a form of global sensitivity analysis, where variance is considered as the measure of uncertainty~\cite{sobol1990sensitivity,sobol2001global}. To illustrate, let us consider a real-valued function $  \fiffunc(\mathbf{Z}) $, where $ \mathbf{Z} $ is a vector of $ \numnonsensitive $ input variables $ \{Z_1, \dots, Z_k\} $. Now, we decompose $ \fiffunc(\mathbf{Z}) $ among the subsets of inputs, such that:
-
+\emph{Variance-based sensitivity analysis} is a form of global sensitivity analysis, where variance is considered as the measure of uncertainty~\cite{sobol1990sensitivity,sobol2001global}. To illustrate, let us consider a real-valued function $  \fiffunc(\feature) $, where $ \feature $ is a vector of $ \numfeatures $ input variables $ \{Z_1, \dots, Z_\numfeatures\} $.
+% and $ Y $ is a univariate output. 
+%\blue{In sensitivity analysis, assumptions are made on the independence and uniform distribution of $ X_i $'s within the unit hypercube}, that is, $ X_i \in [0,1] $ for $ i = \{ 1, \dots, k\} $.\footnote{In our experiments, we have not considered this yet.} Let $ [\numnonsensitive] \triangleq \{1,2,\dots, \numnonsensitive\} $. Then, 
+Now, we decompose $ \fiffunc(\feature) $ among the subsets of inputs, such that:
 \begin{align}
-	\fiffunc(\mathbf{Z}) &= \fiffunc_0 + \sum_{i=1}^{\numnonsensitive} \fiffunc_{\{i\}}(Z_i) +  \sum_{i < j}^{\numnonsensitive} \fiffunc_{\{i,j\}}(Z_i, Z_j)  + \cdots  + \fiffunc_{\{1, 2, \dots, \numnonsensitive\}} (Z_1, Z_2, \dots, Z_{\numnonsensitive})\notag%\label{eq:functional_decomposition}
-	\\    
-	&= \fiffunc_0 +  \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} \fiffunc_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}})\label{eq:functional_decomposition_set_notation}
+	\fiffunc(\feature) &= \fiffunc_0 + \sum_{i=1}^{\numfeatures} \fiffunc_{\{i\}}(Z_i) +  \sum_{i < j}^{\numfeatures} \fiffunc_{\{i,j\}}(Z_i, Z_j)  + \cdots\notag + \fiffunc_{\{1, 2, \dots, \numfeatures\}} (Z_1, Z_2, \dots, Z_{\numfeatures})\\
+	&= \fiffunc_0 +  \sum_{\mathbf{S} \subseteq [\numfeatures]} \fiffunc_{\mathbf{S}}(\feature_{\mathbf{S}})\label{fairness_fairXplainer_eq:functional_decomposition_set_notation}
 \end{align}
+%	$S_> = \{{S_0}, \ldots, {S_{|s|}}\}$ i.e. a monotonically increasing ordering of $|S|$ features for a given starting feature $Z_{S_0}$ such that $S_0 <S_1 <\ldots <S_{|S|}$.
+The standard condition of this decomposition is the orthogonality of each term in the right-hand side of Eq.~\eqref{fairness_fairXplainer_eq:functional_decomposition_set_notation}~\cite{sobol1990sensitivity}. In this decomposition, $ \fiffunc_0 $ is a constant, $ \fiffunc_{\{i\}} $ is a function of $ Z_i $, $ \fiffunc_{\{i,j\}} $ is a function of $ Z_i $ and $ Z_j $, and so on. Adhering to the set-based notations, we denote by $ g_{\mathbf{S}} $ a function of a non-empty subset of variables $ \feature_{\mathbf{S}}  \triangleq \{Z_i \mid i \in \mathbf{S}\} \subseteq \feature $, where $ \mathbf{S} = \{S_i \mid 1 \le |S_i| \le \numfeatures\} \subseteq [\numfeatures] $ is a non-empty subset of indices with $ [\numfeatures] \triangleq \{1,2,\dots, \numfeatures\}  $.  Here, $|\mathbf{S}|=1$ quantifies an individual variable's effect while $|\mathbf{S}|>1$ quantifies the higher-order intersectional effect of variables.
 
-In this decomposition, $ \fiffunc_0 $ is a constant, $ \fiffunc_{\{i\}} $ is a function of $ Z_i $, $ \fiffunc_{\{i,j\}} $ is a function of $ Z_i $ and $ Z_j $, and so on. Here, $ [\numnonsensitive] \triangleq \{1,2,\dots, \numnonsensitive\} $ and $ \mathbf{S}$ is an ordered subset of $[\numnonsensitive] \setminus \emptyset $.  We denote $ \mathbf{Z}_{\mathbf{S}}  \triangleq \{Z_i | i \in \mathbf{S}\}$ as the input of $ \fiffunc_{\mathbf{S}} $, where $ \mathbf{Z}_{\mathbf{S}}$ is a set of variables with indices belonging to $ \mathbf{S} $.  The standard condition of this decomposition is the orthogonality of each term in the right-hand side of Eq.~\eqref{eq:functional_decomposition_set_notation}~\cite{sobol1990sensitivity}. $ \fiffunc_{\mathbf{S}}(\mathbf{Z}_{\mathbf{S}}) $ is the effect of varying all the features in $\mathbf{Z}_{\mathbf{S}}$ simultaneously. %\unsure{Is this sentence necessary?}  
-For $|\mathbf{S}|=1$, it quantifies an individual variable's effect. For $|\mathbf{S}|>1$, it quantifies the higher-order interactive effect of variables.
 
-Now, if we assume $ \fiffunc $ to be square integrable, we obtain the decomposition of the variance of the output~\cite{sobol1990sensitivity}.
-
-\begin{align}\label{eq:variance_decomposition_set_notation}
-	\mathsf{Var}[g(\mathbf{Z})] &= \sum_{i=1}^{\numnonsensitive}V_{\{i\}} +  \sum_{i<j}^{\numnonsensitive} V_{\{i,j\}}  + \cdots  + V_{\{1, 2\dots, \numnonsensitive\}}= \sum_{\mathbf{S} \subseteq [\numnonsensitive] \setminus \emptyset} V_{\mathbf{S}} 
+Considering $ \fiffunc $ as square integrable, we obtain the decomposition of the variance of $ \fiffunc(\feature) $ expressed as the sum of variances of $\fiffunc_{\mathbf{S}}$'s~\cite{sobol1990sensitivity}.
+\begin{align}\label{fairness_fairXplainer_eq:variance_decomposition_set_notation}
+	\mathsf{Var}[g(\feature)] &= \sum_{i=1}^{\numfeatures}V_{\{i\}} +  \sum_{i<j}^{\numfeatures} V_{\{i,j\}}  + \dots +  V_{\{1, 2\dots, \numfeatures\}}= \sum_{\mathbf{S} \subseteq [\numnonsensitive]} V_{\mathbf{S}} 
 \end{align}
-
-where $ V_{\{i\}} $ is the variance of $ \fiffunc_{\{i\}} $, $ V_{\{i,j\}} $ is the variance of $ \fiffunc_{\{i,j\}} $ and so on. Formally,  
-
-\[ V_{\mathbf{S}} \triangleq \mathsf{Var} _{\mathbf{Z}_{\mathbf{S}}}\left[\mathbb{E}_{{\textbf {Z}}/\mathbf{Z}_{\mathbf{S}}}[g(\mathbf{Z})\mid \mathbf{Z}_{\mathbf{S}}]\right]- \sum_{\mathbf{S}' \subset \mathbf{S}/\emptyset}{V} _{\mathbf{S}'}.\] 
-
-Here, $\mathbf{S}'$ denotes all the ordered proper subsets of $\mathbf{S}$. %\improvement{Check notations.}
-This variance decomposition shows how the variance of $\fiffunc(\mathbf{Z}) $ can be decomposed into terms attributable to each input, as well as the interactive effects among them. Together all terms sum to the total variance of the model output. 
-
+where $ V_{\{i\}} $ is the variance of $ \fiffunc_{\{i\}} $, $ V_{\{i,j\}} $ is the variance of $ \fiffunc_{\{i,j\}} $ and so on. Formally,   
+\begin{equation}
+	\label{eq:decomposed_variance}
+	V_{\mathbf{S}} \triangleq \mathsf{Var} _{\feature_{\mathbf{S}}}\left[\mathbb{E}_{{\textbf {Z}}\setminus\feature_{\mathbf{S}}}[g(\feature)\mid \feature_{\mathbf{S}}]\right]- \sum_{\mathbf{S}' \subset \mathbf{S}}{V} _{\mathbf{S}'}.
+\end{equation} 
+Here, $\mathbf{S}'$ denotes all the non-empty and ordered proper subsets of $\mathbf{S}$. Thus, $ V_{\mathbf{S}} $ is the variance w.r.t.\ $ \feature_{\mathbf{S}} $ by subtracting the variances of all non-empty proper subsets of $ \feature_{\mathbf{S}} $. As a result, Eq.~\eqref{fairness_fairXplainer_eq:variance_decomposition_set_notation} demonstrates how the variance of $\fiffunc(\feature) $ can be decomposed into terms attributable to each input feature, as well as the intersectional effects among them. Conversely, together all terms sum to the total variance of the model output. 

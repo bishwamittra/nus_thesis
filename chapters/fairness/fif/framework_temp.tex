@@ -1,0 +1,136 @@
+%\clearpage
+\section{Fairness Influence Functions: Formulation and Properties}\label{sec:fifs}
+We formalize Fairness Influence Functions (FIF) as a quantifier of the contribution of a subset of features to the resultant bias of a classifier applied on a dataset.  In GSA, we observe that the variance of the output of a function can be attributed to the corresponding subset of input variables through decomposing variance (Eq.~\eqref{eq:variance_decomposition_set_notation}). To leverage the power of GSA in fairness in machine learning, we first represent existing fairness metric in terms of the variance of classifier's prediction in Section~\ref{sec:metric_as_variance}. This allows us to formulate FIF based on variance decomposition in Section~\ref{sec:fif_formulation}. 
+
+
+
+
+
+\subsection{Fairness Metrics as the Variance of Prediction}
+\label{sec:metric_as_variance}
+\blue{We refer the indicator function $ \mathds{1}[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}] $ as CPP (Conditional Positive Prediction) of a classifier, which is the central function in existing fairness metrics.} Henceforth, fairness metrics such as statistical parity\footnote{For equalized odds, CPP has an additional conditional $ Y = y $.} are a functional of the probability of CPPs for different sensitive groups~\cite{ghosh2020justicia,benesse2021fairness}.
+%For indicator functions, probability and expectation are equal.
+Our key idea of computing FIFs of features is to represent fairness metrics using the variance of CPPs. 
+%To this end, existing fairness metrics such as statistical parity is the first moment (probability or expectation) of prediction distribution while variance is the second moment of distribution.  
+Formally, we express statistical parity using the variance of CPPs in Lemma~\ref{lm:sp_var_relation}.\footnote{\blue{We demonstrate similar derivation for equalized odds and predictive parity in the Appendix.}}
+
+\begin{lemma}
+	\label{lm:sp_var_relation}
+	Let $ \mathbf{a}_{\max} = \argmax_{\mathbf{a}} \Pr[\widehat{Y} = 1 \mid  \sensitive = \mathbf{a}] $ and $ \mathbf{a}_{\min} = \argmin_{\mathbf{a}} \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}] $ be the most favored and the least favored sensitive groups, respectively. The statistical parity of a binary\footnote{For a multi-class classifier, statistical parity of the target class $ y \in \mathbb{N} $ is $ \frac{\mathsf{Var}[\widehat{Y} = y \mid \sensitive = \mathbf{a}_{\max}]}{1 - \Pr[\widehat{Y} = y \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{\mathsf{Var}[\widehat{Y} = y \mid \sensitive = \mathbf{a}_{\min}] }{1 - \Pr[\widehat{Y} = y \mid  \sensitive = \mathbf{a}_{\min}]}. $} classifier is the difference in the scaled variance of CPPs. Formally, 
+	\[
+	 f_{\mathsf{SP}}(\alg, \mathbf{D}) = \frac{\mathsf{Var}[\widehat{Y} = 1\mid\sensitive = \mathbf{a}_{\max}]}{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{\mathsf{Var}[\widehat{Y} = 1\mid\sensitive = \mathbf{a}_{\min}] }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]}.
+	\]
+\end{lemma}
+\begin{proof}
+	For a sensitive group $ \mathbf{a} $, CPP  is a Bernoulli random variable, where probability\footnote{\red{For any binary event $ E $, expectation and probability are identical, $ \mathbb{E}[\mathds{1}(E)] = \Pr[E = 1] $.}} $ p_{\mathbf{a}}  = \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}] $ and variance $ V_{\mathbf{a}} = \mathsf{Var}[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}] = p_{\mathbf{a}} (1 - p_{\mathbf{a}}) $. Thus, for sensitive groups $ \mathbf{a}_{\max} $ and $ \mathbf{a}_{\min} $, the statistical parity of the classifier is $ p_{\mathbf{a}_{\max}}  - p_{\mathbf{a}_{\min}} =  \frac{V_{\mathbf{a}_{\max}}}{1 - p_{\mathbf{a}_{\max}}}  - \frac{V_{\mathbf{a}_{\min}}}{1 - p_{\mathbf{a}_{\min}}} $. Replacing $ 1 - p_\mathbf{a} = \Pr[\widehat{Y} = 0 \mid \sensitive = \mathbf{a}] $  proves the lemma.
+\end{proof}
+
+
+\begin{example}
+	In Example~\ref{ex:motivating_example} (Figure~\ref{fig:dt_original}), the probability of CPPs of the decision tree for the most and least favored groups are $  \Pr[\widehat{Y} = 1 \mid \text{age = young}] = 0.695 $ and $ \Pr[\widehat{Y} = 1 \mid \text{age = elderly}] = 0.165 $, respectively. Thus, the statistical parity is $ 0.695 - 0.165 =  0.53 $. Next, we compute variance of CPPs as $  \mathsf{Var}[\widehat{Y} = 1\mid \text{age = young}] = 0.212 $ and $  \mathsf{Var}[\widehat{Y} = 1\mid \text{age = elderly}] = 0.138 $. Thus, following Lemma~\ref{lm:sp_var_relation}, we compute the difference in the scaled  variance of CPPs as $ \frac{0.212}{1 - 0.695} - \frac{0.138}{1 - 0.165} =  0.529 \approx 0.53 $, which coincides with the statistical parity.
+\end{example}
+
+
+
+\subsection{Formulation of FIF}
+\label{sec:fif_formulation}
+We are given a binary classifier  $\alg $, a dataset $ \mathbf{D} $, and a  fairness metric $ f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0} $. Our objective is to compute the influences of  features on $ f $. Particularly, we compute the influence of each subset of  features $ \feature_{\mathbf{S}} $, where $ \mathbf{S} = \{S_i \mid 1 \le |S_i| \le \numfeatures\} \subseteq [\numfeatures]  $ is a non-empty subset of indices of $ \feature $.
+
+\begin{definition} Fairness Influence Function (FIF)\footnote{For equalized odds, a precise definition of FIF is $ w_{\mathbf{S}}: (\alg, Y, \feature_{\mathbf{S}}) \rightarrow \mathbb{R} $ taking the ground class $ Y $ as an additional input.}, denoted by $ w_{\mathbf{S}}: (\alg, \feature_{\mathbf{S}}) \rightarrow \mathbb{R} $, measures the quantitative contribution of features $ \feature_{\mathbf{S}} \subseteq \feature $ on the incurred bias $ f(\alg, \mathbf{D}) $. Representing $ f(\alg, \mathbf{D}) $ as variance-difference (Lemma~\ref{lm:sp_var_relation}), we particularly define $ w_{\mathbf{S}} $ based on variance decomposition.
+\begin{equation}\label{eq:fif_decompose}
+	w_{\mathbf{S}}  \triangleq \frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{V_{\mathbf{a}_{\min}, \mathbf{S}} }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]}
+\end{equation}
+
+where, for a sensitive group $ \mathbf{a} $, $ V_{\mathbf{a}, \mathbf{S}} =  \mathsf{Var} _{\feature_{\mathbf{S}}}[\mathbb{E}_{\feature\setminus\feature_{\mathbf{S}}}[\widehat{Y} = 1\mid \sensitive = \mathbf{a}, \feature_{\mathbf{S}}]]- \sum_{\mathbf{S}' \subset \mathbf{S}}{V} _{\mathbf{a}, \mathbf{S}'} $ is the contribution (decomposed variance) of features $ \feature_{\mathbf{S}} $ in $ \mathsf{Var}[\widehat{Y} = 1\mid\sensitive = \mathbf{a}] $. Informally, the FIF $ w_{\mathbf{S}} $ of $ \feature_{\mathbf{S}} $ is the difference in the scaled decomposed variance of CPPs between sensitive groups $ \mathbf{a}_{\max} $ and $ \mathbf{a}_{\min} $ as induced by  $ \feature_{\mathbf{S}} $. Thus, FIF of features is non-zero when the scaled decomposed variance-difference of CPPs is non-zero for those features, and vice versa. We refer $ w_{\mathbf{S}} $ as an \emph{individual influence} when $ |\mathbf{S}| = 1 $ and an \emph{inter-sectional influence} when $ |\mathbf{S}| > 1 $.
+ 
+\end{definition}	
+
+ 
+
+FIF in Eq.~\eqref{eq:fif_decompose} results in different desired properties, such as decomposability\footnote{ Decomposability property is also known as efficiency property in the context of Shapley values~\cite{roth1988shapley}.}, symmetry and null FIF properties, which we formally state in Theorem~\ref{thm:fif_property}.
+
+\begin{theorem}
+	\label{thm:fif_property}
+	Let $ f(\alg, \mathbf{D}) $ be the bias/unfairness of the classifier $ \alg $ on dataset $ \mathbf{D} $ according to linear group fairness metrics such as statistical parity. Let $ w_{\mathbf{S}}  $ be the FIF of a subset of  features $ \feature_{\mathbf{S}} $ as defined in Eq.~\eqref{eq:fif_decompose}. 
+	\begin{enumerate}
+		\item[(a)] \textit{The decomposability property} of FIF states that the sum of FIFs of all subset of  features is equal to the bias of the classifier. 
+		\begin{align}\label{eq:constraint_framework}
+		\sum_{\mathbf{S} \subseteq [\numfeatures] } w_{\mathbf{S}} = f(\alg, \mathbf{D})
+		\end{align}
+		\item[(b)] \textit{The symmetry property} of FIF states that  two features $ X_i $ and $ X_j $ are \red{equivalent} based on FIF, when
+		\begin{align}
+		w_{\{i\}} = w_{\{j\}} \text{ if } \sum_{\mathbf{S}' \subseteq \mathbf{S}\cup \{i\}} w_{\mathbf{S}'} = 		\sum_{\mathbf{S}' \subseteq \mathbf{S} \cup \{j\}} w_{\mathbf{S}'} 
+		\end{align}
+		for every non-empty subset $ \mathbf{S} $ of $ [\numfeatures] $ containing neither $ i $ nor $ j $. 
+		\item[(c)] 	\textit{The null property} of FIF states that feature $ X_i $ \blue{becomes a null or neutral feature feature based on FIF}, when
+		\begin{align}
+		w_{\{i\}} = 0 	\text{ if }	\sum_{\mathbf{S}' \subseteq \mathbf{S} \cup \{i\}} w_{\mathbf{S}'} = 		\sum_{\mathbf{S}' \subseteq \mathbf{S}} w_{\mathbf{S}'} 
+		\end{align}
+		for every non-empty subset $ \mathbf{S} $ of $ [\numfeatures] $ that does not contain $ i $.
+		
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	The decomposability property of FIF is based on GSA, where the total variance is decomposed to the variances of individual and intersectional inputs. 
+	\begin{align*}
+		\sum_{\mathbf{S} \subseteq [\numfeatures]} w_{\mathbf{S}} &= \sum_{\mathbf{S} \subseteq [\numfeatures]} \frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{V_{\mathbf{a}_{\min}, \mathbf{S}} }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]}\\
+		&= \frac{\sum_{\mathbf{S} \subseteq [\numfeatures]} V_{\mathbf{a}_{\max}, \mathbf{S}}}{ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{\sum_{\mathbf{S} \subseteq [\numfeatures]} V_{\mathbf{a}_{\min}, \mathbf{S}} }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]}\\
+		&= \frac{V_{\mathbf{a}_{\max}}}{ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{V_{\mathbf{a}_{\min}} }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]}\\
+		&=\frac{\mathsf{Var}[\widehat{Y} = 1\mid\sensitive = \mathbf{a}_{\max}]}{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{\mathsf{Var}[\widehat{Y} = 1\mid\sensitive = \mathbf{a}_{\min}] }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]}\\
+		&= f_{\mathsf{SP}}(\alg, \mathbf{D})
+	\end{align*}
+	Thus, applying Lemma~\ref{lm:sp_var_relation}, we prove the decomposability property of FIF for statistical parity.
+	\todo{Proof of symmetry and null property.}
+	
+	
+\end{proof}
+
+We emphasize that the decomposability property proposed here is global, i.e. it holds for a whole dataset, but the one used for Shapley-value based explanations~(ref. Def. 1, \citep{lundberg2017unified}), or any local explanation method, is for a given data point. Thus, they are fundamentally different.
+
+
+
+\paragraph{Bias Amplifying and Eliminating Features.} The sign of $ w_{\mathbf{S}} $ denotes whether features $ \feature_{\mathbf{S}} $ amplify the bias of the classifier or eliminate it. When the scaled decomposed variance of CPPs w.r.t.\ features $ \feature_{\mathbf{S}} $ for the sensitive group $ \mathbf{a}_{\max} $ is higher than the group $ \mathbf{a}_{\min} $, $ w_{\mathbf{S}} > 0 $. As such, $ \feature_{\mathbf{S}} $ increase bias. Conversely, when $ w_{\mathbf{S}} < 0 $, $ \feature_{\mathbf{S}} $ eliminates bias, and improves fairness. Finally, features $ \feature_{\mathbf{S}} $ are neutral in bias when $ w_{\mathbf{S}} = 0 $. The following two propositions relate the sign of $ w_{\mathbf{S}} $ with the decomposed variance of CPPs.
+
+\begin{proposition}
+	When $ w_{\mathbf{S}} < 0 $, $ V_{\mathbf{a}_{\max}, \mathbf{S}} \le V_{\mathbf{a}_{\min}, \mathbf{S}}  $
+\end{proposition}
+
+\begin{proof}
+	When $ w_{\mathbf{S}} < 0 $,
+	\begin{align*}
+		&\frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} - \frac{V_{\mathbf{a}_{\min}, \mathbf{S}} }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]} < 0 \\
+		& \Rightarrow \frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]} < \frac{V_{\mathbf{a}_{\min}, \mathbf{S}} }{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]} \\
+		& \Rightarrow  \frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{V_{\mathbf{a}_{\min}, \mathbf{S}}} < \frac{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]}{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]} \le 1 \\
+		& \Rightarrow \frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{V_{\mathbf{a}_{\min}, \mathbf{S}}} \le 1 \\ 
+		& \Rightarrow V_{\mathbf{a}_{\max}, \mathbf{S}} \le V_{\mathbf{a}_{\min}, \mathbf{S}}
+	\end{align*}
+\end{proof}
+
+\begin{proposition}
+	Let $ n_{\max} $ be the number of data points in the dataset $ \mathbf{D} $ belonging to the most favored sensitive group $ \mathbf{a}_{\max} $ and $ \Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}] \ne 0 $. Therefore, when $ w_{\mathbf{S}} > 0  $, $ V_{\mathbf{a}_{\max}, \mathbf{S}} \ge \frac{V_{\mathbf{a}_{\min}, \mathbf{S}}}{n_{\max}} $.
+\end{proposition}
+
+\begin{proof}
+Let $ n_{\min} $ be the number of data points in the dataset $ \mathbf{D} $ belonging to the least favored sensitive group $ \mathbf{a}_{\min} $. Then,	when $ w_{\mathbf{S}} > 0 $,
+\begin{align*}
+	& \frac{V_{\mathbf{a}_{\max}, \mathbf{S}}}{V_{\mathbf{a}_{\min}, \mathbf{S}}} > \frac{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\max}]}{\Pr[\widehat{Y} = 0 \mid  \sensitive = \mathbf{a}_{\min}]} \ge \frac{\frac{1}{n_{\max}}}{\frac{n_{\min}}{n_{\min}}}  = \frac{1}{n_{\max}} \\
+	& \Rightarrow V_{\mathbf{a}_{\max}, \mathbf{S}} \ge \frac{V_{\mathbf{a}_{\min}, \mathbf{S}}}{n_{\max}}
+\end{align*}
+
+\end{proof}
+
+
+\paragraph{Special Cases.} Since our FIF formulation is based on the variance of prediction, for (degenerate) cases when the conditional prediction of the classifier is always positive or always negative for any sensitive group, the variance of prediction becomes zero. This observation results in following two propositions.
+
+\begin{proposition}
+	When statistical parity is $ 0 $, i.e. $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\max} ] = \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\min} ] $, the FIF $w_{\mathbf{S}}  = 0 $ for all subsets of features $ \feature_{\mathbf{S}} $.
+\end{proposition}
+\begin{proposition}
+	When statistical parity is $ 1 $, i.e. $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\max} ] = 1 $ and $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\min} ] = 0 $, the sensitive features $ \sensitive $ are solely responsible for bias. In this case, the FIF $ w_{\mathbf{S}} = 0 $ for \red{all subsets of features except sensitive features. Hence, the FIF of sensitive features is $ 1 $.} 
+\end{proposition}
+
+
+
+
+Expressing FIF in terms of the variance decomposition over subset of features allows us to import and extend well-studied techniques of GSA to perform FIF estimation, which we elaborate on Section~\ref{sec:fairxplainer}.

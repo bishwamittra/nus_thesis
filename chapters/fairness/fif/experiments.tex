@@ -1,70 +1,119 @@
-%\clearpage
-\section{Empirical Performance Analysis}\label{sec:experiments}
-In this section, we perform an empirical evaluation of {\fairXplainer}. In the following, we discuss the experimental setup, the objectives of experiments, and experimental results. 
+\section{Empirical Performance Analysis}\label{fairness_fairXplainer_sec:experiments}
+In this section, we perform an empirical evaluation of {\fairXplainer}. Particularly, we discuss the experimental setup, the objectives of experiments, and experimental results. 
 
-%{ We adjoin the source code and additional experimental results on the effects of maximum order $\lambda$, runtime, accuracy on different datasets and corresponding explanations (\red{Appendix(ref{sec:additionalexperiments})}) to the supplementary material.}
+\paragraph{Experimental Setup.} We implement a prototype of {\fairXplainer} in Python (version $ 3.7.6 $). To estimate FIFs, we leverage and modify the `HDMR' module in SALib library~\cite{Herman2017} based on global sensitivity analysis. In experiments, we consider four widely studied datasets from fairness literature, namely German-credit~\cite{DK2017},
+% Ricci~\cite{mcginley2010ricci}, 
+Titanic (\url{https://www.kaggle.com/c/titanic}), COMPAS~\cite{angwin2016machine}, and Adult~\cite{DK2017uci}. We deploy Scikit-learn~\cite{scikit-learn} to learn different classifiers: logistic regression classifier, support vector machine (SVM), neural network, and decision tree with $ 5 $-fold cross-validation. In experiments, we specify {\fairXplainer} to compute intersectional influences up to the second order ($ \lambda = 2 $). While applying cubic-spline based local regression in {\fairXplainer}, we set $ \tau $, the number of spline intervals to $ 6 $. We compare {\fairXplainer} with the existing Shapley-valued based FIF computational framework (\url{https://shorturl.at/iqtuX}), referred as SHAP~\cite{lundberg2020explaining}. For both {\fairXplainer} and SHAP, we set a timeout of $ 300 $ seconds for estimating FIFs. In addition, we deploy {\fairXplainer} along with a fairness-enhancing algorithm~\cite{kamiran2012data} and a fairness attack~\cite{solans2020poisoning} algorithm, and analyze the effect of these algorithms on the FIFs and the resultant fairness metric. In the following, we discuss the objectives of our empirical study. 
 
-\paragraph{Experimental Setup.} We implement a prototype of {\fairXplainer} in Python (version $ 3.8 $). In {\fairXplainer}, we deploy SAlib library~\cite{Herman2017} to compute FIFs leveraging techniques of global sensitivity analysis. In our experiments, we consider five widely studied datasets from fairness literature, namely COMPAS~\cite{angwin2016machine}, Adult~\cite{DK2017uci}, German-credit~\cite{DK2017}, Ricci~\cite{mcginley2010ricci}, and Titanic (\url{https://www.kaggle.com/c/titanic}). We deploy Scikit-learn~\cite{scikit-learn} to learn different classifiers: Logistic Regression, Support Vector Machine, Decision Tree, and Neural Networks. In experiments, we specify {\fairXplainer} to compute intersectional influences up to second order ($ \lambda = 2 $). We compare {\fairXplainer} with Shapley-valued based FIF computational framework, referred as SHAP~\cite{lundberg2020explaining}. In addition, we deploy {\fairXplainer} along with different fairness-enhancing~\cite{kamiran2012data} and fairness attack~\cite{solans2020poisoning} algorithms, and analyze the effect of these algorithms on the FIFs and the resultant fairness metric. In the following, we discuss the objective of our empirical study. 
-
+\setlength{\textfloatsep}{4pt}% Remove \textfloatsep
 \begin{enumerate}
 %\begin{enumerate}
-	\item How do \textbf{accuracies} of {\fairXplainer} and SHAP compare for estimating FIFs and resulting bias?
-	\item What is the impact of\textbf{ intersectional vs.\ individual FIFs} in tracing the sources of bias?
-    \item How do FIFs change while \textbf{applying} different fairness enhancing algorithms, i.e. \textbf{affirmative actions}, and fairness attacks, i.e. \textbf{punitive actions}?
-	%\item \red{What is the effect of $ \lambda $ on the runtime of {\fairXplainer}?}
+	\item \textit{Performance:} How \textbf{accurate and computationally efficient} {\fairXplainer} and SHAP are in approximating the bias of a classifier based on estimated FIFs?
+	\item \textit{Functionality:} How do FIFs estimated by {\fairXplainer} and SHAP \textbf{correlate with the impact a fairness intervention} strategy on features?
+%    \item \textit{Ablation study:} What are the effects of different \textbf{hyper-parameters} on accuracy and efficiency of {\fairXplainer}?
+	\item \textit{Granularity of explanation:} How effective are the \textbf{ intersectional FIFs} in comparison with the \textbf{individual FIFs} while tracing the sources of bias?
+	\item \textit{Application:} How do FIFs quantify the impact of \textbf{applying} different fairness enhancing algorithms, i.e. \textbf{affirmative actions}, and fairness attacks, i.e. \textbf{punitive actions}?
+ %\item \red{What is the effect of $ \lambda $ on the runtime of {\fairXplainer}?}
 \end{enumerate}
 
-In summary, \textit{{\fairXplainer} achieves significantly less estimation error than SHAP in all the datasets.} This shows the importance of adopting global sensitivity analysis to compute FIFs for group fairness metrics than local explanation approaches. Moreover, \textit{{\fairXplainer} effectively traces the sources of bias by computing intersectional FIFs, which earlier method like SHAP {did not capture}.} {\fairXplainer} also detects the effects of the affirmative and punitive actions on the bias of a classifier and the corresponding tensions between different subsets of features. %Due to brevity of space, we defer additional experimental results to the Supplementary material. %In the following, we elaborate results on estimation error and individual vs.\ intersectional FIFs.
+In summary, (1) we observe that {\fairXplainer} yields \textit{less estimation error} than SHAP while approximating statistical parity using FIFs. {\fairXplainer} incurs lower execution time, i.e. \textit{better efficiency in computing individual FIFs} than SHAP while also enabling computation of intersectional FIFs for real-world datasets and classifiers. (2) While considering a fairness intervention, i.e. change in bias due to omission of a feature, FIFs estimated by {\fairXplainer} have \textit{higher correlation with increase/decrease in bias due to  the intervention than SHAP}. %importantly by top most features with highest absolute FIFs. 
+Thus, {\fairXplainer} demonstrates to be \textit{a better choice for identifying the features influencing the group fairness metrics} than SHAP. 
+%(3) In the ablation study, {\fairXplainer} demonstrates the trade-off between estimation accuracy and execution time through hyper-parameters $ \tau $ and $ \lambda $. 
+(3) \textit{By quantifying both the individual and intersectional influences of features, \fairXplainer{} leads to a more accurate and granular interpretation of the sources of bias}, which is absent in earlier bias explaining methods like SHAP. (4) Finally, as an application of the FIF formulation, {\fairXplainer} also detects the effects of the affirmative and punitive actions on the bias of a classifier and the corresponding tensions between different subsets of features.  Here, we elaborate on experimental results, and defer additional experiments such as applying {\fairXplainer} on other fairness metrics: equalized odds and predictive parity, and an ablation study of hyper-parameters: maximum order of intersectionality  $ \lambda $ and spline intervals $ \tau $ to Appendix~\ref{fairness_fairXplainer_sec:additional_experiments}.
+
+\input{chapters/fairness/fif/table_performance.tex}
+
+\subsection{Performance and Functionality in Estimating FIFs}
+\paragraph{Accurate Approximation of Bias with FIFs.} We compare {\fairXplainer} with SHAP in estimating statistical parity by summing all FIFs, as dictated by the decomposability property (Theorem~\ref{fairness_fairXplainer_thm:fif_property}). {To our best knowledge, the ground truth of FIF is not known for real-world datasets and classifiers. As such, we cannot compare accuracy of {\fairXplainer} and SHAP directly on the estimated FIFs. Since both methods follow the decomposability property, one way to compare them is to test accuracy of the sum of estimated FIFs yielding bias/unfairness, as the ground truth of bias of a classifier can be exactly calculated for a given dataset~\cite{aif360-oct-2018}.}
+We compute estimation error by taking the absolute difference between the exact and  estimated values of statistical parity, and present median results in Table~\ref{fairness_fairXplainer_tab:fair_algo_verification}. 
+
+In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than with $ \lambda = 1 $ in all datasets and classifiers. This implies that combining intersectional FIFs with individual FIFs captures bias more accurately than the individual FIFs alone. In each dataset, {\fairXplainer} ($\lambda = 2$) demonstrates less estimation error than SHAP in all classifiers except in decision trees, denoting that GSA based approach {\fairXplainer} is more accurate in approximating group fairness metrics through FIFs than the local explainer SHAP. In decision trees, {\fairXplainer}\textemdash which is model-agnostic in methodology\textemdash with $ \lambda = 2 $ often demonstrates a comparable accuracy with SHAP, especially the optimized tree-based explanation counterpart of SHAP~\cite{lundberg2020local2global}. In the context of neural networks, SHAP, particularly Kernel-SHAP, often fails to estimate FIFs within the provided time-limit, while {\fairXplainer} with $ \lambda = 2 $ yields highly accurate estimates (median estimation error between $ 0$ to $0.053 $). Therefore, we conclude that \emph{{\fairXplainer} is more accurate in estimating statistical parity using FIFs than SHAP.}
 
 
 
-
-\begin{figure}[!t]
-	\begin{minipage}{0.49\textwidth}
-		\centering
-		\subfloat[Statistical parity]{\includegraphics[scale=0.39]{figures/fairness/fif/sp_train_accuracy}}
-	\end{minipage}
-	\begin{minipage}{0.5\textwidth}
-		\centering
-		\subfloat[Equalized odds]{\includegraphics[scale=0.39]{figures/fairness/fif/eo_train_accuracy}}
-	\end{minipage}
-	\caption[Accuracy of {\fairXplainer}]{Comparing {\fairXplainer} and SHAP on the estimation error of fairness metrics. Lower values on the $ Y $-axis denote a better result. {\fairXplainer} has significantly less error than SHAP.}\label{fig:estimation_error}
-%	\vspace{-0.5em}
-\end{figure}
-\paragraph{Accurate Estimation of Bias.} We compare {\fairXplainer} with SHAP in estimating Statistical Parity $(\mathsf{SP})$ and Equalized Odds $(\mathsf{EO})$, where each metric is calculated by summing all FIFs (Axiom~\ref{axm:additivity}). We consider five datasets, each trained on different classifiers by applying five-fold cross-validation. We compute estimation error by taking the absolute difference between the exact and  estimated value of a metric, and present results in Figure~\ref{fig:estimation_error}. In both metrics, {\fairXplainer} demonstrates significantly less error than SHAP. For example, the mean error of {\fairXplainer} in estimating $ \mathsf{SP} $ on Titanic dataset is $ 0.1 $ vs.\ $ 0.42 $ for SHAP. In this context, the error of {\fairXplainer} is often zero in most datasets and only insignificant ($ \le 0.13 $) due to the degenerate cases (Section~\ref{sec:fifs}) with $ \Pr[\widehat{Y} = 1 | \sensitive = \mathbf{a}] \in \{0, 1\} $.  Therefore, \emph{global sensitivity analysis based approach {\fairXplainer} is significantly more accurate in computing FIFs and corresponding fairness metric than local explanation based approach SHAP}.
-
-%\clearpage
-
-\paragraph{Individual vs.\ Intersectional FIFs.} Now, we aim to understand the importance of intersectional FIFs over individual FIFs. We consider COMPAS dataset with race = \{Caucasian, non-Caucasian\} as the sensitive feature, and a logistic regression classifier to predict whether a person will re-offend crimes within the next two years. Since the classifier only optimizes training error, it demonstrates statistical parity as $ 0.17 $, which means a non-Caucasian  has $ 0.17 $ higher probability of re-offending crimes than a Caucasian. Next, we investigate the source of bias and present individual FIFs in Figure~\ref{fig:individual_fifs}, and both individual and intersectional FIFs in Figure~\ref{fig:individual_and_intersectional_fifs}. In both figures, we show top seven influential FIFs sorted by absolute values,  followed by residual higher-order FIFs. In Figure~\ref{fig:individual_fifs}, `priors count' of an individual is dominating in increasing statistical parity (FIF $ = 0.12 $). Other non-sensitive features appear to have almost zero FIFs. However, the sum of second-order influences of all features increases statistical parity by $ 0.06 $, denoting that the data is highly correlated and presenting only individual FIFs does not trace the true sources of bias. For example, while both `sex' and `age' of persons have zero influence on bias (Figure~\ref{fig:individual_fifs}), these features together with `c charge degree', `priors count', and `juvenile other count' contribute highly on statistical parity (sum of FIFs $ = 0.03 + 0.02 + 0.01 + 0.01 - 0.01 - 0.01 = 0.05$). \emph{Therefore, intersectional influences together with individual influences lead to a clearer understanding on the source of bias of a classifier. Note that, unlike SHAP, {\fairXplainer} is the only framework that computes beyond individual FIFs.}
 \begin{figure}[t!]
-	\begin{minipage}{0.43\textwidth}
+	\centering
+		\begin{minipage}{0.4\columnwidth}
 		\centering
-		\subfloat[Individual FIFs]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight_unsorted}\label{fig:individual_fifs}}
+		\subfloat{\includegraphics[scale=0.38]{figures/fairness/fif/runtime_diff_methods_train_sp}}\vspace*{-.7em}
+		\caption{Execution time of different methods for estimating FIFs. {\fairXplainer} with $ \lambda = 1 $ is more efficient than SHAP, while {\fairXplainer} ($ \lambda = 2 $) requires more computational effort.
+		}
+		\label{fairness_fairXplainer_fig:execution_time_cactus_plot}
+	\end{minipage}\hfil
+	\begin{minipage}{0.55\columnwidth}
+		\centering\vspace*{-1em}
+		\subfloat[COMPAS]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_compas}}
+		\subfloat[Adult]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_adult}}\vspace*{-1em}
+		\caption{Results on fairness intervention on logistic regression classifiers for COMPAS and Adult datasets. Pearson's correlation coefficient between bias-difference due to the intervention and FIFs is higher for top ranked influential features by {\fairXplainer} compared to SHAP.}	
+		\label{fairness_fairXplainer_fig:fairness_intervention}
+%		\centering
+%		\subfloat{\includegraphics[scale=0.35]{figures/fairness/fif/sp_compas_train_error.pdf}}
+%		\subfloat{\includegraphics[scale=0.35]{figures/fairness/fif/sp_compas_train_time.pdf}}
+%		
+%		\caption{Effect of spline intervals on the estimation error of statistical parity and  execution time of {\fairXplainer} on COMPAS.}
+%		\label{fairness_fairXplainer_fig:effect_spline_intervals}
 	\end{minipage}
-	\begin{minipage}{0.5\textwidth}
-		\centering
-		\subfloat[Individual and intersectional FIFs]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight}\label{fig:individual_and_intersectional_fifs}}
-	\end{minipage}
-	\vspace{-0.2em}
-	\caption[Individual vs.\ intersectional FIFs]{FIFs for COMPAS dataset on explaining statistical parity. Intersectional FIFs depict sources of bias in detail than individual FIFs.}\label{fig:individual_vs_intersectional_influence}
+\end{figure}
+
+
+\paragraph{Execution Time: {\fairXplainer} vs.\ SHAP} We compare the execution time of {\fairXplainer} vs.\ SHAP in a cactus plot in Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot}, where a point $ (x, y) $ denotes that a method computes FIFs of $ y $ many fairness instances within $ x $ seconds. We consider $ 480 $ fairness instances from $ 4 $ datasets constituting $ 24 $ distinct combinations of sensitive features, $ 4 $ classifiers, and $ 5 $ cross-validation folds. In Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot},  {\fairXplainer} with $ \lambda = 1 $ is faster than  $ \lambda = 2 $. For example, within $ 10 $ seconds, {\fairXplainer} with $ \lambda = 1 $ solves $ 443 $ instances vs.\ $ 41 $ instances with $ \lambda = 2 $.  In addition, {\fairXplainer} with $ \lambda = 1 $ solves all $ 480 $ instances compared to $ 360 $ instances solved by SHAP. Thus, {\fairXplainer} with $ \lambda = 1 $ demonstrates its higher efficiency in estimating individual FIFs compared to SHAP. While estimating intersectional FIFs, {\fairXplainer} also demonstrates its practical applicability by solving $ 350 $ instances within  $ 160 $ seconds. \textit{Therefore, {\fairXplainer} demonstrates computational efficiency in explaining group fairness metrics of real-world datasets and classifiers.}
+
+
+\paragraph{FIFs under Fairness Intervention} We consider a fairness intervention strategy to hide the impact of an individual feature on a classifier and record the correlation between fairness improvement/reduction of the intervened classifier with the FIF of the feature. Our intervention strategy of modifying the classifier is different than~\cite{datta2016algorithmic}, where the dataset is modified by replacing features with random values. In particular, we intervene a logistic regression classifier by setting the coefficient to zero for the corresponding feature. Intuitively, when the coefficient becomes zero for a feature, the prediction of the classifier may become independent on the feature; thereby, the bias of the classifier may also be independent on the conditional variances of the feature for different sensitive groups.  As a result, a feature with a positive FIF value (i.e. increases bias) is likely to decrease bias under the intervention, and vice versa. In Figure~\ref{fairness_fairXplainer_fig:fairness_intervention}, we report Pearson's correlation coefficient between the difference in bias (statistical parity) due to intervention and the FIFs of features in COMPAS and Adult datasets, where features are sorted in descending order of their absolute FIFs estimated by {\fairXplainer} and SHAP. In {\fairXplainer}, the correlation coefficient generally decreases with an increase of top influential features, denoting that features with higher absolute FIFs highly correlate with bias-differences. SHAP, in contrast, demonstrates less correlation, specially for the top most influential features. \emph{Therefore, FIFs estimated by {\fairXplainer} shows the potential of being deployed to design improved fairness algorithms in future.}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{figure}
+	\centering
+	\subfloat[{\fairXplainer} ($ \lambda = 1 $)]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight_unsorted}\label{fairness_fairXplainer_fig:individual_fifs}}\hfil
+	\subfloat[{\fairXplainer} ($ \lambda = 2 $)]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight}\label{fairness_fairXplainer_fig:intersectional_fifs}}\hfil
+	\subfloat[SHAP]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight_shap}\label{fairness_fairXplainer_fig:fif_shap}}
 	
-\end{figure}
-\begin{figure}[t!]
-	\vspace{-0.7em}
-	\begin{minipage}{0.49\textwidth}
-		\centering
-		\subfloat[Fairness attack (punitive actions)]{\includegraphics[scale=0.345]{figures/fairness/fif/fairness_attack}\label{fig:fairness_attack}}
-	\end{minipage}
-	\begin{minipage}{0.5\textwidth}
-		\centering	
-		\subfloat[Fairness enchancing algorithm (affirmative actions)]{\includegraphics[scale=0.345]{figures/fairness/fif/fairness_repair}\label{fig:fairness_repair}}
-	\end{minipage}
-	\vspace{-0.2em}
-	\caption[FIFs under fairness attack and fairness enhancing algorithms]{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing algorithm~\cite{kamiran2012data} on FIFs.}\label{fig:affirmative_punitive_actions}
-%	\vspace{-0.5em}
+	\caption{FIFs for COMPAS dataset on explaining statistical parity. Both individual and intersectional FIFs in Figure~\ref{fairness_fairXplainer_fig:intersectional_fifs} depict sources of bias in detail than individual FIFs alone in Figure~\ref{fairness_fairXplainer_fig:individual_fifs}. In Figure~\ref{fairness_fairXplainer_fig:fif_shap}, individual FIFs estimated by SHAP are far from correctly approximating statistical parity (exact value $0.174 $).}
+	\label{fairness_fairXplainer_fig:fif_illustration_compas}
 \end{figure}
 
-\paragraph{Fairness affirmative/punitive actions.} Continuing on the experiment in Figure~\ref{fig:individual_vs_intersectional_influence}, we evaluate the effect of fairness attack and enhancing algorithms on FIFs for COMPAS dataset in Figure~\ref{fig:affirmative_punitive_actions}.  In Figure~\ref{fig:individual_vs_intersectional_influence}, statistical parity of the classifier is $ 0.17 $. Applying a data poisoning fairness attack~\cite{solans2020poisoning} increases statistical parity to $ 0.5 $ and the data reweighing-based fairness-enhancing algorithm~\cite{kamiran2012data} decreases it to $ 0.15$. We observe that in both cases, there are a subset of features decreasing bias while another subset of features increasing it, e.g. `age' vs.\ `priors count'. Figure~\ref{fig:fairness_attack} suggests that the attack algorithm would be more successful if it could hide the influence of `age' of a person in receiving discriminating prediction for re-offending crimes. Figure~\ref{fig:fairness_repair} suggests that the fairness enhancing algorithm can improve by ameliorating the effect of `priors count' further. Thus, \textit{{\fairXplainer} provides a dissecting tool to undertake necessary steps to improve or worsen fairness of the classifier.}
+
+
+\subsection{Explainability and Applicability of FIFs}
+\paragraph{Individual vs.\ Intersectional FIFs.} Now, we aim to understand the importance of intersectional FIFs over individual FIFs in Figure~\ref{fairness_fairXplainer_fig:fif_illustration_compas}. We consider COMPAS dataset with race $ \in $ \{Caucasian, non-Caucasian\} as the sensitive feature, and a logistic regression classifier to predict whether a person will re-offend crimes within the next two years. Since the classifier only optimizes training error, it demonstrates statistical parity of $ 0.174 $, i.e. it suggests that a non-Caucasian  has $ 0.174 $ higher probability of re-offending crimes than a Caucasian. Next, we investigate the sources of bias and present individual FIFs in Figure~\ref{fairness_fairXplainer_fig:individual_fifs}, and both individual and intersectional FIFs in Figure~\ref{fairness_fairXplainer_fig:intersectional_fifs}. In both figures, we present influential features and their FIFs in the descending order of absolute values. According to {\fairXplainer}, the priors count (FIF $ = 0.1 $) dominates in increasing statistical parity\textemdash between Caucasian and non-Caucasian, their prior count demonstrates the maximum difference in the scaled variance of positive prediction. Other non-sensitive features have almost zero FIFs. However, in Figure~\ref{fairness_fairXplainer_fig:individual_fifs}, higher-order FIFs ($ \lambda > 1 $) increases statistical parity by $ 0.031 $, denoting that the data is correlated and presenting only individual FIFs is not sufficient for understanding the sources of bias. For example, while both sex and age individually demonstrate almost zero influence on bias (Figure~\ref{fairness_fairXplainer_fig:individual_fifs}), their combined effect and intersectional effects with c-charge degree, priors count, and juvenile miscellaneous count contribute highly on statistical parity. In contrast to {\fairXplainer}, SHAP only estimates individual FIFs  (Figure~\ref{fairness_fairXplainer_fig:fif_shap}) and approximates statistical parity with higher error than {\fairXplainer}.  Interestingly, {\fairXplainer} yields FIF estimates of the classifier trained on COMPAS dataset that significantly matches with the rule-based classifier extracted from the COMPAS dataset using Certifiably Optimal Rule Lists (CORELS) algorithm~\cite[Figure 3]{rudin19}. From Figure 3 in~\cite{rudin19}, we observe that prior count is the only feature used individually to predict arrests, while age is paired with sex and prior counts respectively. While considering second-order intersectionality, {\fairXplainer} ($ \lambda = 2 $) yields priors count, (sex, age), and (age, priors count) as \emph{three of the top four features} that explains the observation of~\cite{rudin19} better than SHAP and {\fairXplainer} ($ \lambda = 1 $) considering only individual features. \emph{Therefore, {\fairXplainer} demonstrates a clearer understanding on the sources of bias of a classifier by simultaneously quantifying on intersectional influences and individual influences }.  %\todo{For a linear classifier with independent features, see if coefficient and FIFs are related.}
+
+
+
+\begin{figure}
+	\subfloat[Fairness attack (punitive actions)]{\includegraphics[scale=0.35]{figures/fairness/fif/fairness_attack}\label{fairness_fairXplainer_fig:fairness_attack}}\hfil
+	\subfloat[Fairness enchancing (affirmative actions)]{\includegraphics[scale=0.35]{figures/fairness/fif/fairness_repair}\label{fairness_fairXplainer_fig:fairness_repair}}
+	
+	\caption{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing~\cite{kamiran2012data} algorithms on FIFs.}\label{fairness_fairXplainer_fig:affirmative_punitive_actions}
+\end{figure}
+
+\paragraph{Quantifying Impacts of Affirmative/Punitive Actions.} Continuing on the experiment in Figure~\ref{fairness_fairXplainer_fig:fif_illustration_compas}, we evaluate the effect of fairness attack and enhancing algorithms on FIFs on COMPAS dataset in Figure~\ref{fairness_fairXplainer_fig:affirmative_punitive_actions}.  Without applying any fairness algorithm, the statistical parity of the classifier is $ 0.174 $. Applying a data poisoning fairness attack~\cite{solans2020poisoning} increases statistical parity to $ 0.502 $ (approximated as $ 0.418 $ in Figure~\ref{fairness_fairXplainer_fig:fairness_attack}), whereas  a fairness-enhancing algorithm based on data reweighing~\cite{kamiran2012data} decreases statistical parity to $ 0.151 $ (approximated as $ 0.135 $ in Figure~\ref{fairness_fairXplainer_fig:fairness_repair}). In Figure~\ref{fairness_fairXplainer_fig:fairness_attack}, the attack algorithm would be more successful if it could hide the influence of features with positive FIFs, such as priors count and the intersectional effects of age and c-charge degree with sex. In contrast, in Figure~\ref{fairness_fairXplainer_fig:fairness_repair}, the fairness enhancing algorithm can improve by  further ameliorating the effect features with  negative FIFs, such as priors count. Thus, \textit{{\fairXplainer} demonstrates the potential as a dissecting tool to undertake necessary steps to improve or worsen fairness of a classifier.}
+
+
 
 
 

@@ -68,6 +68,20 @@
 \usepackage{pgfplots}
 
 
+%%Theorems in appendix with proper hrefs
+\makeatletter
+\newtheorem*{rep@theorem}{\rep@title}
+\newcommand{\newreptheorem}[2]{%
+	\newenvironment{rep#1}[1]{%
+		\def\rep@title{\textbf{#2} \ref{##1}}%
+		\begin{rep@theorem}}%
+		{\end{rep@theorem}}}
+\makeatother
+\newreptheorem{theorem}{Theorem}
+\newreptheorem{example}{Example}
+\newreptheorem{proposition}{Proposition}
+
+
 % Tikz
 \usepackage{tikz}
 \usetikzlibrary{automata}
@@ -114,6 +128,10 @@
 %	FairXplainer
 \newcommand{\fairXplainer}{\ensuremath{\mathsf{FairXplainer}}}
 \newcommand{\fiffunc}{\ensuremath{g}}
+\newcommand{\feature}{\ensuremath{\mathbf{Z}}}
+\newcommand{\numfeatures}{\ensuremath{m}}
+
+
 
 
 % color
@@ -254,15 +272,13 @@
 	\input{chapters/fairness/fvgm/applications}
 	\input{chapters/fairness/fvgm/conclusion}
 					
-%	%%		FairXplainer
-%	\chapter{Computing Fairness Influence Functions with Global Sensitivity Analysis}				
-%	%				\input{chapters/fairness/fif/abstract.tex}
-%	\input{chapters/fairness/fif/introduction.tex}
-%	%				\input{chapters/fairness/fif/preliminaries.tex}
-%	\input{chapters/fairness/fif/framework.tex}
-%	\input{chapters/fairness/fif/fairxplainer.tex}
-%	\input{chapters/fairness/fif/experiments.tex}
-%	\input{chapters/fairness/fif/conclusion.tex}	
+	%%		FairXplainer
+	\chapter{Computing Fairness Influence Functions with Global Sensitivity Analysis}				
+	\input{chapters/fairness/fif/introduction.tex}
+	\input{chapters/fairness/fif/framework.tex}
+	\input{chapters/fairness/fif/fairxplainer.tex}
+	\input{chapters/fairness/fif/experiments.tex}
+	\input{chapters/fairness/fif/conclusion.tex}	
 
 	
 	
@@ -277,9 +293,5 @@
 \end{backmatter}
 
 \appendix
-%\input{chapters/ap-recipes.tex}
-%\input{chapters/ap-ingredients.tex}
-%
-%\input{chapters/ap-publication.tex} % optional to include your publication list
-
+\input{chapters/fairness/fif/appendix.tex}
 \end{document}

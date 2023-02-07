@@ -1,4 +1,4 @@
-\begin{figure}[t!]
+\begin{figure}
 	\begin{minipage}[t]{0.13\textwidth}			
 		\scalebox{1}{	
 		\begin{tikzpicture}[x=1cm,y=0.3cm]
@@ -13,20 +13,20 @@
 				\begin{tikzpicture}[x=1.5cm,y=0.3cm]
 				% Define nodes
 				\node[latent,scale=2] (a1) {$\textrm{age}$} ; %
-				\node[obs, scale=2, below=of a1, xshift=-2cm] (h) {$\textrm{income}$}; %
-				\node[obs, scale=2, below=of a1, xshift=2cm] (i) {$\textrm{fitness}$}; %
+				\node[obs, scale=2, below=of a1, xshift=-2cm] (h) {$\textrm{fitness}$}; %
+				\node[obs, scale=2, below=of a1, xshift=2cm] (i) {$\textrm{income}$}; %
 				\node[obs, scale=2, below=of h, xshift=2cm] (p) {$\widehat{Y}$}; %			
 				%%add edge
 				\edge[] {a1} {h,i} ;
 				\edge[] {h,i} {p} ;
 				\end{tikzpicture}
 			}	
-			\label{fig:dag_age_income_fitness}}
+			\label{fairness_fairXplainer_fig:dag_age_income_fitness}}
 	\end{minipage}%
-	\begin{minipage}{0.5\textwidth}
+	\begin{minipage}{0.4\textwidth}
 		\centering
 		\subfloat[Age-dependent distributions of non-sensitive features]{\includegraphics[scale=0.4]{figures/fairness/fif/sanity_distribution}
-		\label{fig:distribution_example}}
+		\label{fairness_fairXplainer_fig:distribution_example}}
 	\end{minipage}
 
 	\begin{minipage}[t]{0.13\textwidth}
@@ -56,16 +56,16 @@
 				\path [line] (a2) -|       (a21) node [scale=1.5,midway, above]  {Y};
 				\path [line] (a2) -|       (a22) node [scale=1.5,midway, above]  {N};
 				\end{tikzpicture}}
-			\label{fig:dt_original}}
+			\label{fairness_fairXplainer_fig:dt_original}}
 	\end{minipage}%
 	\begin{minipage}{0.45\textwidth}
 		\centering
-		\subfloat[Decision tree with affirmative action (DT$ 2 $)]{
+		\subfloat[Decision tree with an affirmative action (DT$ 2 $)]{
 			\scalebox{0.45}{	
 				\begin{tikzpicture}[x=1cm,y=1.8cm]
 				\node [box, scale=1.5]                                    (p)      {fitness $\geq 0.61$};
 				\node [scale=1.5, box, below= of p, xshift=-2.1cm, yshift=1.2cm]    (a1)    {income\\ $\geq 0.29$};
-				\node [scale=1.5, box, below= of p, xshift=2.1cm, yshift=1.2cm, fill=affirmative]     (a2)    {income $\geq 0.555$};
+				\node [scale=1.5, box, below= of p, xshift=2.1cm, yshift=1.2cm, fill=affirmative]     (a2)    {income $\geq 0.55$};
 				\node [scale=1.5,below= of a1, xshift=-1.5cm, yshift=0.8cm]  (a11)    { $\widehat{Y}= 1$};
 				\node [scale=1.5,below= of a1, xshift=1.5cm, yshift=0.8cm]   (a12)    { $\widehat{Y}=0 $};
 				\node [scale=1.5,below= of a2, xshift=-1.5cm, yshift=0.8cm]  (a21)    { $\widehat{Y}= 1$};
@@ -79,11 +79,11 @@
 				\path [line] (a2) -|       (a22) node [scale=1.5,midway, above]  {N};
 				\end{tikzpicture}}	
 			
-			\label{fig:dt_affirmative}}
+			\label{fairness_fairXplainer_fig:dt_affirmative}}
 	\end{minipage}
 
 	\begin{minipage}[t]{0.07\textwidth}
-		\vspace{-2em}
+		%\vspace{-2em}
 		\scalebox{1}{	
 			\begin{tikzpicture}[x=1cm,y=0.3cm]
 			\node[] (a1) {\textbf{FIF:}};			
@@ -92,16 +92,16 @@
 	\end{minipage}%
 	\begin{minipage}{0.46\textwidth}
 		\centering
-		\subfloat[Fairness influence functions (FIF) for DT$ 1 $]{\includegraphics[scale=0.45]{figures/fairness/fif/fif_example}
-		\label{fig:fif_original}}	
+		\subfloat[Fairness influence functions (FIF) for DT$ 1 $]{\includegraphics[scale=0.42]{figures/fairness/fif/fif_example}
+		\label{fairness_fairXplainer_fig:fif_original}}	
 	\end{minipage}%
 	\begin{minipage}{0.5\textwidth}
 		\centering
-		\subfloat[Modified FIFs for DT$ 2 $]{\includegraphics[scale=0.45]{figures/fairness/fif/fif_example_affirmative_action}
-		\label{fig:fif_affirmative}}
+		\subfloat[Modified FIFs for DT$ 2 $]{\includegraphics[scale=0.42]{figures/fairness/fif/fif_example_affirmative_action}
+		\label{fairness_fairXplainer_fig:fif_affirmative}}
 	\end{minipage}
-
-	\caption[Illustration of fairness influence functions]{FIFs of input features to investigate the bias (i.e., statistical parity) of a decision tree classifier predicting the eligibility for health insurance using age-dependent features `fitness' and `income'. An affirmative action reduces bias, and corresponding FIFs present the evidence.}
-	\label{fig:fair_example_fif}
-	\vspace{-1em}
+%\vspace*{-.5em}
+	\caption{FIFs of input features to investigate the bias (statistical parity) of a decision tree predicting the eligibility for health insurance using age-dependent features `fitness' and `income'. An affirmative action reduces bias as corresponding FIFs reflect it.}
+	\label{fairness_fairXplainer_fig:fair_example_fif}
+	%\vspace{-1.2em}
 \end{figure}
