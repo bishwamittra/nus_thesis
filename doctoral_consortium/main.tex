@@ -1,0 +1,184 @@
+%%%% ijcai23.tex
+
+\typeout{IJCAI--23 Instructions for Authors}
+
+% These are the instructions for authors for IJCAI-23.
+
+\documentclass{article}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+
+% The file ijcai23.sty is a copy from ijcai22.sty
+% The file ijcai22.sty is NOT the same as previous years'
+\usepackage{ijcai23}
+
+% Use the postscript times font!
+\usepackage{times}
+\usepackage{soul}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[small]{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[switch]{lineno}
+
+% Comment out this line in the camera-ready submission
+\linenumbers
+
+\urlstyle{same}
+
+% the following package is optional:
+%\usepackage{latexsym}
+
+% See https://www.overleaf.com/learn/latex/theorems_and_proofs
+% for a nice explanation of how to define new theorems, but keep
+% in mind that the amsthm package is already included in this
+% template and that you must *not* alter the styling.
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+
+
+% Following comment is from ijcai97-submit.tex:
+% The preparation of these files was supported by Schlumberger Palo Alto
+% Research, AT\&T Bell Laboratories, and Morgan Kaufmann Publishers.
+% Shirley Jowell, of Morgan Kaufmann Publishers, and Peter F.
+% Patel-Schneider, of AT\&T Bell Laboratories collaborated on their
+% preparation.
+
+% These instructions can be modified and used in other conferences as long
+% as credit to the authors and supporting agencies is retained, this notice
+% is not changed, and further modification or reuse is not restricted.
+% Neither Shirley Jowell nor Peter F. Patel-Schneider can be listed as
+% contacts for providing assistance without their prior permission.
+
+% To use for other conferences, change references to files and the
+% conference appropriate and use other authors, contacts, publishers, and
+% organizations.
+% Also change the deadline and address for returning papers and the length and
+% page charge instructions.
+% Put where the files are available in the appropriate places.
+
+
+% PDF Info Is REQUIRED.
+% Please **do not** include Title and Author information
+\pdfinfo{
+/TemplateVersion (IJCAI.2023.0)
+}
+
+\title{Interpretability and Fairness in Machine Learning: A Formal Methods Approach}
+
+
+% Single author syntax
+\author{
+    Bishwamittra Ghosh
+    \affiliations
+    National University of Singapore
+    \emails
+   bghosh@u.nus.edu
+}
+
+% Multiple author syntax (remove the single-author syntax above and the \iffalse ... \fi here)
+\iffalse
+\author{
+First Author$^1$
+\and
+Second Author$^2$\and
+Third Author$^{2,3}$\And
+Fourth Author$^4$
+\affiliations
+$^1$First Affiliation\\
+$^2$Second Affiliation\\
+$^3$Third Affiliation\\
+$^4$Fourth Affiliation
+\emails
+\{first, second\}@example.com,
+third@other.example.com,
+fourth@example.com
+}
+\fi
+
+
+
+% Macros
+\newcommand{\imli}{\ensuremath{\mathsf{IMLI}}}
+\newcommand{\crr}{\ensuremath{\mathsf{CRR}}}
+\newcommand{\fairXplainer}{\ensuremath{\mathsf{FairXplainer}}}
+\newcommand{\justicia}{\ensuremath{\mathsf{Justicia}}}
+\newcommand{\fvgm}{\ensuremath{\mathsf{FVGM}}}
+
+\begin{document}
+
+\maketitle
+
+
+The last decades have witnessed significant progress in machine learning with a host of applications of algorithmic decision-making in different safety-critical domains, such as medical~\cite{erickson2017machine,kaissis2020secure,kononenko2001machine}, law~\cite{kumar2018law,surden2014machine}, education~\cite{luckin2018machine}, and transportation~\cite{peled2019model,zantalis2019review}. In high-stake domains,  machine learning predictions have far-reaching consequences on the end-users~\cite{eshete2021making}. With the aim of applying machine learning for societal goods, there have been increasing efforts to regulate machine learning by imposing interpretability~\cite{rudin2019stop}, fairness~\cite{barocas2017fairness}, robustness~\cite{rauber2017foolbox}, and privacy~\cite{papernot2016towards} in predictions. In this thesis, we focus on the interpretability and fairness aspects of machine learning. The thesis establishes a close integration of formal methods with machine learning and proposes efficient algorithmic solutions for problems arising in interpretability and fairness in machine learning.
+
+Towards responsible machine learning, we propose two research themes in this thesis: interpretability and fairness of machine learning classifiers. \emph{In interpretable machine learning}, rule-based classifiers effectively represent the decision boundary using a set of rules comprising input features. Interpretable rule-based classifiers not only interpret the decision function but also be applied to explain the prediction of black-box classifiers~\cite{gill2020responsible,lundberg2017unified,moradi2021post,ribeiro2016should,slack2020fooling}, a fundamental research question in explainable artificial intelligence (XAI). In this thesis, we propose efficient algorithms based on incremental learning for interpretable rule-based classifiers. In another research theme of \emph{fairness in machine learning}, classifiers tend to exhibit bias/unfairness to certain demographic groups in the data unless the classifiers are trained with a fairness objective. Consequently, the research on fairness centers on quantifying bias using multiple fairness definitions and mitigating bias based on multiple fairness algorithms. In this thesis, we study fairness verification problems to assess the fairness of different classifiers under the lens of multiple fairness definitions and algorithms. In addition, we study the sources of the unfairness of classifiers by identifying  features attributing highly to bias. To summarize our thesis, in interpretable and fair machine learning, we prioritize improving the \emph{scalability} and the \emph{accuracy} of solutions\textemdash either or both of which prior approaches fail to achieve. 
+
+
+
+
+\section{Interpretable Machine Learning}
+The problem in interpretable machine learning is to learn a classifier making interpretable predictions to the end-users. To achieve the interpretability of predictions, decision functions in the form of classification rules such as decision trees,  decision lists, decision sets, etc.\ are particularly effective~\cite{bessiere2009minimising,dash2021lprules,ignatiev2021reasoning,izza2020explaining,lakkaraju2017interpretable,lakkaraju2016interpretable,letham2015interpretable,narodytska2018learning,rivest1987learning,wang2015falling,yu2020optimal}.  At this point, it is important to acknowledge that interpretability is an informal notion, and formalizing it in full generality is challenging. In our context of rule-based classifiers, we use \emph{sparsity of rules} (that is, fewer rules each having fewer Boolean literals), which has been considered a proxy of interpretability in various domains, specifically in the medical domain~\cite{gage2001validation,lakkaraju2019faithful,letham2015interpretable,malioutov2013exact,myers1962myers}.
+
+
+
+
+
+In this thesis, we study two interpretable rule-based classifiers, characterized by their expressiveness. At first, we study classifiers represented as formulas in propositional logic. In propositional logic, Conjunctive Formal Form (CNF) and Disjunctive Normal Form (DNF) are useful representations of Boolean formulas. Popular interpretable rule-based classifiers such as decision tree, decision lists, and decision sets share the logical structure of CNF/DNF in their representation of the decision function. Thereby, we propose to learn an interpretable CNF classifier, wherein its interpretability is defined by the number of Boolean literals that the formula contains. Compared to CNF, Boolean cardinality constraints are more expressive as they allow numerical bounds on Boolean literals~\cite{sinz2005towards}. Relying on the concept of cardinality constraints to increase expressiveness, our second interpretable rule-based classifier is a logical relaxation of CNF/DNF classifiers, namely \emph{relaxed-}CNF. 
+
+
+The problem of learning rule-based classifiers is known to be computationally intractable. The earliest tractable approaches for classifiers such as decision trees and decision lists relied on heuristically chosen objective functions and greedy algorithmic techniques~\cite{ClarkN1989,CohenS1999,quinlan2014}. In these approaches, the size of rules is controlled by early stopping,  ad-hoc rule pruning, etc. In recent approaches, the interpretable classification problem is reduced to an optimization problem, where the accuracy and the sparsity of rules are optimized jointly~\cite{lakkaraju2016interpretable,narodytska2018learning}. Different optimization solvers such as linear programming~\cite{malioutov2013exact}, sub-modular optimizations~\cite{lakkaraju2016interpretable}, Bayesian optimizations~\cite{letham2015interpretable}, and MaxSAT~\cite{malioutov2018mlic} are then deployed to find the best classifier with maximum accuracy and minimum rule-size. The discrete combinatorial nature of learning rule-based classifiers leads to the intractability of the problem and suffers from scalability issues in large datasets. Therefore, we propose an incremental learning approach by wrapping traditional optimization solvers such as MaxSAT and MILP (mixed integer linear programming) to efficiently learn rule-based classifiers in a mini-batch learning setting. 
+
+The contributions of this thesis on interpretable machine learning are summarized in the following.
+
+\subsection*{Scalability via Incremental Learning}
+We propose an incremental learning framework, called $ \imli $~\cite{GMM2022,GM2019},  based on MaxSAT for synthesizing interpretable classification rules expressible in proposition logic. $ \mathsf{IMLI} $ considers a joint objective function to optimize the accuracy and the interpretability of classification rules and learns an optimal rule by solving an appropriately designed MaxSAT query. Despite the progress of MaxSAT solving in the last decade, the straightforward MaxSAT-based solution cannot scale to practical classification datasets containing thousands to millions of samples. Therefore, we incorporate an efficient incremental learning technique inside the MaxSAT formulation by integrating mini-batch learning and iterative rule-learning. The resulting framework learns a classifier by iteratively covering the training data, wherein in each iteration, it solves a sequence of smaller MaxSAT queries corresponding to each mini-batch. In our experiments, $ \mathsf{IMLI} $ achieves the best balance among prediction accuracy, interpretability, and scalability. For instance, $ \mathsf{IMLI} $ attains a competitive prediction accuracy and interpretability w.r.t.\ existing interpretable classifiers and demonstrates impressive scalability on large datasets where both interpretable and non-interpretable classifiers fail. As an application, we deploy $ \mathsf{IMLI} $ in learning popular interpretable classifiers such as decision lists and decision sets.
+
+\subsection*{Expressiveness via Logical Relaxation}
+We extend our incremental learning framework to learn a more relaxed representation of classification rules with higher expressiveness~\cite{GMM2020}. Elaborately, we consider relaxed definitions of standard OR/AND operators in Boolean logic by allowing exceptions in the construction of a clause and also in the selection of clauses in a rule. Building on these relaxed definitions, we introduce relaxed-CNF classification rules motivated by the popular usage of checklists in the medical domain and Boolean cardinality constraints in logic. Relaxed-CNF generalizes widely employed rule representations including CNF, DNF, and decision sets. While the combinatorial structure of relaxed-CNF rules offers exponential succinctness, the na\"ive learning techniques are computationally expensive. To this end, we propose an incremental mini-batch learning procedure, called $ \mathsf{CRR} $, that employs advances in MILP solvers to efficiently learn relaxed-CNF rules. Our experimental analysis demonstrates that $ \mathsf{CRR} $ can generate relaxed-CNF rules, which are more accurate and sparser compared to the alternative rule-based models.
+
+
+
+
+
+
+
+
+\section{Fairness in Machine Learning}
+As a technology machine learning is oblivious to societal good or bad. The success of machine learning as an accurate predictor, however, finds applications in high-stake decision-making, such as college admission~\cite{martinez2021using}, recidivism prediction~\cite{tollenaar2013method}, job applications~\cite{ajunwa2016hiring} etc. In such applications, the deployed  classifier often demonstrates bias towards certain \emph{sensitive demographic groups} involved in the data~\cite{dwork2012fairness}. For example, a classifier deciding the eligibility of college admission may offer more admission to White-male candidates than to Black-female candidates\textemdash possibly because of the historical bias in the admission data, or the accuracy-centric learning objective of the classifier, or a combination of both~\cite{berk2019accuracy,landy1978correlates,zliobaite2015relation}. Following such phenomena, multiple fairness metrics, such as \textit{statistical parity}, \textit{equalized odds}, \textit{predictive parity} etc, have been proposed to quantify the bias of the classifier. For example, if the classifier in college admission demonstrates a {statistical parity} of $ 0.6 $, it means that White-male candidates are offered admission $ 60\% $ more than Black-female candidates~\cite{besse2021survey,feldman2015certifying,garg2020fairness}. To this end, different fairness enhancing algorithms have been devised to improve fairness with respect to one or multiple fairness metrics. These algorithms try to rectify and mitigate bias in three ways: \textit{pre-processing} the data~\cite{kamiran2012data,zemel2013learning,calmon2017optimized}, \textit{in-processing} the classifier~\cite{zhang2018mitigating}, and \textit{post-processing} the outcomes of a classifier~\cite{kamiran2012decision,hardt2016equality}. Researchers also study fairness attack algorithms to worsen the fairness of a classifier, such as by adding poisoned data samples~\cite{solans2020poisoning}. In the presence of multiple fairness metrics and algorithms, in this thesis, we contribute to two fundamental problems in fairness: (i) probabilistic verification of fairness and (ii) identification of sources of unfairness.
+
+
+\subsection*{Probabilistic Fairness Verification} The problem in probabilistic fairness verification is to verify the bias of a classifier given the distribution of input features. The early works on fairness verification focused on measuring fairness metrics of a classifier for a given dataset~\cite{aif360-oct-2018}. Naturally, such techniques were limited in enhancing confidence of users for wide deployment. Consequently, recent verifiers seek to achieve verification beyond  finite dataset and in turn focus on the  probability distribution of features~\cite{albarghouthi2017fairsquare, bastani2019probabilistic}.  More specifically, the input to the verifier is a classifier and  the probability distribution of features, and the output is an estimate of fairness metrics that the classifier obtains given the distribution.
+
+
+In order to solve the fairness verification problem, existing works have proposed two principled approaches.	Firstly,~\cite{albarghouthi2017fairsquare} propose a formal method approach to reduce the verification problem into the weighted volume computation of an SMT formula. Secondly,~\cite{bastani2019probabilistic} propose a sampling approach that relies on extensively enumerating the conditional probabilities of prediction given different sensitive features and thus, incurs high computational cost. Additionally, existing works assume feature independence of non-sensitive features and consider correlated features within a limited scope, such as conditional probabilities of non-sensitive features w.r.t. sensitive features and ignore correlations among non-sensitive features. As a result, the \textit{scalability} and \textit{accuracy} of existing  verifiers remain major challenges.
+
+
+In this thesis, we propose an efficient fairness verification framework for two classes of machine learning classifiers, classifiers represented as Boolean formulas and linear classifiers. Based on stochastic satisfiability (SSAT)\cite{littman2001stochastic}, our proposed verifier {\justicia} verifies the fairness of Boolean classifiers such as decision tree by solving appropriately designed SSAT formulas. {\justicia} also extends verification to compound sensitive groups, which are a combination of multiple categorical sensitive features such as race $ \in $ \{White, Black\} and gender $ \in $ \{male, female\}. Because SSAT encoding allows separate quantification to each sensitive feature without any restriction on the number of features. In experiments, {\justicia} is more scalable than the existing probabilistic verifiers~\cite{albarghouthi2017fairsquare,bastani2019probabilistic}, and more robust than the sample-based empirical verifiers~\cite{aif360-oct-2018}. 
+%We also prove a finite-sample error bound on estimated fairness metrics, which is stronger than the existing asymptotic guarantees.
+
+
+Linear classifiers have attracted significant attention from researchers in the context of fair algorithms~\cite{pleiss2017fairness,zafar2017fairness,dressel2018accuracy, john2020verifying}. Existing fairness verifier suffers from two-fold limitations for verifying linear classifiers: (i) poor scalability due to applying SSAT/SMT or sampling based techniques and (ii) inaccuracy due to ignoring feature correlations. Consequently, we propose a fairness verification framework for linear classifiers, namely {\fvgm}, for an accurate and scalable fairness verification. {\fvgm} proposes a novel \textit{stochastic subset-sum} encoding for linear classifiers with an efficient pseudo-polynomial solution using dynamic programming. To address feature-correlations, {\fvgm} considers a graphical model, particularly a Bayesian Network to represent the conditional dependence (and independence) among features in the form of a Directed Acyclic Graph (DAG). Experimentally,  {\fvgm} is more accurate and scalable than existing fairness verifiers; {\fvgm} can verify group and causal fairness metrics for multiple fairness algorithms. We also demonstrate two novel applications of {\fvgm} as a fairness verifier: (a) detecting fairness attacks, and (b) computing fairness influences of a subset of features on shifting the incurred bias of the classifiers from the original bias.
+%, which we study in detail in the following contribution of the thesis.
+
+
+
+
+
+
+\subsection*{Identification of Sources of Unfairness}
+While fairness metrics globally quantify bias, they cannot detect or explain the sources of bias~\cite{begley2020explainability,lundberg2020explaining,pan2021explaining}. In order to identify the sources of bias and also the effect of affirmative/punitive actions to alleviate/deteriorate bias, it is important to understand \textit{which factors contribute how much to the bias of a classifier on a dataset}. To this end, we follow a feature-attribution approach to understand the sources of bias~\cite{begley2020explainability,lundberg2020explaining}, where we relate the \emph{influences} of input features towards the resulting bias of the classifier. Particularly, we define and compute \textit{Fairness Influence Function} (FIF) that quantifies the contribution of individual and subset of features to the resulting bias. FIFs do not only allow practitioners to identify the features to act up on but also to quantify the effect of various affirmative~\cite{calmon2017optimized,hardt2016equality,kamiran2012decision,zemel2013learning,zhang2018mitigating,zhang2018fairness,zhang2019faht} or punitive actions~\cite{hua2021human,mehrabi2020exacerbating,solans2020poisoning} on the resulting bias. We also instantiate an algorithm, {\fairXplainer}, that uses variance decomposition among the subset of features and a local regressor to compute FIFs accurately, while also capturing the intersectional effects of the features. Our experimental analysis validates that {\fairXplainer} captures the influences of both individual features and higher-order feature interactions, estimates the bias more accurately than existing local explanation methods, and detects the increase/decrease in bias due to affirmative/punitive actions in the classifier.
+
+
+%% The file named.bst is a bibliography style file for BibTeX 0.99c
+\bibliographystyle{named}
+\bibliography{ref}
+
+\end{document}
+
