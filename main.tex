@@ -53,6 +53,7 @@
 
 
 % Theorem
+\theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 \newtheorem{axiom}{Axiom}
@@ -183,7 +184,6 @@
 
 
 \begin{document}
-
 \title{Interpretability and Fairness in Machine Learning: A Formal Methods Approach}
 \author{Bishwamittra Ghosh}
 \prevdegrees{%
@@ -217,7 +217,6 @@
 \end{frontmatter}
 
 
-\begin{mainmatter}
 	\part{Prologue}
 	\input{chapters/introduction.tex}
 	\input{chapters/background.tex}
@@ -248,7 +247,7 @@
 	\input{chapters/interpretability/relaxed-cnf/experiment.tex}
 	\input{chapters/interpretability/relaxed-cnf/conclusion.tex}
 	
-	\clearpage
+
 	\part{~Fairness in Machine Learning}
 	
 	In this part of the thesis, we discuss fairness verification for classifiers represented as Boolean formulas in Chapter~\ref{chapter:justicia} and linear classifiers in Chapter~\ref{chapter:fvgm}. Finally, we discuss the identification of the sources of unfairness in Chapter~\ref{chapter:fif}.
@@ -281,15 +280,13 @@
 
 	
 	
-\end{mainmatter}
 
 
-\begin{backmatter}
-	\part{Epilogue}
+	\part{~Epilogue}
 	\input{chapters/conclusion.tex}
 	\bookmarksetup{startatroot}
 	\printbibliography[heading=bibintoc]
-\end{backmatter}
+
 
 \appendix
 \input{chapters/fairness/fif/appendix.tex}

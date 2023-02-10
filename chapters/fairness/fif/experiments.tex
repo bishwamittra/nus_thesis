@@ -5,7 +5,7 @@ In this section, we perform an empirical evaluation of {\fairXplainer}. Particul
 % Ricci~\cite{mcginley2010ricci}, 
 Titanic (\url{https://www.kaggle.com/c/titanic}), COMPAS~\cite{angwin2016machine}, and Adult~\cite{DK2017uci}. We deploy Scikit-learn~\cite{scikit-learn} to learn different classifiers: logistic regression classifier, support vector machine (SVM), neural network, and decision tree with $ 5 $-fold cross-validation. In experiments, we specify {\fairXplainer} to compute intersectional influences up to the second order ($ \lambda = 2 $). While applying cubic-spline based local regression in {\fairXplainer}, we set $ \tau $, the number of spline intervals to $ 6 $. We compare {\fairXplainer} with the existing Shapley-valued based FIF computational framework (\url{https://shorturl.at/iqtuX}), referred as SHAP~\cite{lundberg2020explaining}. For both {\fairXplainer} and SHAP, we set a timeout of $ 300 $ seconds for estimating FIFs. In addition, we deploy {\fairXplainer} along with a fairness-enhancing algorithm~\cite{kamiran2012data} and a fairness attack~\cite{solans2020poisoning} algorithm, and analyze the effect of these algorithms on the FIFs and the resultant fairness metric. In the following, we discuss the objectives of our empirical study. 
 
-\setlength{\textfloatsep}{4pt}% Remove \textfloatsep
+
 \begin{enumerate}
 %\begin{enumerate}
 	\item \textit{Performance:} How \textbf{accurate and computationally efficient} {\fairXplainer} and SHAP are in approximating the bias of a classifier based on estimated FIFs?
@@ -31,22 +31,25 @@ In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than w
 
 \begin{figure}
 	\centering
-	\subfloat{\includegraphics[scale=0.38]{figures/fairness/fif/runtime_diff_methods_train_sp}}
+	\subfloat{\includegraphics[scale=0.5]{figures/fairness/fif/runtime_diff_methods_train_sp}}
 	\caption[Execution time of FIFs in $ \mathsf{SP} $]{Execution time of different methods for estimating FIFs. {\fairXplainer} with $ \lambda = 1 $ is more efficient than SHAP, while {\fairXplainer} ($ \lambda = 2 $) requires more computational effort.
 	}
 	\label{fairness_fairXplainer_fig:execution_time_cactus_plot}
-\end{figure}
-\begin{figure}
-	\centering\vspace*{-1em}
-	\subfloat[COMPAS]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_compas}}
-	\subfloat[Adult]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_adult}}\vspace*{-1em}
-	\caption[FIFs under fairness intervention]{Results on fairness intervention on logistic regression classifiers for COMPAS and Adult datasets. Pearson's correlation coefficient between bias-difference due to the intervention and FIFs is higher for top ranked influential features by {\fairXplainer} compared to SHAP.}	
-	\label{fairness_fairXplainer_fig:fairness_intervention}
 \end{figure}
 
 
 
 \paragraph{Execution Time: {\fairXplainer} vs.\ SHAP} We compare the execution time of {\fairXplainer} vs.\ SHAP in a cactus plot in Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot}, where a point $ (x, y) $ denotes that a method computes FIFs of $ y $ many fairness instances within $ x $ seconds. We consider $ 480 $ fairness instances from $ 4 $ datasets constituting $ 24 $ distinct combinations of sensitive features, $ 4 $ classifiers, and $ 5 $ cross-validation folds. In Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot},  {\fairXplainer} with $ \lambda = 1 $ is faster than  $ \lambda = 2 $. For example, within $ 10 $ seconds, {\fairXplainer} with $ \lambda = 1 $ solves $ 443 $ instances vs.\ $ 41 $ instances with $ \lambda = 2 $.  In addition, {\fairXplainer} with $ \lambda = 1 $ solves all $ 480 $ instances compared to $ 360 $ instances solved by SHAP. Thus, {\fairXplainer} with $ \lambda = 1 $ demonstrates its higher efficiency in estimating individual FIFs compared to SHAP. While estimating intersectional FIFs, {\fairXplainer} also demonstrates its practical applicability by solving $ 350 $ instances within  $ 160 $ seconds. \textit{Therefore, {\fairXplainer} demonstrates computational efficiency in explaining group fairness metrics of real-world datasets and classifiers.}
+
+
+\begin{figure}
+	\centering
+	\subfloat[COMPAS]{\includegraphics[scale=0.5]{figures/fairness/fif/intervention_compas}}
+	\subfloat[Adult]{\includegraphics[scale=0.5]{figures/fairness/fif/intervention_adult}}\vspace*{-1em}
+	\caption[FIFs under fairness intervention]{Results on fairness intervention on logistic regression classifiers for COMPAS and Adult datasets. Pearson's correlation coefficient between bias-difference due to the intervention and FIFs is higher for top ranked influential features by {\fairXplainer} compared to SHAP.}	
+	\label{fairness_fairXplainer_fig:fairness_intervention}
+\end{figure}
+
 
 
 \paragraph{FIFs under Fairness Intervention} We consider a fairness intervention strategy to hide the impact of an individual feature on a classifier and record the correlation between fairness improvement/reduction of the intervened classifier with the FIF of the feature. Our intervention strategy of modifying the classifier is different than~\cite{datta2016algorithmic}, where the dataset is modified by replacing features with random values. In particular, we intervene a logistic regression classifier by setting the coefficient to zero for the corresponding feature. Intuitively, when the coefficient becomes zero for a feature, the prediction of the classifier may become independent on the feature; thereby, the bias of the classifier may also be independent on the conditional variances of the feature for different sensitive groups.  As a result, a feature with a positive FIF value (i.e. increases bias) is likely to decrease bias under the intervention, and vice versa. In Figure~\ref{fairness_fairXplainer_fig:fairness_intervention}, we report Pearson's correlation coefficient between the difference in bias (statistical parity) due to intervention and the FIFs of features in COMPAS and Adult datasets, where features are sorted in descending order of their absolute FIFs estimated by {\fairXplainer} and SHAP. In {\fairXplainer}, the correlation coefficient generally decreases with an increase of top influential features, denoting that features with higher absolute FIFs highly correlate with bias-differences. SHAP, in contrast, demonstrates less correlation, specially for the top most influential features. \emph{Therefore, FIFs estimated by {\fairXplainer} shows the potential of being deployed to design improved fairness algorithms in future.}
@@ -79,9 +82,9 @@ In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than w
 
 \begin{figure}
 	\centering
-	\subfloat[{\fairXplainer} ($ \lambda = 1 $)]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight_unsorted}\label{fairness_fairXplainer_fig:individual_fifs}}\hfil
-	\subfloat[{\fairXplainer} ($ \lambda = 2 $)]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight}\label{fairness_fairXplainer_fig:intersectional_fifs}}\hfil
-	\subfloat[SHAP]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight_shap}\label{fairness_fairXplainer_fig:fif_shap}}
+	\subfloat[{\fairXplainer} ($ \lambda = 1 $)]{\includegraphics[scale=0.45]{figures/fairness/fif/feature_weight_unsorted}\label{fairness_fairXplainer_fig:individual_fifs}}\hfil
+	\subfloat[{\fairXplainer} ($ \lambda = 2 $)]{\includegraphics[scale=0.45]{figures/fairness/fif/feature_weight}\label{fairness_fairXplainer_fig:intersectional_fifs}}\hfil
+	\subfloat[SHAP]{\includegraphics[scale=0.45]{figures/fairness/fif/feature_weight_shap}\label{fairness_fairXplainer_fig:fif_shap}}
 	
 	\caption[FIFs for COMPAS dataset]{FIFs for COMPAS dataset on explaining statistical parity. Both individual and intersectional FIFs in Figure~\ref{fairness_fairXplainer_fig:intersectional_fifs} depict sources of bias in detail than individual FIFs alone in Figure~\ref{fairness_fairXplainer_fig:individual_fifs}. In Figure~\ref{fairness_fairXplainer_fig:fif_shap}, individual FIFs estimated by SHAP are far from correctly approximating statistical parity (exact value $0.174 $).}
 	\label{fairness_fairXplainer_fig:fif_illustration_compas}
@@ -95,8 +98,8 @@ In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than w
 
 
 \begin{figure}
-	\subfloat[Fairness attack (punitive actions)]{\includegraphics[scale=0.35]{figures/fairness/fif/fairness_attack}\label{fairness_fairXplainer_fig:fairness_attack}}\hfil
-	\subfloat[Fairness enchancing (affirmative actions)]{\includegraphics[scale=0.35]{figures/fairness/fif/fairness_repair}\label{fairness_fairXplainer_fig:fairness_repair}}
+	\subfloat[Fairness attack (punitive actions)]{\includegraphics[scale=0.4]{figures/fairness/fif/fairness_attack}\label{fairness_fairXplainer_fig:fairness_attack}}\hfil
+	\subfloat[Fairness enchancing (affirmative actions)]{\includegraphics[scale=0.4]{figures/fairness/fif/fairness_repair}\label{fairness_fairXplainer_fig:fairness_repair}}
 	
 	\caption[FIFs under fairness affirmative/punitive actions]{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing~\cite{kamiran2012data} algorithms on FIFs.}\label{fairness_fairXplainer_fig:affirmative_punitive_actions}
 \end{figure}

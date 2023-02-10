@@ -18,7 +18,7 @@ We now provide an introduction to relaxed-CNF rules. In interpretable rule-based
 
 \begin{figure*}
 	\begin{center}
-		\includegraphics[scale=.65]{figures/interpretability/relaxed-cnf/checklist.pdf}
+		\includegraphics[scale=.62]{figures/interpretability/relaxed-cnf/checklist.pdf}
 	\end{center}
 	\caption[Illustration of a relaxed-CNF classification rule]{An illustrative example of a  relaxed CNF classification rule, which describes the decision function in the form of a  two-level checklist. This classifier is learned on the WDBC (Wisconsin diagnostic breast cancer) dataset and it predicts whether a tumor cell is malignant or not based on the characteristics of the  tumor cell. The first column in each checklist contains Boolean literals. An entry in the second column is  $ 1 $ if the corresponding literal is true by an observed tumor cell, and $ 0 $ otherwise. In the first level, checklist A (resp.\ B) is true if the count of true  literals is at least $ 2 $ (resp.\ $ 3 $). In the second level, a tumor cell is predicted as malignant if the count of true checklists is at least $ 1 $. }
 	\label{interpretability_crr_exmpl:wdbc}

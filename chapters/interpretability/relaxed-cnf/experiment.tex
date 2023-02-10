@@ -21,6 +21,8 @@ We perform experiments on a high-performance computer cluster, where each node c
 \begin{table}
 	\caption[Accuracy, rule-size, and training time of rule-based classifiers]{Comparisons of test accuracy, rule-size and training time among different rule-based classifiers. Every cell in the last four columns contains the test accuracy in percentage (top value), rule size  (middle value), and  training time in seconds (bottom value). In the experiments, {\crr} shows higher test accuracy than IMLI and generates sparser rules than RIPPER. Number in bold denotes the best result, such as maximum test accuracy, minimum rule-size, and minimum training time among competitive classifiers.}
 	\label{interpretability_crr_tab:rule_based_classifiers}
+	
+	
 %	\setlength{\tabcolsep}{3pt} 
 	\begin{center}
 		\begin{tabular}{l  r  r r r r r r r rrr}
@@ -29,37 +31,47 @@ We perform experiments on a high-performance computer cluster, where each node c
 			\midrule
 			{ Heart}   & $  303 $  & $  31 $  & $   \textbf{78.69}  $    & $   72.13  $    & $   72.13  $    & $   77.69  $   \\ & & 
 			& $   7 $    & $   19 $    & $   13 $    & $   \textbf{4.5}  $   \\ & & 
-			& $   5.27 \text{s}  $    & $   25.07 \text{s}  $    & $   \textbf{1.8} \text{s}  $    & $   122.5 \text{s}  $   \\\\
+			& $   5.27 \text{s}  $    & $   25.07 \text{s}  $    & $   \textbf{1.8} \text{s}  $    & $   122.5 \text{s}  $   \\
+			\midrule 
 			{ Ionosphere}   & $  351 $  & $  144 $  & $   88.65  $    & $   \textbf{91.43}  $    & $   89.29  $    & $   \textbf{91.43}  $   \\ & & 
 			& $   8 $    & $   \textbf{4} $    & $   8.5  $    & $   20 $   \\ & & 
-			& $   5.87 \text{s}  $    & $   75.53 \text{s}  $    & $   \textbf{2.09} \text{s}  $    & $   5.59 \text{s}  $   \\\\ 
+			& $   5.87 \text{s}  $    & $   75.53 \text{s}  $    & $   \textbf{2.09} \text{s}  $    & $   5.59 \text{s}  $   \\
+			\midrule 
 			{ WDBC}   & $  569 $  & $  88 $  & $   95.22  $    & $   \textbf{95.65}  $    & $   93.91  $    & $   94.69  $   \\ & & 
 			& $   7.5  $    & $   12 $    & $   \textbf{7} $    & $   34.5  $   \\ & & 
-			& $   5.7 \text{s}  $    & $   630.23 \text{s}  $    & $   \textbf{1.38} \text{s}  $    & $   316.32 \text{s}  $   \\\\ 
+			& $   5.7 \text{s}  $    & $   630.23 \text{s}  $    & $   \textbf{1.38} \text{s}  $    & $   316.32 \text{s}  $   \\
+			\midrule 
 			{ Magic}   & $  19020 $  & $  79 $  & $   \textbf{84.04}  $    & $   74.15  $    & $   71.97  $    & $   81.31  $   \\ & & 
 			& $   115 $    & $   \textbf{3} $    & $   24 $    & $   31 $   \\ & & 
-			& $   \textbf{15.86} \text{s}  $    & $   56.46 \text{s}  $    & $   141.2 \text{s}  $    & $   1012.6 \text{s}  $   \\\\ 
+			& $   \textbf{15.86} \text{s}  $    & $   56.46 \text{s}  $    & $   141.2 \text{s}  $    & $   1012.6 \text{s}  $   \\
+			\midrule 
 			{ Tom's HW}   & $  28179 $  & $  910 $  & $   \textbf{97.4}  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   95.88  $    & $   97.34  $   \\ & & 
 			& $   36 $    &       & $   30 $    & $   \textbf{4} $   \\ & & 
-			& $   \textbf{42.73} \text{s}  $    &       & $   92.65 \text{s}  $    & $   1071.58 \text{s}  $   \\\\ 
+			& $   \textbf{42.73} \text{s}  $    &       & $   92.65 \text{s}  $    & $   1071.58 \text{s}  $   \\
+			\midrule 
 			{ Credit}   & $  30000 $  & $  110 $  & $   81.68  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   81.42  $    & $  \textbf{ 82.04}  $   \\ & & 
 			& $   38.5  $    &       & $   \textbf{10} $    & $   32 $   \\ & & 
-			& $   \textbf{14.52} \text{s}  $    &       & $   17.66 \text{s}  $    & $   1021.35 \text{s}  $   \\\\ 
+			& $   \textbf{14.52} \text{s}  $    &       & $   17.66 \text{s}  $    & $   1021.35 \text{s}  $   \\
+			\midrule 
 			{ Adult}   & $  32561 $  & $  144 $  & $   84.31  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   82.08  $    & $   \textbf{84.86}  $   \\ & & 
 			& $   94 $    &       & $   23 $    & $   \textbf{18} $   \\ & & 
-			& $   27.61 \text{s}  $    &       & $   \textbf{11.91} \text{s}  $    & $   1016.36 \text{s}  $   \\\\ 
+			& $   27.61 \text{s}  $    &       & $   \textbf{11.91} \text{s}  $    & $   1016.36 \text{s}  $   \\
+			\midrule 
 			{ Twitter}   & $  49999 $  & $  1511 $  & $   \textbf{95.74}  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   94.24  $    & $   95.16  $   \\ & & 
 			& $   179.5  $    &       & $   57 $    & $   \textbf{12} $   \\ & & 
-			& $   \textbf{170.87} \text{s}  $    &       & $   238.29 \text{s}  $    & $   1144.66 \text{s}  $   \\\\ 
+			& $   \textbf{170.87} \text{s}  $    &       & $   238.29 \text{s}  $    & $   1144.66 \text{s}  $   \\
+			\midrule 
 			{ Weather-AUS}   & $  107696 $  & $  141 $  & $   \textbf{84.57}  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   82.83  $    & $   83.34  $   \\ & & 
 			& $   195 $    &       & $   7 $    & $   \textbf{2} $   \\ & & 
-			& $   \textbf{121.02} \text{s}  $    &       & $   366.12 \text{s}  $    & $   1115.27 \text{s}  $   \\\\ 
+			& $   \textbf{121.02} \text{s}  $    &       & $   366.12 \text{s}  $    & $   1115.27 \text{s}  $   \\
+			\midrule 
 			{ Skin}   & $  245057 $  & $  119 $  & $   98.32  $    &   \multicolumn{1}{c}{\multirow{3}{*}{\textemdash}}       & $   \textbf{98.92}  $    & $   95.08  $   \\ & & 
 			& $   725 $    &       & $   201 $    & $   \textbf{29} $   \\ & & 
-			& $   1313.19 \text{s}  $    &       & $   \textbf{103.8} \text{s}  $    & $   825.6 \text{s}  $   \\\\ 
+			& $   1313.19 \text{s}  $    &       & $   \textbf{103.8} \text{s}  $    & $   825.6 \text{s}  $   \\
 			\bottomrule
 		\end{tabular}
 	\end{center}
+	
 	
 \end{table}
 

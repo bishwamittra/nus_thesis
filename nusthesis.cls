@@ -102,14 +102,14 @@
 % The Grad. Division requires that "Placement of page numbers must be
 % at the center of bottom."
 
-\pagestyle{simple}
+\pagestyle{plain}
 \makeevenhead{simple}{\leftmark}{}{}
 \makeoddhead{simple}{}{}{\rightmark}
 \makeevenfoot{simple}{}{\thepage}{}
 \makeoddfoot{simple}{}{\thepage}{}
 \aliaspagestyle{book}{simple}
-\aliaspagestyle{part}{simple}
-\aliaspagestyle{chapter}{simple}
+\aliaspagestyle{part}{plain}
+\aliaspagestyle{chapter}{plain}
 \aliaspagestyle{title}{simple}
 
 % Issue warnings if the settings are not appropriate for a final copy
@@ -419,7 +419,7 @@
   \chapter*{List of Tables}\vspace{2em}\makeatletter\@starttoc{lot}\makeatother}
 
 \usepackage[sf]{titlesec}
-\titleformat{\chapter}[display]{\normalfont\huge\bfseries\ssp}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries\ssp}{\chaptertitlename\ \thechapter}{15pt}{\Huge}
 \titleformat{\section}{\normalfont\Large\bfseries\ssp}{\thesection}{1em}{}
 \titleformat{\subsection}{\normalfont\large\bfseries\ssp}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\normalfont\normalsize\bfseries\ssp}{\thesubsubsection}{1em}{}
