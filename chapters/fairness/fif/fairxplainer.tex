@@ -13,7 +13,8 @@ We propose an algorithm, {\fairXplainer}, that leverages the variance decomposit
 
 %\iffalse
 \begin{algorithm}[t!]
-	\caption{{\fairXplainer}}\label{fairness_fairXplainer_algo:framework}
+	\small{
+	\caption{{\fairXplainer}: An algorithm for estimating FIFs}\label{fairness_fairXplainer_algo:framework}
 	\begin{flushleft}
 	\hspace*{\algorithmicindent}\textbf{Input:} Classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y}$, Dataset $\mathbf{D} = \{(\mathbf{z}^{(i)}, y^{(i)})\}_{i=1}^n$, Fairness metric $f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}$, Maximum order of intersectional influence $\lambda $\\
 	\hspace*{\algorithmicindent}\textbf{Output:} FIF $ w_{\mathbf{S}}$ for the subsets of features $\{\feature_{\mathbf{S}}\}$
@@ -55,6 +56,7 @@ We propose an algorithm, {\fairXplainer}, that leverages the variance decomposit
 		%		 \Comment{Eq.~\eqref{fairness_fairXplainer_eq:covariance_computation}}
 		\EndFunction
 	\end{algorithmic}
+	}
 \end{algorithm}
 %\fi
 Here, $ \fiffunc_{\mathbf{a}, 0} $ is a constant, $ \fiffunc_{\mathbf{a},\mathbf{S}} $ is a \emph{component function} of $ \fiffunc_{\mathbf{a}} $ taking  a non-empty subset of features $ \feature_{\mathbf{S}} $ as input, and $ \delta $ is the approximation error. For computational tractability, we consider only components of \emph{maximum order} $ \lambda $, denoting the maximum order of intersectionality. {\fairXplainer} deploys backfitting algorithm for learning component functions in Eq.~\eqref{fairness_fairXplainer_eq:set_additive_classifier}, as discussed in the following.
