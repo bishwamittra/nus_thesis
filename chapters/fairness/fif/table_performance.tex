@@ -1,10 +1,11 @@
 \begin{table*}    
-	\caption{Median error (over 5-fold cross validation and all combinations of sensitive features) of estimating statistical parity, $ |\mathsf{SP} - \widehat{\mathsf{SP}}| $, using FIFs computed by different methods (columns $ 5 $ to $ 7 $). Best results (lowest error) are in bold color. `{\textemdash}' denotes timeout.}\label{fairness_fairXplainer_tab:fair_algo_verification}   
+	\caption[Approximation error of $ \mathsf{SP} $ using FIFs]{Median error (over 5-fold cross validation and all combinations of sensitive features) of estimating statistical parity, $ |\mathsf{SP} - \widehat{\mathsf{SP}}| $, using FIFs computed by different methods (columns $ 5 $ to $ 7 $). Best results (lowest error) are in bold color. `{\textemdash}' denotes timeout.}\label{fairness_fairXplainer_tab:fair_algo_verification}  
+	\small{	 
 	\centering
 	%        \setlength{\tabcolsep}{.3em}
 	\begin{tabular}{lrclrrrr}
 		\toprule
-		\multirow{2}{*}{Dataset} & \multirow{2}{*}{\shortstack[1]{Dimension\\$ (n, \numfeatures) $}} & \multirow{2}{*}{\shortstack[1]{Max Sensitive\\Features, $ |\sensitive| $}} &\multirow{2}{*}{Classifier} & \multirow{2}{*}{SHAP} & \multicolumn{2}{c}{\fairXplainer}\\
+		\multirow{2}{*}{Dataset} & \multirow{2}{*}{\shortstack[1]{Dimension\\$ (n, \numfeatures) $}} & \multirow{2}{*}{\shortstack[1]{Max $ |\sensitive| $}} &\multirow{2}{*}{Classifier} & \multirow{2}{*}{SHAP} & \multicolumn{2}{c}{\fairXplainer}\\
 		& & & & & $ \lambda = 1 $ & $ \lambda = 2 $\\
 		\midrule
 		
@@ -39,6 +40,7 @@
 
 		\bottomrule
 	\end{tabular}
+}
 %	\vspace*{1em}
 \end{table*}
 

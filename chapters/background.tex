@@ -111,9 +111,9 @@ In a rule-based classifier such as a CNF formula, we view $ \mathcal{R} $ as a p
 In this section, we discuss preliminaries in fairness in machine learning, followed by methods to verify fairness and identify the sources of unfairness. 
 
 \subsection{Dataset and Distribution}
-We consider a dataset $ \dataset $ as a collection of $n$ triples  $\{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n$ generated from an underlying distribution $\mathcal{D}$. Each non-sensitive data point $\mathbf{x}^{(i)}$ consists of $\numnonsensitive$ features $[x^{(i)}_1, \dots, x^{(i)}_{\numnonsensitive}] $. Each sensitive data point $\mathbf{a}^{(i)}$ consists of $\numsensitive$ categorical features $[a^{(i)}_1, \dots, a^{(i)}_{\numsensitive}] $.  $y^{(i)} \in \{0,1\}$ is the binary class corresponding to $(\mathbf{x}^{(i)}, \mathbf{a}^{(i)})$. 
+We consider a dataset $ \mathbf{D} $ as a collection of $n$ data points  $\{(\mathbf{z}^{(i)}, y^{(i)})\}_{i=1}^n$  generated from an underlying distribution $\mathcal{D}$. The feature vector $\mathbf{z}^{(i)} \triangleq (\mathbf{x}^{(i)}, \mathbf{a}^{(i)}) $ is a concatenation of non-sensitive features $ \mathbf{x}^{(i)} $ and sensitive features $ \mathbf{a}^{(i)} $. Each non-sensitive data point $\mathbf{x}^{(i)}$ consists of $\numnonsensitive$ features $[x^{(i)}_1, \dots, x^{(i)}_{\numnonsensitive}] \in \mathbb{R}^{\numnonsensitive} $. Each sensitive data point $\mathbf{a}^{(i)}$ consists of $\numsensitive$ categorical features $[a^{(i)}_1, \dots, a^{(i)}_{\numsensitive}] \in \mathbb{N}^{\numsensitive} $. Thus, the cardinality of feature vector $ \mathbf{z}^{(i)} $ is denoted by $ m $, formally $ |\mathbf{z}^{(i)}| \triangleq \numfeatures = \numnonsensitive + \numsensitive $. The binary class corresponding to $(\mathbf{x}^{(i)}, \mathbf{a}^{(i)})$ is $y^{(i)} \in \{0,1\}$. We refer to $y^{(i)}$ as the true class. 
 
-We use $ (\nonsensitive, \sensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, \mathbf{a}, y)$.  Each non-sensitive feature $ X_i \in \nonsensitive $ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each categorical sensitive feature $ A_j \in \sensitive $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. Thus, $ \mathcal{D} $ is the product distribution of all features, $ \mathcal{D} \triangleq \prod_{i=1}^{\numnonsensitive}\mathcal{X}_i \prod_{j=1}^{\numsensitive} \mathcal{A}_j $.
+We denote the random variables corresponding to $ (\mathbf{z}, \mathbf{x}, \mathbf{a},  y) $ with $ (\feature, \nonsensitive, \sensitive, Y) $. Each non-sensitive feature $ X_i \in \nonsensitive $ is sampled from a continuous probability distribution {$ \mathcal{X}_i $}, and each categorical sensitive feature $ A_j \in \sensitive $ is sampled from a discrete probability distribution {$ \mathcal{A}_j $}. Thus, $ \mathcal{D} $ is the product distribution of all features, $ \mathcal{D} \triangleq \prod_{i=1}^{\numnonsensitive}\mathcal{X}_i \prod_{j=1}^{\numsensitive} \mathcal{A}_j $.
 
 For sensitive features, a valuation vector $ \mathbf{a} = [a_1, .., a_{\numsensitive}] $ is called a \textit{compound sensitive group}. For example, consider $ \sensitive = $ [race, sex] where race $ \in $ \{Asian, Color, White\} and sex $ \in $ \{female, male\}. Thus $ \mathbf{a} = $ [Asian, female]  is a compound sensitive group.
 
@@ -136,18 +136,19 @@ f_{\mathsf{DI}}(\alg, \mathcal{D}) \triangleq \frac{\min_{\mathbf{a}} \Pr[\wideh
 
 
 
-\paragraph{Equalized Odds ($ \mathsf{EO} $).} \textit{Separation} measuring group fairness metrics such as equalized odds constrain that $ \widehat{Y} $ is independent of $ \sensitive $ given the ground class $ Y $~\cite{hardt2016equality}.  Formally, for $ Y \in \{0,1\} $, equalized odds is 
+\paragraph{Equalized Odds ($ \mathsf{EO} $).} \textit{Separation} measuring group fairness metrics such as equalized odds~\cite{hardt2016equality} constrain that the predicted class $ \widehat{Y} $ is independent of $ \sensitive $ given the true class $ Y $.  Formally, for $ Y \in \{0,1\} $, equalized odds is defined as
+\[ f_{\mathsf{EO}}(\alg, \mathbf{D}) \triangleq  \max_{y} \Big(\max_{\mathbf{a}}\Pr[\widehat{Y} =1 \mid \mathbf{A} = \mathbf{a}, Y = y] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 \mid \mathbf{A} = \mathbf{a}, Y = y]\Big).
+\] 
 
+Equalized odds intuitively implies the maximum statistical parity conditioned on $ Y $.
+
+\paragraph{Predictive Parity ($ \mathsf{PP} $).}
+\textit{Sufficiency} measuring group fairness metrics such as Predictive Parity ($ \mathsf{PP} $) constrain that the ground class $ Y $ is independent of $ \sensitive $ given the prediction $ \widehat{Y} $. Formally, 
 \begin{align*}
-	f_{\mathsf{EO}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 0], \\ &\max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}, Y = 1]).
+	f_{\mathsf{PP}}(\alg, \mathbf{D})  
+	\triangleq \max_{y} \Big(\max_{\mathbf{a}}\Pr[Y =1 \mid \mathbf{A} = \mathbf{a}, \widehat{Y} = y] - \min_{\mathbf{a}}\Pr[Y =1 \mid \mathbf{A} = \mathbf{a}, \widehat{Y} = y]\Big).
 \end{align*} 
 
-
-\paragraph{Predictive Parity ($ \mathsf{PP} $).} \textit{Sufficiency} measuring group fairness metrics such as predictive parity constrain that the ground class $ Y $ is independent of $ \sensitive $ given the prediction $ \widehat{Y} $~\cite{verma2018fairness}. Formally, 
-
-\begin{align*}
-	f_{\mathsf{PP}}(\alg, \mathcal{D})  \triangleq \max(&\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 0], \\&\max_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1] - \min_{\mathbf{a}}\Pr[Y =1 | \mathbf{A} = \mathbf{a}, \widehat{Y} = 1]).
-\end{align*}
 
 \paragraph{Path-specific Causal Fairness ($ \mathsf{PCF} $).}
 Let $ \mathbf{a}_{\max}  \triangleq \argmax_{ \mathbf{a}} \Pr[\widehat{Y} =1 |\mathbf{A}=  \mathbf{a}] $. We consider mediator features $ \mediator \subseteq \nonsensitive $ sampled from the conditional distribution $ {\mathcal{Z}_{|\mathbf{A} = \mathbf{a}_{\max}}} $. This emulates the fact that mediator variables have the same sensitive features $ \mathbf{a}_{\max} $.   To this end, the path-specific causal fairness, abbreviated as $ \mathsf{PCF} $, of a classifier is \[
@@ -183,13 +184,11 @@ In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and 
 \end{equation}
 
 
-\blue{The complexity $ \bncomplexity(\graph) $ of a Bayesian network $ (\graph, \theta) $ with discrete random variables $ \graphvertices $ is defined as the number of independent parameters used to define the probability distribution of $ \graphvertices $~\cite{murakonda2021quantifying}. Let $ \bnnumdiscrete(\graphvertex) $ denote the number of distinct values that a random variable $ \graphvertex $ can take. As such, for each conditional probability $ \Pr[\graphvertex_i = v_i | \parent(\graphvertex_i) = \mathbf{u}; \theta] $, we need $ \bnnumdiscrete(\parent(\graphvertex_i))(\bnnumdiscrete(\graphvertex_i) - 1) $ independent parameters. Thus, the total complexity of a Bayesian network is:}
+The complexity $ \bncomplexity(\graph) $ of a Bayesian network $ (\graph, \theta) $ with discrete random variables $ \graphvertices $ is defined as the number of independent parameters used to define the probability distribution of $ \graphvertices $~\cite{murakonda2021quantifying}. Let $ \bnnumdiscrete(\graphvertex) $ denote the number of distinct values that a random variable $ \graphvertex $ can take. As such, for each conditional probability $ \Pr[\graphvertex_i = v_i | \parent(\graphvertex_i) = \mathbf{u}; \theta] $, we need $ \bnnumdiscrete(\parent(\graphvertex_i))(\bnnumdiscrete(\graphvertex_i) - 1) $ independent parameters. Thus, the total complexity of a Bayesian network is:
 
-\blue{
 \begin{align}
 	\bncomplexity(\graph) = \sum_{i=1}^{|\graphvertices|} \bnnumdiscrete(\parent(\graphvertex_i))(\bnnumdiscrete(\graphvertex_i) - 1)
 \end{align}
-}
 
 
 \subsection{Global Sensitivity Analysis (GSA): Variance Decomposition}

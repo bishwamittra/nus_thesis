@@ -29,31 +29,21 @@ We compute estimation error by taking the absolute difference between the exact 
 
 In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than with $ \lambda = 1 $ in all datasets and classifiers. This implies that combining intersectional FIFs with individual FIFs captures bias more accurately than the individual FIFs alone. In each dataset, {\fairXplainer} ($\lambda = 2$) demonstrates less estimation error than SHAP in all classifiers except in decision trees, denoting that GSA based approach {\fairXplainer} is more accurate in approximating group fairness metrics through FIFs than the local explainer SHAP. In decision trees, {\fairXplainer}\textemdash which is model-agnostic in methodology\textemdash with $ \lambda = 2 $ often demonstrates a comparable accuracy with SHAP, especially the optimized tree-based explanation counterpart of SHAP~\cite{lundberg2020local2global}. In the context of neural networks, SHAP, particularly Kernel-SHAP, often fails to estimate FIFs within the provided time-limit, while {\fairXplainer} with $ \lambda = 2 $ yields highly accurate estimates (median estimation error between $ 0$ to $0.053 $). Therefore, we conclude that \emph{{\fairXplainer} is more accurate in estimating statistical parity using FIFs than SHAP.}
 
-
-
-\begin{figure}[t!]
+\begin{figure}
 	\centering
-		\begin{minipage}{0.4\columnwidth}
-		\centering
-		\subfloat{\includegraphics[scale=0.38]{figures/fairness/fif/runtime_diff_methods_train_sp}}\vspace*{-.7em}
-		\caption{Execution time of different methods for estimating FIFs. {\fairXplainer} with $ \lambda = 1 $ is more efficient than SHAP, while {\fairXplainer} ($ \lambda = 2 $) requires more computational effort.
-		}
-		\label{fairness_fairXplainer_fig:execution_time_cactus_plot}
-	\end{minipage}\hfil
-	\begin{minipage}{0.55\columnwidth}
-		\centering\vspace*{-1em}
-		\subfloat[COMPAS]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_compas}}
-		\subfloat[Adult]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_adult}}\vspace*{-1em}
-		\caption{Results on fairness intervention on logistic regression classifiers for COMPAS and Adult datasets. Pearson's correlation coefficient between bias-difference due to the intervention and FIFs is higher for top ranked influential features by {\fairXplainer} compared to SHAP.}	
-		\label{fairness_fairXplainer_fig:fairness_intervention}
-%		\centering
-%		\subfloat{\includegraphics[scale=0.35]{figures/fairness/fif/sp_compas_train_error.pdf}}
-%		\subfloat{\includegraphics[scale=0.35]{figures/fairness/fif/sp_compas_train_time.pdf}}
-%		
-%		\caption{Effect of spline intervals on the estimation error of statistical parity and  execution time of {\fairXplainer} on COMPAS.}
-%		\label{fairness_fairXplainer_fig:effect_spline_intervals}
-	\end{minipage}
+	\subfloat{\includegraphics[scale=0.38]{figures/fairness/fif/runtime_diff_methods_train_sp}}
+	\caption[Execution time of FIFs in $ \mathsf{SP} $]{Execution time of different methods for estimating FIFs. {\fairXplainer} with $ \lambda = 1 $ is more efficient than SHAP, while {\fairXplainer} ($ \lambda = 2 $) requires more computational effort.
+	}
+	\label{fairness_fairXplainer_fig:execution_time_cactus_plot}
 \end{figure}
+\begin{figure}
+	\centering\vspace*{-1em}
+	\subfloat[COMPAS]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_compas}}
+	\subfloat[Adult]{\includegraphics[scale=0.33]{figures/fairness/fif/intervention_adult}}\vspace*{-1em}
+	\caption[FIFs under fairness intervention]{Results on fairness intervention on logistic regression classifiers for COMPAS and Adult datasets. Pearson's correlation coefficient between bias-difference due to the intervention and FIFs is higher for top ranked influential features by {\fairXplainer} compared to SHAP.}	
+	\label{fairness_fairXplainer_fig:fairness_intervention}
+\end{figure}
+
 
 
 \paragraph{Execution Time: {\fairXplainer} vs.\ SHAP} We compare the execution time of {\fairXplainer} vs.\ SHAP in a cactus plot in Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot}, where a point $ (x, y) $ denotes that a method computes FIFs of $ y $ many fairness instances within $ x $ seconds. We consider $ 480 $ fairness instances from $ 4 $ datasets constituting $ 24 $ distinct combinations of sensitive features, $ 4 $ classifiers, and $ 5 $ cross-validation folds. In Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot},  {\fairXplainer} with $ \lambda = 1 $ is faster than  $ \lambda = 2 $. For example, within $ 10 $ seconds, {\fairXplainer} with $ \lambda = 1 $ solves $ 443 $ instances vs.\ $ 41 $ instances with $ \lambda = 2 $.  In addition, {\fairXplainer} with $ \lambda = 1 $ solves all $ 480 $ instances compared to $ 360 $ instances solved by SHAP. Thus, {\fairXplainer} with $ \lambda = 1 $ demonstrates its higher efficiency in estimating individual FIFs compared to SHAP. While estimating intersectional FIFs, {\fairXplainer} also demonstrates its practical applicability by solving $ 350 $ instances within  $ 160 $ seconds. \textit{Therefore, {\fairXplainer} demonstrates computational efficiency in explaining group fairness metrics of real-world datasets and classifiers.}
@@ -93,7 +83,7 @@ In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than w
 	\subfloat[{\fairXplainer} ($ \lambda = 2 $)]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight}\label{fairness_fairXplainer_fig:intersectional_fifs}}\hfil
 	\subfloat[SHAP]{\includegraphics[scale=0.35]{figures/fairness/fif/feature_weight_shap}\label{fairness_fairXplainer_fig:fif_shap}}
 	
-	\caption{FIFs for COMPAS dataset on explaining statistical parity. Both individual and intersectional FIFs in Figure~\ref{fairness_fairXplainer_fig:intersectional_fifs} depict sources of bias in detail than individual FIFs alone in Figure~\ref{fairness_fairXplainer_fig:individual_fifs}. In Figure~\ref{fairness_fairXplainer_fig:fif_shap}, individual FIFs estimated by SHAP are far from correctly approximating statistical parity (exact value $0.174 $).}
+	\caption[FIFs for COMPAS dataset]{FIFs for COMPAS dataset on explaining statistical parity. Both individual and intersectional FIFs in Figure~\ref{fairness_fairXplainer_fig:intersectional_fifs} depict sources of bias in detail than individual FIFs alone in Figure~\ref{fairness_fairXplainer_fig:individual_fifs}. In Figure~\ref{fairness_fairXplainer_fig:fif_shap}, individual FIFs estimated by SHAP are far from correctly approximating statistical parity (exact value $0.174 $).}
 	\label{fairness_fairXplainer_fig:fif_illustration_compas}
 \end{figure}
 
@@ -108,7 +98,7 @@ In general, {\fairXplainer} achieves less estimation with $ \lambda = 2 $ than w
 	\subfloat[Fairness attack (punitive actions)]{\includegraphics[scale=0.35]{figures/fairness/fif/fairness_attack}\label{fairness_fairXplainer_fig:fairness_attack}}\hfil
 	\subfloat[Fairness enchancing (affirmative actions)]{\includegraphics[scale=0.35]{figures/fairness/fif/fairness_repair}\label{fairness_fairXplainer_fig:fairness_repair}}
 	
-	\caption{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing~\cite{kamiran2012data} algorithms on FIFs.}\label{fairness_fairXplainer_fig:affirmative_punitive_actions}
+	\caption[FIFs under fairness affirmative/punitive actions]{Effects of a fairness attack~\cite{solans2020poisoning} and a fairness enhancing~\cite{kamiran2012data} algorithms on FIFs.}\label{fairness_fairXplainer_fig:affirmative_punitive_actions}
 \end{figure}
 
 \paragraph{Quantifying Impacts of Affirmative/Punitive Actions.} Continuing on the experiment in Figure~\ref{fairness_fairXplainer_fig:fif_illustration_compas}, we evaluate the effect of fairness attack and enhancing algorithms on FIFs on COMPAS dataset in Figure~\ref{fairness_fairXplainer_fig:affirmative_punitive_actions}.  Without applying any fairness algorithm, the statistical parity of the classifier is $ 0.174 $. Applying a data poisoning fairness attack~\cite{solans2020poisoning} increases statistical parity to $ 0.502 $ (approximated as $ 0.418 $ in Figure~\ref{fairness_fairXplainer_fig:fairness_attack}), whereas  a fairness-enhancing algorithm based on data reweighing~\cite{kamiran2012data} decreases statistical parity to $ 0.151 $ (approximated as $ 0.135 $ in Figure~\ref{fairness_fairXplainer_fig:fairness_repair}). In Figure~\ref{fairness_fairXplainer_fig:fairness_attack}, the attack algorithm would be more successful if it could hide the influence of features with positive FIFs, such as priors count and the intersectional effects of age and c-charge degree with sex. In contrast, in Figure~\ref{fairness_fairXplainer_fig:fairness_repair}, the fairness enhancing algorithm can improve by  further ameliorating the effect features with  negative FIFs, such as priors count. Thus, \textit{{\fairXplainer} demonstrates the potential as a dissecting tool to undertake necessary steps to improve or worsen fairness of a classifier.}
