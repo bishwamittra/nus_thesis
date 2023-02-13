@@ -1,4 +1,3 @@
-\appendix
 \chapter{Fairness Influence Functions}
 %\section{Societal Impact}
 %In this paper, we quantify the influence of input features on the incurred bias/unfairness of the classifier on a dataset. This quantification facilitates our understanding of potential features or subsets of features attributing highly to the bias. This also allows us to understand the effect of the fairness enhancing algorithms in removing bias and their achievement/failure to do so. To the best of our understanding, this paper does not have any negative societal impact. 
@@ -195,7 +194,7 @@ p_{r,n}(Z) =
 \end{align*}
 
 
-In this paper, we consider cubic splines with the basis function $ B_{r,4}(Z) $ that constitutes a B-spline of degree $ 3 $. This polynomial has $ C^2 $ continuity, i.e. for each piecewise term, derivatives up to the second order are zero at the endpoints of each interval in the knot vector. We estimate component functions $ \fiffunc_{\mathbf{a}, \mathbf{S}} $'s with the basis function $ B_{r,4}(\mathbf{Z})  $ of cubic splines~\cite{li2010global}, as shown in Equation~\eqref{fairness_fairXplainer_eq:cubic_splines}.  
+In this chapter, we consider cubic splines with the basis function $ B_{r,4}(Z) $ that constitutes a B-spline of degree $ 3 $. This polynomial has $ C^2 $ continuity, i.e. for each piecewise term, derivatives up to the second order are zero at the endpoints of each interval in the knot vector. We estimate component functions $ \fiffunc_{\mathbf{a}, \mathbf{S}} $'s with the basis function $ B_{r,4}(\mathbf{Z})  $ of cubic splines~\cite{li2010global}, as shown in Equation~\eqref{fairness_fairXplainer_eq:cubic_splines}.  
 \begin{align}\label{fairness_fairXplainer_eq:cubic_splines}
 \begin{split}
 &\fiffunc_{\mathbf{a}, \{i\}} (\mathbf{Z}_{\{i\}}) \approx \sum_{r=-1}^{\tau+1}\alpha_r^iB_{r,n}(\mathbf{Z}_{\{i\}})\\
