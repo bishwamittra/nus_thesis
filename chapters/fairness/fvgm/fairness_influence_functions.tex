@@ -23,32 +23,32 @@ Influence function also generalizes to PPV specific to compound sensitive groups
 
 For both the datasets, we consider biological `sex' as the sensitive features.
 In both cases, we denote the sensitive groups `male' and `female' as `sex=0' and `sex=1', respectively. 
-FIFs computed for these sensitive groups show influence of different features and their relevant disparities. We illustrate the results in Figure~\ref{fig:fif}.
+FIFs computed for these sensitive groups show influence of different features and their relevant disparities. We illustrate the results in Figure~\ref{fairness_fvgm_fig:fif}.
 
-Figure~\ref{fig:fif_a} illustrates that the PPV value for the `male' population in the dataset is $0.61$. If we now replace the feature `age' with uniformly random values, the PPV for the same group becomes $0.46$, Thus, the FIF of the feature `age' for `male' group is $0.15$.
-Similarly, all the red bars in Figures~\ref{fig:fif_a}-\ref{fig:fif_b}, ~\ref{fig:fif_c}-\ref{fig:fif_d} indicate a positive influence of that feature and the green bars indicate a negative influence of the feature on the individual getting classified to $\hat{Y}=1$.
+Figure~\ref{fairness_fvgm_fig:fif_a} illustrates that the PPV value for the `male' population in the dataset is $0.61$. If we now replace the feature `age' with uniformly random values, the PPV for the same group becomes $0.46$, Thus, the FIF of the feature `age' for `male' group is $0.15$.
+Similarly, all the red bars in Figures~\ref{fairness_fvgm_fig:fif_a}-\ref{fairness_fvgm_fig:fif_b}, ~\ref{fairness_fvgm_fig:fif_c}-\ref{fairness_fvgm_fig:fif_d} indicate a positive influence of that feature and the green bars indicate a negative influence of the feature on the individual getting classified to $\hat{Y}=1$.
 
-In Figures~\ref{fig:fif_c} and~\ref{fig:fif_f}, we illustrate the influence of different features on the disparate impact between the two groups `male' and `female'. 
+In Figures~\ref{fairness_fvgm_fig:fif_c} and~\ref{fairness_fvgm_fig:fif_f}, we illustrate the influence of different features on the disparate impact between the two groups `male' and `female'. 
 The green bar indicates that removing a feature causes an increase in DI, i.e. fairness in classification, and the red bar indicates the opposite. Alternatively, we can conclude that bigger is the green bar for a feature, higher is the bias-inducing effect of it.
 
-Thus, from Figure~\ref{fig:fif_c}, we conclude that `age' is the most bias-inducing feature among the two groups `male' and `female'.
-From Fig~\ref{fig:fif_a} and~\ref{fig:fif_b}, we observe that `age' is a decisive feature for `male' while it is comparatively insignificant for `female'.
+Thus, from Figure~\ref{fairness_fvgm_fig:fif_c}, we conclude that `age' is the most bias-inducing feature among the two groups `male' and `female'.
+From Fig~\ref{fairness_fvgm_fig:fif_a} and~\ref{fairness_fvgm_fig:fif_b}, we observe that `age' is a decisive feature for `male' while it is comparatively insignificant for `female'.
 
 In case of Adult dataset, the PPV for `male' and `female' groups are 0.45 and 0.3 respectively. Among all the features, we observe that `race' has a positive impact on the classification for both the groups. This means removing the `race' information decreases the chance of getting classified to higher economic group. On the other hand, `capital-gain' has the highest influence on the classification for both groups. It is also the most biased-inducing feature as it varies most disparately among the two groups as the `capital-gain' differs significantly between two groups. 
-\begin{figure}[t!]
+\begin{figure}
 	\begin{center}
 	
-		\subfloat[COMPAS]{\includegraphics[scale=0.24]{figures/dependency_exp_Learn-dependency_compas_lr_sex_0}\label{fig:fif_a}}
-		\subfloat[COMPAS]{\includegraphics[scale=0.24]{figures/dependency_exp_Learn-dependency_compas_lr_sex_1}\label{fig:fif_b}}\\
-		\subfloat[Adult]{\includegraphics[scale=0.24]{figures/dependency_exp_Learn-dependency_adult_lr_sex_0}\label{fig:fif_d}}
-		\subfloat[Adult]{\includegraphics[scale=0.24]{figures/dependency_exp_Learn-dependency_adult_lr_sex_1}\label{fig:fif_e}}\\
-		\subfloat[COMPAS]{\includegraphics[scale=0.24]{figures/dependency_exp_Learn-dependency_compas_lr_sex_DI}\label{fig:fif_c}}
-		\subfloat[Adult]{\includegraphics[scale=0.24]{figures/dependency_exp_Learn-dependency_adult_lr_sex_DI}\label{fig:fif_f}}\\
+		\subfloat[COMPAS]{\includegraphics[scale=0.35]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_0}\label{fairness_fvgm_fig:fif_a}}
+		\subfloat[COMPAS]{\includegraphics[scale=0.35]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_1}\label{fairness_fvgm_fig:fif_b}}\\
+		\subfloat[Adult]{\includegraphics[scale=0.35]{figures/fairness/fvgm/dependency_exp_Learn-dependency_adult_lr_sex_0}\label{fairness_fvgm_fig:fif_d}}
+		\subfloat[Adult]{\includegraphics[scale=0.35]{figures/fairness/fvgm/dependency_exp_Learn-dependency_adult_lr_sex_1}\label{fairness_fvgm_fig:fif_e}}\\
+		\subfloat[COMPAS]{\includegraphics[scale=0.35]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_DI}\label{fairness_fvgm_fig:fif_c}}
+		\subfloat[Adult]{\includegraphics[scale=0.35]{figures/fairness/fvgm/dependency_exp_Learn-dependency_adult_lr_sex_DI}\label{fairness_fvgm_fig:fif_f}}\\
 		
 	
 		
 	\end{center}
-	\caption{Extended results on computing feature influence functions (FIF) for COMPAS  and Adult dataset.}\label{fig:fif}
+	\caption{Extended results on computing feature influence functions (FIF) for COMPAS  and Adult dataset.}\label{fairness_fvgm_fig:fif}
 \end{figure}
 
 
