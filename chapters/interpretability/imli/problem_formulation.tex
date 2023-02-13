@@ -2,17 +2,17 @@
 
  \section{Problem Formulation}
  \label{interpretability_imli_sec:problem}
-Given 
+We are given 
 \begin{enumerate}
 	\item a dataset $ \dataset = \{(\mathbf{x}^{(i)}, y^{(i)})\}_{i=1}^n$ of $ n $ samples, where feature vector $ \mathbf{x}^{(i)} \in \{0, 1\}^m $ contains $ m $ features and class label $ y^{(i)} \in \{0,1\} $,
 	\item a positive integer $ k \ge 1 $ denoting the number of clauses to be learned in the classification rule, and
-	\item a regularization parameter $ \lambda \in \mathbb{R}^+ $,
+	\item a regularization parameter $ \lambda \in \mathbb{R}^+ $.
 \end{enumerate}
-we learn a classifier $ \Rule $ represented as a $ k $-clause CNF formula separating samples of class $ 1 $ from class $ 0 $. 
+Our goal is to learn a rule-based classifier $ \Rule $ represented as a $ k $-clause CNF formula separating samples of class $ 1 $ from class $ 0 $. 
  
  
 
- Our goal is to learn classifiers that balance two 
+ We learn classifiers that balance two 
  goals: of  being accurate but also interpretable.  
  Various notions of interpretability have been proposed in the context of   classification problems. A common proxy for interpretability in the context of decision rules 
  is the sparsity of rule. For instance, a rule involving fewer literals is highly interpretable.  In this work, we minimize the total number of literals in all clauses, which motivates us to  find $ \Rule  $ with minimum  $ |\Rule| $. Let $ \Rule $ classify all samples correctly during training. Among all the classification rules that classify all samples correctly,  we choose the sparsest (most interpretable) such $ \Rule $. 

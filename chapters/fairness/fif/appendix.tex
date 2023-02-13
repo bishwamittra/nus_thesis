@@ -1,7 +1,7 @@
 \appendix
 \chapter{Fairness Influence Functions}
-\section{Societal Impact}
-In this paper, we quantify the influence of input features on the incurred bias/unfairness of the classifier on a dataset. This quantification facilitates our understanding of potential features or subsets of features attributing highly to the bias. This also allows us to understand the effect of the fairness enhancing algorithms in removing bias and their achievement/failure to do so. To the best of our understanding, this paper does not have any negative societal impact. 
+%\section{Societal Impact}
+%In this paper, we quantify the influence of input features on the incurred bias/unfairness of the classifier on a dataset. This quantification facilitates our understanding of potential features or subsets of features attributing highly to the bias. This also allows us to understand the effect of the fairness enhancing algorithms in removing bias and their achievement/failure to do so. To the best of our understanding, this paper does not have any negative societal impact. 
 
 
 \begin{comment}
@@ -166,7 +166,7 @@ Let $ n_{\min} $ be the number of data points in the dataset $ \mathbf{D} $ belo
 \end{comment}
 
 
-\section{A Smoothing Operator $\textsc{Smooth}$: Cubic Splines}
+\section{A Smoothing Operator: Cubic Splines}
 \label{fairness_fairXplainer_sec:smoothing} 
 In the $\textsc{LocalRegression}$ module of {\fairXplainer} (Line~\ref{fairness_fairXplainer_algo_line:local_regression_start}--\ref{fairness_fairXplainer_algo_line:local_regression_end}, Algorithm~\ref{fairness_fairXplainer_algo:framework}), we use a smoothing operator $\textsc{Smooth}$ (Line~\ref{fairness_fairXplainer_alg_line:backfitting_step}). In our experiments, \textit{we use cubic splines as the smoothing operator}. Here, we elucidate the technical details of cubic splines.
 
@@ -241,13 +241,13 @@ Due to brevity of space, we elaborate definition of statistical parity and corre
 Following the classification setting and notations described in Section~\ref{chapter:preliminaries}, here we consider a binary classifier trained on dataset $\mathbf{D}\triangleq \{(\mathbf{x}^{(i)}, \mathbf{a}^{(i)}, y^{(i)})\}_{i=1}^n$ as $\alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y} $. $\widehat{Y} \in \{0,1\}$ and ${Y} \in \{0,1\}$ represents the predicted class and the true class for a data point $ (\nonsensitive, \sensitive) $ with sensitive features $\sensitive$ and non-sensitive features $\nonsensitive$.
 
 
-\subsection{FIFs of Equalized Odds.}  For equalized odds, we deploy {\fairXplainer} twice, one for computing FIFs on a subset of data points in the dataset where $ Y = 1 $ and another on data points with $ Y = 0 $. Since, the maximum of the sum of FIFs between $ Y = 1 $ and $ Y = 0 $ is the equalized odds of the classifier, we finally report FIFs of features corresponding to the maximum sum of FIFs between $ Y \in \{0, 1\} $.
+\subsection{FIFs of Equalized Odds}  For equalized odds, we deploy {\fairXplainer} twice, one for computing FIFs on a subset of data points in the dataset where $ Y = 1 $ and another on data points with $ Y = 0 $. Since, the maximum of the sum of FIFs between $ Y = 1 $ and $ Y = 0 $ is the equalized odds of the classifier, we finally report FIFs of features corresponding to the maximum sum of FIFs between $ Y \in \{0, 1\} $.
 
 
 
 
 
-\subsection{FIFs of Predictive Parity.}  To compute FIFs for predictive parity, we condition the dataset by the predicted class $ \widehat{Y} $ and separate into two sub-datasets: $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $. For each sub-dataset, we deploy $ \fairXplainer $ by setting the ground-truth class $ Y $ as label. This contrasts the computation for  statistical parity and equalized odds, where the predicted class $ \widehat{Y} $ is considered as label. Finally, the maximum of the sum of FIFs between two sub-datasets for $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $ measures the predictive parity. Similar to equalized odds, FIFs achieving the greatest sum of FIFs for $ \widehat{Y} \in \{0, 1\} $ are the reported FIFs for the predictive parity of the classifier.
+\subsection{FIFs of Predictive Parity}  To compute FIFs for predictive parity, we condition the dataset by the predicted class $ \widehat{Y} $ and separate into two sub-datasets: $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $. For each sub-dataset, we deploy $ \fairXplainer $ by setting the ground-truth class $ Y $ as label. This contrasts the computation for  statistical parity and equalized odds, where the predicted class $ \widehat{Y} $ is considered as label. Finally, the maximum of the sum of FIFs between two sub-datasets for $ \widehat{Y} = 1 $ and  $ \widehat{Y} = 0 $ measures the predictive parity. Similar to equalized odds, FIFs achieving the greatest sum of FIFs for $ \widehat{Y} \in \{0, 1\} $ are the reported FIFs for the predictive parity of the classifier.
 
 %In Appendix~\ref{fairness_fairXplainer_sec:additional_experiments}, we provide runtime analysis and accuracy of {\fairXplainer} to compute FIFs corresponding to predictive parity for different datasets and classifiers.
 
@@ -343,7 +343,7 @@ In Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot_eo_pp}, we d
 	\subfloat[COMPAS]{\includegraphics[scale=0.38]{figures/fairness/fif/sp_compas_train_mean_rmse.pdf}}
 	\subfloat[COMPAS]{\includegraphics[scale=0.38]{figures/fairness/fif/sp_compas_train_time.pdf}}
 	
-	\caption[Ablation study on FIFs: $ \tau $]{Effect of spline intervals on the approximation error of statistical parity, root-mean square error (RMSE), and  execution time of {\fairXplainer}.}
+	\caption[Ablation study on FIFs: effect of spline intervals]{Effect of spline intervals on the approximation error of statistical parity, root-mean square error (RMSE), and  execution time of {\fairXplainer}.}
 	\label{fairness_fairXplainer_fig:effect_spline_intervals_appendix}
 \end{figure}
 
@@ -378,7 +378,7 @@ In Figure~\ref{fairness_fairXplainer_fig:runtime}, we report the runtime of {\fa
 	\subfloat{\includegraphics[scale=0.4]{figures/fairness/fif/ablation_study_max_order_sp_train_time.pdf}}
 	
 	
-	\caption[Ablation study on FIFs: $ \lambda $]{Effect of maximum order $ \lambda $ on the approximation error of statistical parity, root-mean square error (RMSE) and  execution time of {\fairXplainer}.}
+	\caption[Ablation study on FIFs: effect of maximum order of intersectionality]{Effect of maximum order $ \lambda $ on the approximation error of statistical parity, root-mean square error (RMSE) and  execution time of {\fairXplainer}.}
 	\label{fairness_fairXplainer_fig:effect_maxorder_appendix}
 \end{figure}
 
@@ -535,7 +535,7 @@ We deploy a neural network ($ 3 $ hidden layers, each with $ 2 $ neurons, L$ 2 $
 
 \textbf{In Adult dataset,} the classifier predicts whether an individual earns more than $ \$50 $k per year or not, where race and sex are sensitive features. We observe that the trained network is unfair and it demonstrates statistical parity as $ 0.23 $. As we analyze FIFs,  education number, age, and capital gain/loss are key features responsible for the bias. 
 
-\begin{figure}[!t]
+\begin{figure}
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\subfloat[Individual FIFs]{\includegraphics[scale=0.45]{figures/fairness/fif/adult_feature_weight_unsorted}\label{fairness_fairXplainer_fig:individual_fifs_adult}}

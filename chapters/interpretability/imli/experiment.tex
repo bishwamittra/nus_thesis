@@ -36,13 +36,13 @@ To summarize our experimental results, {\imli} achieves the best balance among p
 
 
 
-\begin{table*}[!t]
+\begin{table*}
 	\centering
 	
 	\caption[Accuracy and rule-size of interpretable classifiers]{Comparison of accuracy and rule-size among interpretable classifiers. Each cell from the fourth to the eighth column contains test accuracy (top) and rule-size (bottom). `\textemdash' represents a timeout. Numbers in bold represent the best performing results among different classifiers.}
 	\label{interpretability_imli_table:interpretable_classifiers} 
 	%	\setlength{\tabcolsep}{.2em}
-	\small
+	\small{
 	\begin{tabular}{lrrrrrrrrrrrr}
 		
 		
@@ -127,7 +127,7 @@ To summarize our experimental results, {\imli} achieves the best balance among p
 	
 		
 	\end{tabular}
-
+	}
 \end{table*}
 
 
@@ -160,7 +160,7 @@ In Figure~\ref{interpretability_imli_fig:interpretable_classifiers}, we present 
 In WDBC and Adult datasets presented on the first two plots in Figure~\ref{interpretability_imli_fig:interpretable_classifiers}, CORELS solves lower than $  600 $ instances within a timeout of $ 1000 $ seconds. The scalability performance of BRS is even worse, where it solves around $ 700 $ and $ 200 $ instances in WDBC and Adult datasets, respectively. The other three classifiers: {\imli}, BRL, and RIPPER  solve all $ 1000 $ instances, where BRL takes comparatively higher training time than the other two. The performance of {\imli} and RIPPER is similar, with RIPPER being comparatively better in the two datasets. However, the efficiency of {\imli} compared to other classifiers becomes significant as the number of samples in a dataset increases. In particular, in `Weather AUS' dataset, BRS cannot solve a single instance, BRL and CORELS solves $ ~400 $ instances, and RIPPER solves around $ 600 $ instances. {\imli}, however, solves all $ 1000 $ instances in this dataset. Similarly, in `BNG(labor)' dataset, all other classifiers except {\imli} and CORELS cannot solve any instance. While {\imli} mostly takes the maximum allowable time ($ 1000 $ seconds) in solving all instances in this dataset, CORELS can solve lower than $ 400 $ instances. The improved performance of {\imli} is due to incremental learning based on the novel integration of iterative learning and mini-batch learning. Contrary to our incremental learning, earlier approaches are based on heuristic rule-pruning (e.g., RIPPER) and rule-mining followed by Bayesian optimization (e.g., BRL, BRS) and branch and bounds algorithms (e.g., CORELS). Thus, owing to incremental learning, {\imli} establishes itself as the most scalable classifier compared to other state-of-the-art interpretable classifiers.
 
 
-\begin{figure}[!t]
+\begin{figure}
 	
 	\centering
 	
@@ -181,7 +181,7 @@ In WDBC and Adult datasets presented on the first two plots in Figure~\ref{inter
 \paragraph{Comparison with non-interpretable classifiers.} We compare {\imli} with state of the art non-interpretable classifiers such as LR, SVM, kNN, and RF in terms of their median test accuracy in Table~\ref{interpretability_imli_table:non_interpretable_classifiers}. In the majority of the datasets, {\imli} achieves comparatively lower test accuracy than the best performing non-interpretable classifier. The decrease in the test accuracy of {\imli} is attributed to two factors. Firstly, while we train {\imli} on discretized data, non-interpretable classifiers are trained on non-discretized data and thus {\imli} incurs additional classification errors due to discretization. Secondly, {\imli} learns a rule-based classifier, whereas non-interpretable classifiers can learn more flexible decision boundaries and thus fit data well. In Table~\ref{interpretability_imli_table:non_interpretable_classifiers}, we also observe that {\imli} achieves impressive scalability than competing classifiers by solving datasets with $ 1, 000,000 $  samples where most of the non-interpretable classifiers fail to learn any decision boundary on such large datasets. Thus, {\imli}, being an interpretable classifier, demonstrates lower accuracy than competing non-interpretable classifiers, but higher scalability in practice. 
 
 
-\begin{table*}[!t]        
+\begin{table*}     
 	\centering
 	\caption[Accuracy of {\imli} and non-interpretable classifiers]{Comparison of {\imli} with non-interpretable classifiers in terms of test accuracy. In the table, `\textemdash' represents a timeout. Numbers in bold represent the best performing results among different classifiers.}
 	\label{interpretability_imli_table:non_interpretable_classifiers}
@@ -235,7 +235,7 @@ In WDBC and Adult datasets presented on the first two plots in Figure~\ref{inter
 \end{table*}
 
 
-\begin{figure}[!t]
+\begin{figure}
 	
 	
 	\centering
@@ -270,7 +270,7 @@ We next focus on the test error of different formulations in the middle column i
 
 Moving focus on the rule-size in the rightmost column in Figure~\ref{interpretability_imli_fig:different_formulations}, {\imli}-$\mathsf{B}$ achieves the highest rule-size in WDBC dataset. In contrast, the rule-size of {\imli}-$\mathsf{B}$  is lowest (zero) in Credit and Adult datasets. In the last two datasets, {\imli}-$\mathsf{B}$ times out during training and returns the default rule ``true'' by predicting all samples as class $ 1 $. The other two formulations {\imli} and {\imli}-$\mathsf{M}$  demonstrate a similar trend in rule-size in all datasets with {\imli}-$\mathsf{M}$ generating comparatively smaller size rules in Credit and Adult datasets. In this context,  the improvement of rule-sparsity of {\imli}-$\mathsf{M}$ is due to a comparatively higher test error (or lower accuracy) than {\imli} as observed in all three datasets. Therefore, {\imli} appears to be the best performing formulation w.r.t.\ training time, test error, and rule-size by balancing between accuracy and rule-size while being more scalable.
 
-\begin{table*}[!t]        
+\begin{table*}
 	\centering
 	\caption[Accuracy and rule-size of different classification rules learned using {\imli}]{Comparison of test accuracy (top value) and rule-size (bottom value) among different rule-based representations learned using {\imli}. Numbers in bold denote the best performing results among different representations.}
 	\label{interpretability_imli_table:different_representations}
@@ -367,7 +367,7 @@ We learn all four interpretable representations on twelve datasets, where the CN
 
 
 
-\begin{figure}[!t]
+\begin{figure}
 	
 	\centering
 	
@@ -406,7 +406,7 @@ We learn all four interpretable representations on twelve datasets, where the CN
 \textbf{Effect of the size of mini-batch.} In Figure~\ref{interpretability_imli_fig:effect_of_batch_size}, we present the effect of mini-batch size in {\imli}. As we consider more samples in a batch, both test and training accuracy increase in general as presented in the first and second columns in Figure~\ref{interpretability_imli_fig:effect_of_batch_size}. Similarly, the size of generated rules also increases with the number of samples. Due to solving higher size MaxSAT queries, the training time also increases in general with an increase in mini-batch size. Therefore, by varying the size of mini-batches, {\imli} allows controlling on training time vs the prediction accuracy (and rule-size) of generated rules. 
 
 
-\begin{figure}[!t]
+\begin{figure}
 	
 	\centering
 	
@@ -437,7 +437,7 @@ We learn all four interpretable representations on twelve datasets, where the CN
 
 
 
-\begin{figure}[!t]
+\begin{figure}
 	
 	\centering
 	

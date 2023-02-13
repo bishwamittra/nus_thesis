@@ -3,7 +3,7 @@ In this section, we apply {\fvgm} for verifying fairness-enhancing algorithms an
 
 
 \iffalse
-\begin{figure}[t!]
+\begin{figure}
 	%\vspace{-1em}
 	
 	\centering
@@ -87,7 +87,7 @@ FIF allows us to explain the sources of unfairness in the classifier. In practic
 In Figure~\ref{fvgm_fig:influence function}, we compute FIF for all features in COMPAS dataset, separately for two sensitive groups: Female (`sex' $ = 1 $) and Male. This dataset concerns the likelihood of a person of re-offending crimes within the next two years. We first observe that the base values of the probability of positive prediction are different for the two groups ($ 0.46 $ vs $ 0.61 $ for Female and Male), thereby showing Male as more probable to re-offend crimes than Female. Moreover, FIF of the feature `age' is comparatively higher in magnitude for Male than Female. 
 This implies that while deciding recidivism the algorithm assumes that Female individuals across different ages re-offend crimes with almost the same probability and the probability of re-offending for Male individuals highly depends on age. Thus, applying {\fvgm} to compute FIF provides us insights about sources of bias and thus, indicators to improve fairness.
 
-\begin{figure}[t!]	
+\begin{figure}	
 	\centering
 	\vspace{-2ex}
 	\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/dependency_exp_Learn-dependency_compas_lr_sex_1}}

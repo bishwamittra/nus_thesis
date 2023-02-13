@@ -3,7 +3,7 @@
 In this section, we empirically evaluate the performance of {\fvgm}. We first present the experimental setup  followed by experimental results.
 %\footnote{Due to page limit, we present additional experimental results, proof of lemmas, and miscellaneous details in Appendix.}
 
-\begin{figure}[t!]
+\begin{figure}
 	\begin{center}		
 		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/cactus_all_verifiers_LR_time_}}
 		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/cactus_all_verifiers_SVM_time_}}		
@@ -27,7 +27,7 @@ We compare {\fvgm} with three existing fairness verifiers: Justicia~\cite{ghosh2
 
 \paragraph{Results.} In Figure~\ref{fvgm_fig:scalability_exp}, we present the scalability results of different verifiers. First, we observe that FairSquare often times out ($ =900 $ seconds) and can solve $ \le 5 $ benchmarks. This indicates that SMT-based reduction for linear classifiers cannot scale. Similarly, SSAT-based verifier Justicia that performs pseudo-Boolean to CNF translation for linear classifiers, times out for around $  20 $ out of $ 100 $ benchmarks. Sampling-based framework, VeriFair, has comparatively better scalability than SMT/SSAT-based frameworks and can solve more than $ 90 $ benchmarks. Finally, {\fvgm} achieves impressive scalability by solving all $ 100 $ benchmarks with $ 1 $ to $ 2 $ orders of magnitude runtime improvements than existing verifiers. Therefore,\textit{ {\stochastic}-based framework {\fvgm} proves to be highly scalable in verifying fairness properties of linear classifiers than the state-of-the-art.} 
 
-\begin{figure}[t!]
+\begin{figure}
 	\begin{center}	
 		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/sanity_DI_LR_01}}
 		\subfloat{\includegraphics[scale=0.3]{figures/fairness/fvgm/sanity_DI_SVM_01}}		

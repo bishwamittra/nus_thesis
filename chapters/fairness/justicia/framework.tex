@@ -87,9 +87,9 @@ As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\widehat{Y} = 1 | \sensitive = \mathb
 		\State $ p_{i} \leftarrow \Pr[X_i = 1|\sensitive = \mathbf{a}], \forall X_i \in \nonsensitive $
 		\State $ \phi := \phi_{\widehat{Y}} \wedge (\sensitive =\mathbf{a}) $
 		\State $  \Phi_\mathbf{a} := \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \exists A_1,\dots, \exists A_{\numsensitive},  \phi $
-		\State $ \Pr[\Phi_\mathbf{a}]  \leftarrow \mathsf{SSAT}(\Phi_\mathbf{a}) $ \Comment{returns a probability}
+		\State $ \Pr[\Phi_\mathbf{a}]  \leftarrow \mathsf{SSAT}(\Phi_\mathbf{a}) $ \Comment{returns probability}
 		\EndFor
-		\State\Return $ \max_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}], \min_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $
+		\Return $ \max_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}], \min_{\mathbf{a} \in \sensitive} \Pr[\Phi_{\mathbf{a}}] $
 		\label{fairness_justicia_algo:justicia_enum_end}
 		\EndFunction
 		\Statex
@@ -102,7 +102,7 @@ As we compute $ \Pr[\Phi_\mathbf{a}] = \Pr[\widehat{Y} = 1 | \sensitive = \mathb
 		\State $ p_{i} \leftarrow \Pr[X_i=1], \forall X_i \in \nonsensitive $
 		\State $  \Phi_\mathsf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \phi_{\widehat{Y}} $
 		\State $  \Phi'_\mathsf{ER} := \exists A_1,\dots, \exists A_{\numsensitive}, \R^{p_{1}}X_1, \dots, \R^{p_{\numnonsensitive}}X_{\numnonsensitive}, \neg \phi_{\widehat{Y}} $
-		\State\Return $ \mathsf{SSAT}(\Phi_\mathsf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathsf{ER}) $
+		\Return $ \mathsf{SSAT}(\Phi_\mathsf{ER}), 1 - \mathsf{SSAT}(\Phi'_\mathsf{ER}) $
 		\label{fairness_justicia_algo:justicia_learn_end}
 		\EndFunction
 	\end{algorithmic}

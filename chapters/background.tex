@@ -123,13 +123,13 @@ We represent a binary classifier trained on the dataset $\dataset$ as $\alg: (\n
 
 \subsection{Fairness Metrics}
 
-A classifier $\alg$ that solely optimizes accuracy, i.e., the average number of times $\widehat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions: group fairness and causal fairness. To this end, we use $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ given the distribution of features $ \mathcal{D} $. Alternatively, a fairness metric can be computed on a finite dataset instead of on the distribution. In that case, we use the notation $ f(\alg, \dataset) $, which is the bias of the classifier $ \alg $ on a dataset $ \dataset $. 
+A classifier $\alg$ that solely optimizes accuracy, i.e. the average number of times $\widehat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions: group fairness and causal fairness. To this end, we denote $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ given the distribution of features $ \mathcal{D} $. Alternatively, a fairness metric can be computed on a finite dataset instead of on the distribution. In that case, we use the notation $ f(\alg, \dataset) $, which is the bias of the classifier $ \alg $ on a dataset $ \dataset $. 
 
 \paragraph{Statistical Parity ($ \mathsf{SP} $).} Statistical parity belongs to \textit{independence} measuring group fairness metrics, where the prediction $ \widehat{Y} $ is statistically independent of sensitive features $ \sensitive $~\cite{feldman2015certifying}.  The statistical parity of  a classifier is measured as 
 \[ f_{\mathsf{SP}}(\alg, \mathcal{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}], \] which is the difference between the maximum and minimum conditional probability of positive prediction the classifier for different sensitive groups.
 
 
-\paragraph{Disparate impact ($ \mathsf{DI} $).} Disparate impact also belongs to independence measuring group fairness metrics. Disparate impact measures the ratio between the minimum and the maximum probability of positive prediction of the classifier over all sensitive groups, and prescribe the ratio to be close to $1$~\cite{feldman2015certifying}.  Formally, the disparate impact of a classifier is 
+\paragraph{Disparate impact ($ \mathsf{DI} $).} Disparate impact also belongs to independence measuring group fairness metrics. Disparate impact measures the ratio between the minimum and the maximum conditional probability of positive prediction of the classifier over all sensitive groups, and prescribe the ratio to be close to $1$~\cite{feldman2015certifying}.  Formally, the disparate impact of a classifier is 
 \[
 f_{\mathsf{DI}}(\alg, \mathcal{D}) \triangleq \frac{\min_{\mathbf{a}} \Pr[\widehat{Y} =1 | \mathbf{A} =  \mathbf{a}]}{\max_{\mathbf{a}} \Pr[\widehat{Y} =1 | \mathbf{A} =  \mathbf{a}]}.
 \]
@@ -169,7 +169,7 @@ Therefore, path-specific causal fairness constrains that the prediction $ \wideh
 
 
 
-\paragraph{Fairness Certification.} We certify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, that quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, predictive parity, and path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier achieves $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
+\paragraph{Fairness Verification.} We verify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, that quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, predictive parity, and path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier achieves $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
 
 
 \subsection{Bayesian Network}

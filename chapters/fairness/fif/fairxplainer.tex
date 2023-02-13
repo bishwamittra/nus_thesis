@@ -16,7 +16,7 @@ We propose an algorithm, {\fairXplainer}, that leverages the variance decomposit
 	\small{
 	\caption{{\fairXplainer}: An algorithm for estimating FIFs}\label{fairness_fairXplainer_algo:framework}
 	\begin{flushleft}
-	\hspace*{\algorithmicindent}\textbf{Input:} Classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y}$, Dataset $\mathbf{D} = \{(\mathbf{z}^{(i)}, y^{(i)})\}_{i=1}^n$, Fairness metric $f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}$, Maximum order of intersectional influence $\lambda $\\
+	\hspace*{\algorithmicindent}\textbf{Input:} Classifier $ \alg: (\nonsensitive, \sensitive) \rightarrow \widehat{Y}$, dataset $\mathbf{D} = \{(\mathbf{z}^{(i)}, y^{(i)})\}_{i=1}^n$, fairness metric $f(\alg, \mathbf{D}) \in \mathbb{R}^{\geq 0}$, and maximum order of intersectional influence $\lambda $\\
 	\hspace*{\algorithmicindent}\textbf{Output:} FIF $ w_{\mathbf{S}}$ for the subsets of features $\{\feature_{\mathbf{S}}\}$
 	\end{flushleft}
 
@@ -40,7 +40,7 @@ We propose an algorithm, {\fairXplainer}, that leverages the variance decomposit
 		\While{each $ \widehat{\fiffunc}_{\mathbf{a},\mathbf{S}} $ does not converge}
 		\For{each $\mathbf{S}$}
 		\State $ \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}} \leftarrow \textsc{Smooth}\big(\{\fiffunc_{\mathbf{a}}(\mathbf{z}^{(i)}) - \fiffunc_{\mathbf{a}, 0} - \sum_{\mathbf{S} \ne \mathbf{S}'} \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}'}(\mathbf{z}_{\mathbf{S}}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\big)
-		$\label{fairness_fairXplainer_alg_line:backfitting_step} \Comment{Backfitting}
+		$\label{fairness_fairXplainer_alg_line:backfitting_step}
 		\State $\widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}}  \leftarrow \widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}} - \textsc{Mean}\big(\{\widehat{\fiffunc}_{\mathbf{a}, \mathbf{S}}(\mathbf{z}_{\mathbf{S}}^{(i)})\}_{i=1, \mathbf{a}^{(i)} = \mathbf{a}}^n\big)$ \label{fairness_fairXplainer_alg_line:mean_centered} \Comment{Mean centering}
 		\EndFor
 		\EndWhile
