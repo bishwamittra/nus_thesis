@@ -1,20 +1,33 @@
 \chapter{Interpretable Classification Rules}
 
+\section{Experimental Comparison between Incremental vs.\ Non-incremental  Encoding}
+We compare the performance of two encoding techniques, na\"ive non-incremental encoding and efficient incremental encoding in {\imli}, for learning interpretable CNF classification rules in datasets of various sizes. We demonstrate the scalability results using a cactus plot in Figure~\ref{fig:interpretability_imli_additional_fig:scalability_non_incremental_vs_incremental}. Each point $ (x, y) $ represents the ability to solve $ x $ classification instances within $ y $ seconds. We test both incremental and non-incremental encoding using $ 360 $ instances for each dataset with varying hyper-parameters. As the dataset size increases, the non-incremental encoding times out, failing to solve all $ 360 $ instances within $ 1000 $ seconds in the Credit and Adult datasets. In contrast, the incremental encoding in {\imli} demonstrates higher scalability, solving all $ 360 $ instances in less than $ 10 $ seconds in the Titanic dataset, and efficiently solving all $ 360 $ instances within the timeout in the Credit and Adult datasets. Hence, the incremental encoding is superior in terms of scalability compared to the non-incremental encoding.
+
+In Figure~\ref{fig:interpretability_imli_additional_fig:all_preformances_non_incremental_vs_incremental}, 
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Parkinsons_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_WDBC_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Pima_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Titanic_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Magic_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Tom's_HW_cactus_train_val_fit_time}		\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Credit_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Adult_cactus_train_val_fit_time}
+	\caption[Scalability: incremental vs.\ non-incremental encoding]{Detailed scalability results of incremental vs.\ non-incremental encoding in {\imli}, presented as a cactus plot. As datasets become large, the non-incremental encoding suffers from poor scalability by witnessing time-outs more frequently than the incremental encoding {\imli}.}
+	\label{fig:interpretability_imli_additional_fig:scalability_non_incremental_vs_incremental}
+\end{figure}
+
+
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.38]{figures/interpretability/imli/thesis_exp/thesis_exp_cactus_train_val_fit_time}
 	\includegraphics[scale=0.38]{figures/interpretability/imli/thesis_exp/thesis_exp_cactus_predicate_count}
 	\includegraphics[scale=0.38]{figures/interpretability/imli/thesis_exp/thesis_exp_cactus_test_accuracy}
 	\includegraphics[scale=0.38]{figures/interpretability/imli/thesis_exp/thesis_exp_cactus_train_val_accuracy}
+	
+	\caption[Performance comparison between non-incremental vs.\ incremental encoding]{Comparison of training time, rule-size, and test and train accuracy between non-incremental vs.\ incremental encoding in {\imli}. In $ X $-axis, the dimension of the dataset (\#samples $ \mid $  \#features) is shown below dataset name. In large datasets, non-incremental encoding often times out and learns zero-size classification rules yielding less test and train accuracy than the incremental encoding.}
+	\label{fig:interpretability_imli_additional_fig:all_preformances_non_incremental_vs_incremental}
 \end{figure}
 
 
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Parkinsons_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_WDBC_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Pima_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Titanic_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Magic_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Tom's_HW_cactus_train_val_fit_time}		\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Credit_cactus_train_val_fit_time}	\includegraphics[scale=0.27]{figures/interpretability/imli/thesis_exp/thesis_exp_Adult_cactus_train_val_fit_time}
-\end{figure}
 
-\section{Representative Interpretable Classification Rules in Datasets}
+
+\section{Representative Interpretable Classifiers}
 In the following, we present representative CNF classifiers learned in different datasets. In each dataset, if an input satisfies the CNF formula, it is predicted class $ 1 $ and vice-versa.
 
 \noindent \textbf{ Parkinsons: }\\
