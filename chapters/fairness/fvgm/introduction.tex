@@ -1,6 +1,7 @@
 %\section{Introduction}
 
 \label{chapter:fvgm}
+\begin{comment}
 	The significant improvement of machine learning over the decades has led to a host of applications of machine learning in  high-stake decision-making such as college admission~\cite{martinez2021using}, hiring of employees~\cite{ajunwa2016hiring}, and recidivism prediction~\cite{tollenaar2013method,dressel2018accuracy}. Machine learning algorithms often have an accuracy-centric learning objective, which may cause them to be biased towards certain part of the dataset belonging to a certain economically or socially sensitive groups~\cite{landy1978correlates,zliobaite2015relation,berk2019accuracy}.
 %	Fairness in Machine Learning (ML) has gained a significant focus  in recent years as ML algorithms are deployed in high-stake decision-making, such as college admission, hiring of employees, and recidivism prediction. Thus, if the ML algorithm is biased towards certain part of the dataset belonging to certain economically or socially sensitive groups, it can cause adverse effects in real-life.
 	 The following example illustrates a plausible case of unfairness of machine learning. 
@@ -23,28 +24,15 @@
 	
 %	\red{Despite extensive efforts over the past few years, the scalability and accuracy of fairness verifiers remains a major challenge. In particular, the existing techniques fail to scale beyond {\em toy} examples. In this work, we seek to remedy the situation. As a first step, we focus on  \textit{linear classifiers}, which has attracted a significant attention from researchers in the context of fair algorithms~\cite{pleiss2017fairness,zafar2017fairness,dressel2018accuracy, john2020verifying}. At this point, it is worth highlighting that our empirical evaluation demonstrates that the existing techniques fail to scale beyond small examples or provide highly inaccurate estimates for comparatively {\em small} linear classifiers. }
  	
-	
-	In order to solve the fairness-verification problem, existing works have proposed two principled approaches.	Firstly, \cite{ghosh2020justicia} and \cite{albarghouthi2017fairsquare} propose formal methods that reduce the problem into a solution of an SSAT or an SMT~ formula respectively.	Secondly, \cite{bastani2019probabilistic} propose a sampling approach that relies on extensively enumerating the conditional probabilities of prediction given different sensitive features and thus, incurs high computational cost. Additionally, existing works assume feature independence of non-sensitive features and consider correlated features within a limited scope, such as conditional probabilities of non-sensitive features w.r.t. sensitive features and ignore correlations among non-sensitive features. As a result, the \textit{scalability} and \textit{accuracy} of existing  verifiers remains a major challenge.
-	
-	In this work, we seek to remedy the aforementioned situation. As a first step, we focus on  \textit{linear classifiers}, which has attracted significant attention from researchers in the context of fair algorithms~\cite{pleiss2017fairness,zafar2017fairness,dressel2018accuracy, john2020verifying}. At this point, it is worth highlighting that our empirical evaluation demonstrates that the existing techniques fail to scale beyond small examples or provide highly inaccurate estimates for comparatively {\em small} linear classifiers. 
-	
-%	In this paper, we argue that the above solution is not practical in verifying linear classifiers for two reasons: (i) the encoding of a linear classifier into an SSAT or an SMT formula or using a sampling approach suffer from scalability and (ii) ignoring correlations among all features results in an inaccurate estimate of fairness metrics. 	
-	
-	
-%	Given multiple fairness definitions, fairness algorithms either \textit{preprocess} the training data~\cite{calmon2017optimized,kamiran2012data,zemel2013learning}, \textit{in-process} the classifier during training~\cite{zhang2018mitigating}, or \textit{post-process} the prediction of the trained classifiers~\cite{hardt2016equality,kamiran2012decision} to improve fairness. In contrast, fairness-attack algorithms try to manipulate the data or the classifier to worsen its fairness~\cite{solans2020poisoning}. 
-	
+\end{comment}
 
+	In this chapter, we extend the probabilistic fairness verification problem to a more practical scenario by accounting for the correlation of features, which is prevalent in most classification datasets. Existing fairness verifiers \cite{albarghouthi2017fairsquare,bastani2019probabilistic}, including Justicia \cite{ghosh2020justicia} in Chapter~\ref{chapter:justicia}, suffer from poor accuracy due to considering specific input distribution. For example, they assume feature independence of non-sensitive features and consider correlated features within a limited scope, such as conditional probabilities of non-sensitive features with respect to sensitive features, and ignore correlations among non-sensitive features. Thus, it is desirable to design a fairness verification framework where the input is a probability distribution containing feature correlations.
 	
-%	\red{Among different ML classifiers, researcher This observation motivates us in asking the following research question: \textit{Can we design an efficient fairness verification framework for linear classifiers that can verify different fairness definitions and algorithms accurately?} 
-
+	Towards this goal, we particularly focus on the verification of \textit{linear classifiers} as our first step because there has been significant attention on linear classifiers in the context of fair algorithms \cite{pleiss2017fairness,zafar2017fairness,dressel2018accuracy, john2020verifying}. In this context, existing approaches suffer from limited scalability while verifying linear classifiers. This is due to the encoding of linear classifiers into SSAT/SMT formulas \cite{ghosh2020justicia,albarghouthi2017fairsquare}. For example, Justicia applies pseudo-Boolean to CNF translation of linear classifiers as a pre-processing step, and the encoding becomes large depending on the number of features and the precision of real-valued coefficients in linear classifiers.
 	
+	Considering these two aspects, our goal in this chapter is to design a fairness verifier particularly tailored for linear classifiers that addresses both the scalability and accuracy challenges of existing verifiers.
 	
-%	
-%	Considering the surge of research in ML fairness based on linear classifiers, we focus on designing a fairness verifier particularly tailored for linear classifiers. We further show novel applications of the verifier in practical fairness tasks, such as detecting fairness attacks and computing the source of unfairness in the level of input features.
-%	
-	
-
-	
+		
 	
 	\paragraph{Our Contributions.} The contributions of this chapter are summarized below.
 	
