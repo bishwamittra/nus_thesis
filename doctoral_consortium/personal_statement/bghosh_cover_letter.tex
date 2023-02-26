@@ -1,0 +1,110 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[top=2cm,left=3.1cm,right=3.1cm,bottom=2cm]{geometry}% margins
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{comment}
+\usepackage{natbib}
+
+
+\usepackage{xcolor}
+\newcommand{\magenta}[1]{\textcolor{magenta}{#1}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+
+
+%noindent
+\setlength\parindent{0pt}
+
+\begin{document}
+	
+	
+	
+%	logo
+	\begin{figure}[t]
+		\includegraphics[scale=0.03]{logo}
+	\end{figure}
+	\noindent\makebox[\linewidth]{\rule{\textwidth}{1pt}}
+	
+	\begin{flushright}
+		\begin{tabular}{l@{}}
+			\today \\
+			\newline \\
+			\textbf{Bishwamittra Ghosh}\\
+			205 Bukit Batok Street 21, \#02-46\\ 
+			Singapore, 650205\\
+			Singapore\\
+			\blue{\url{https://bishwamittra.github.io}}\\
+			\textbf{Email:} bghosh@u.nus.edu\\
+			\textbf{Phone:} (+65)85990160\\
+		\end{tabular}%
+	\end{flushright}
+	
+
+
+	\textbf{Subject:} Application for attending IJCAI 2023 Doctoral Consortium Program.
+	
+	
+	
+	\vspace{1em}
+	Dear Organizing Committee,
+	
+	
+	\vspace{1em}
+	I am writing to apply for the IJCAI 2023 Doctoral Consortium Program. Please find attached my application materials.
+	
+	\vspace{1em}
+	
+	My research interests primarily lie in the areas of fairness and interpretability in machine learning. Specifically, in my dissertation research, I focus on formally verifying fairness in machine learning, interpreting fairness by identifying its sources, and designing interpretable rule-based classifiers. To achieve scalable and accurate solutions, I closely integrate automated reasoning, formal methods, and statistics with fairness and interpretability.
+	
+	\vspace{1em}
+	My research is motivated by prior works on fairness and interpretability. For example, \cite{rudin2019stop} emphasizes the design of interpretable classifiers, such as rule-based classifiers~\citep{lakkaraju2016interpretable}, for high-stake and safety-critical decision-making, instead of interpreting opaque black-box classifiers. We improve the scalability of interpretable classifiers based on maximum satisfiability (MaxSAT) and incremental learning by demonstrating interpretable classification on million-size datasets. In fairness, \cite{albarghouthi2017fairsquare} and \cite{bastani2019probabilistic} study formal fairness verification to verify multiple fairness metrics of classifiers given the probability distribution of features. In our research, we improve the scalability and accuracy of formal fairness verification by integrating stochastic satisfiability (SSAT) and Bayesian network capturing feature-correlations. Furthermore, motivated by the GDPR's ``right to explanation'', research on interpreting model predictions has surged~\citep{lundberg2017unified}. However, interpreting prediction bias has received less attention~\citep{lundberg2020explaining}. In this context, we apply global sensitivity analysis (GSA) to interpret fairness metrics by decomposing model bias into individual features and the intersection of multiple features.
+	
+	\vspace{1em}
+	
+	
+   I have not previously attended a doctoral consortium. I expect to graduate in Summer 2023 and plan to pursue a research career in either academia or industry, with a research focus centered on solving novel and practical problems in fairness and interpretability in machine learning for the next five years. To this end, I would be delighted to have mentors working in fairness and interpretability, such as Xiting Wang, Arthur Choi, Alexey Ignatiev, Dominik Peters, and Mohamed Siala.
+	
+	
+	\vspace{1em}
+	My research has thrived through multiple collaborations and internships in industry and academia. We have published our works at premier conferences and journals in artificial intelligence and machine learning (AAAI-2022, 2021, 2020, JAIR-2022, ECAI-2020, AIES-2019) and databases (VLDB-2018, TSAS-2022).
+	
+%	\vspace{1em}
+%	My application materials are also available from my website \blue{\url{https://bishwamittra.github.io}}.
+	
+	
+	\vspace{1em}
+	Thank you for considering my application. I look forward to hearing from you.
+	
+	\vspace{1em}
+	Sincerely,\\
+	Bishwamittra Ghosh	
+
+
+	\bibliographystyle{plainnat}
+	\bibliography{ref.bib}
+
+\begin{comment}
+\clearpage
+\section*{Reference}
+\textbf{Kuldeep S. Meel}\\
+Sung Kah Kay Assistant Professor\\ 
+School of Computing, National University of Singapore, Singapore\\
+Email: meel@comp.nus.edu.sg\\
+
+
+\textbf{Daniel Neider}\\
+Professor\\
+Carl von Ossietzky Universit\"at Oldenburg, Germany\\
+Email: daniel.neider@uol.de\\
+
+\textbf{Debabrota Basu}\\
+Faculty\\
+Scool, Inria, Lille-Nord, France\\
+Email: debabrota.basu@inria.fr\\
+
+\end{comment}
+
+
+\end{document}
