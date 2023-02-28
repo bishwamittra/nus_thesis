@@ -17,7 +17,7 @@ In this section, we empirically evaluate the performance of {\fvgm}. We first pr
 We  implement a  prototype of {\fvgm} in Python (version 3.8).  
 We deploy the Scikit-learn library for learning linear classifiers such as Logistic Regression (LR) and Support Vector Machine (SVM) with linear kernels. We perform five-fold cross-validation on a dataset. While the classifier is trained on continuous features, we discretize them to Boolean features to be invoked by {\fvgm}. During discretization, we apply a gird-search to estimate the best bin-size within a maximum bin of $ 10 $. To convert the coefficients of features into integers, we employ another grid-search to choose the best multiplier within $ \{1,2, \dots, 100\} $. For learning a Bayesian network on the converted Boolean data, we deploy the PGMPY library~\cite{ankan2015pgmpy}. For network learning, we apply a Hill-climbing search algorithm that learns a DAG structure by optimizing K2 score~\cite{koller2009probabilistic}. For estimating parameters of the network, we use Maximum Likelihood Estimation (MLE) algorithm. 
 
-We compare {\fvgm} with three existing fairness verifiers: Justicia~\cite{ghosh2020justicia}, FairSquare~\cite{albarghouthi2017fairsquare}, and VeriFair~\cite{bastani2019probabilistic}.In the following, we discuss a comparative analysis among all verifiers based on scalability and accuracy, where {\fvgm} yields superior performance than others. 
+We compare {\fvgm} with three existing fairness verifiers: Justicia (Chapter~\ref{chapter:justicia}), FairSquare~\cite{albarghouthi2017fairsquare}, and VeriFair~\cite{bastani2019probabilistic}. In the following, we discuss a comparative analysis among all verifiers based on scalability and accuracy, where {\fvgm} yields superior performance than others. 
  
 %Additionally, we have verified two fairness algorithms: reweighing algorithm (RW)~\cite{kamiran2012data} and the optimized pre-processing algorithm (OP)~\cite{calmon2017optimized}, and a fairness poisoning-attack algorithm~\cite{solans2020poisoning}. 
 
@@ -62,7 +62,7 @@ We compare {\fvgm} with three existing fairness verifiers: Justicia~\cite{ghosh2
 
 
 
-
+\begin{comment}
 
 
 \begin{table}[!t]
@@ -112,6 +112,7 @@ We compare {\fvgm} with three existing fairness verifiers: Justicia~\cite{ghosh2
 \end{table}
 
 
+\end{comment}
 
 
 
