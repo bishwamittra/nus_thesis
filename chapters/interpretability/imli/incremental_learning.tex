@@ -1,7 +1,6 @@
 \section{Incremental Learning with MaxSAT}
 \label{interpretability_imli_sec:incremental_learning} 
-The complexity of the MaxSAT query in Section~\ref{interpretability_imli_sec:encoding} increases with the number of samples in the training dataset and the number of clauses to be learned in a CNF formula. In this section, we discuss an incremental learning technique that along with the MaxSAT formulation can generate classification rules efficiently. Our incremental learning is built on two concepts: (i)
-mini-batch learning and (ii) iterative learning. We discuss both in detail in the following.
+To facilitate a scalable learning, we discuss the key technical contribution of this chapter: an incremental learning framework of interpretable classification rules based on MaxSAT. The complexity of the MaxSAT query in Section~\ref{interpretability_imli_sec:encoding} increases with the number of samples $ n $ in the training dataset and the number of clauses $ k $  in the CNF classifier. To scale on large $ n $ and $ k $, our incremental learning is built on two concepts: (i) mini-batch learning and (ii) iterative learning. 
 
 \subsection{Mini-batch Learning} 
 
