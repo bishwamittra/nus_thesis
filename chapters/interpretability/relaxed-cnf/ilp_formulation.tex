@@ -1,8 +1,8 @@
 \section{Classification Rules in Relaxed Logical Form}
 \label{interpretability_crr_sec:ilp}
 In this section, we describe the main contribution of this chapter, {\crr}, a  framework for learning   relaxed-CNF rules.  {\crr}  converts the learning problem into  an ILP-based formulation,  learns the optimal assignment of variables and constructs rule $ \Rule $ based on the assignment. We organize the rest of this section as follows.
-We  discuss the decision variables in Section ~\ref{interpretability_crr_sec:variables},  the constraints and the linear programming relaxation in Section~\ref{interpretability_crr_sec:ilp_query}, the incremental learning in Section~\ref{interpretability_crr_sec:inc_ilp}, feature discretization in Section~\ref{interpretability_crr_sec:discretization}, and adaptation of {\crr} for learning other classification rules in Section~\ref{interpretability_crr_sec:other_rules}.
-% We conclude this section by describing how {\crr} can be adjusted to learn interpretable rules in other logical forms in Section~\ref{interpretability_crr_sec:other_format}.
+We  discuss the decision variables in Chapter~\ref{interpretability_crr_sec:variables},  the constraints and the linear programming relaxation in Chapter~\ref{interpretability_crr_sec:ilp_query}, the incremental learning in Chapter~\ref{interpretability_crr_sec:inc_ilp}, feature discretization in Chapter~\ref{interpretability_crr_sec:discretization}, and adaptation of {\crr} for learning other classification rules in Chapter~\ref{interpretability_crr_sec:other_rules}.
+% We conclude this section by describing how {\crr} can be adjusted to learn interpretable rules in other logical forms in Chapter~\ref{interpretability_crr_sec:other_format}.
 
 %Given an instance space $ \{ \mathbf{X}, \mathbf{y} \} $ and  model parameters $ \noclause,\card_c,\card_l$, and  $\lambda $, {{\crr}} constructs an ILP query $ Q $  and invokes an off the shelf ILP solver to compute the underlying rule $ \Rule $.
 
@@ -108,7 +108,7 @@ In our case, we cannot relax all integer constraints because it may violate the 
 \subsection{Incremental Mini-batch Learning}
 \label{interpretability_crr_sec:inc_ilp}
 
-In Section~\ref{interpretability_crr_sec:ilp_query}, we  present an ILP formulation for learning relaxed-CNF rules and then discussed the relaxation to the integer constraints in the MILP formulation to make the approach computationally tractable. However, each integer constraints in the formulation cannot be relaxed, as discussed  in Section~\ref{interpretability_crr_sec:relaxation}. Thus we require an improved learning technique to achieve scalability. We now describe a mini-batch learning approach to {\crr}, that learns relaxed-CNF rule $ \Rule $ incrementally from a set of mini-batches while solving a modified MILP query for each mini-batch.
+In Chapter~\ref{interpretability_crr_sec:ilp_query}, we  present an ILP formulation for learning relaxed-CNF rules and then discussed the relaxation to the integer constraints in the MILP formulation to make the approach computationally tractable. However, each integer constraints in the formulation cannot be relaxed, as discussed  in Chapter~\ref{interpretability_crr_sec:relaxation}. Thus we require an improved learning technique to achieve scalability. We now describe a mini-batch learning approach to {\crr}, that learns relaxed-CNF rule $ \Rule $ incrementally from a set of mini-batches while solving a modified MILP query for each mini-batch.
 
 
 

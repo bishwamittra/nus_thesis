@@ -1,8 +1,8 @@
 \section{Interpretable Classification Rule Learning via MaxSAT}
 \label{interpretability_imli_sec:baseline}
 In this section, we revisit~\cite{malioutov2018mlic} by discussing a MaxSAT-based learning framework for an interpretable rule-based classifier, particularly a CNF classifier $ \Rule $. 
-We first describe the decision variables in Section~\ref{interpretability_imli_sec:variables} and present the MaxSAT encoding  in Section~\ref{interpretability_imli_sec:encoding}. The MaxSAT formulation assumes binary features as input. We
-conclude this section by learning $ \Rule $ with non-binary features in Section~\ref{interpretability_imli_sec:non-binary} and discussing more flexible interpretability constraints of $ \Rule $ in Section~\ref{interpretability_imli_sec:complex_interpretability_objectives}.  
+We first describe the decision variables in Chapter~\ref{interpretability_imli_sec:variables} and present the MaxSAT encoding  in Chapter~\ref{interpretability_imli_sec:encoding}. The MaxSAT formulation assumes binary features as input. We
+conclude this section by learning $ \Rule $ with non-binary features in Chapter~\ref{interpretability_imli_sec:non-binary} and discussing more flexible interpretability constraints of $ \Rule $ in Chapter~\ref{interpretability_imli_sec:complex_interpretability_objectives}.  
 
 
 
@@ -20,7 +20,7 @@ We consider two types of Boolean variables: (i) \emph{feature} variables $ \bool
 We consider a partial-weighted MaxSAT formula, where we encode the objective function in Eq.~\eqref{interpretability_imli_eq:obj} as soft clauses and the learning constraints as hard clauses. We next discuss the MaxSAT encoding in detail.
 
 \begin{itemize}
-	\item \textbf{Soft clauses for maximizing training accuracy:} For each training sample, {\imli} constructs a soft unit\footnote{A unit clause has a single literal.} clause $ \neg \noise_l $ to account for a penalty for misclassification. Since the penalty for misclassification of a sample is $ 1 $  in Eq.~\eqref{interpretability_imli_eq:obj},  the weight of this soft clause is also $ 1 $. 
+	\item \textbf{Soft clauses for maximizing training accuracy:} For each training sample, we construct a soft unit\footnote{A unit clause has a single literal.} clause $ \neg \noise_l $ to account for a penalty for misclassification. Since the penalty for misclassification of a sample is $ 1 $  in Eq.~\eqref{interpretability_imli_eq:obj},  the weight of this soft clause is also $ 1 $. 
 	
 	\begin{equation}
 		\label{interpretability_imli_soft_clause_error}
@@ -29,7 +29,7 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	Intuitively, if a sample is misclassified, the associated error variable becomes true, thereby dissatisfying the soft clause $ E_l $.
 	 
 	
-	\item \textbf{Soft clauses for minimizing rule-sparsity:} To favor rule-sparsity, {\imli} tries to learn a classifier with as few literals as possible. Hence, for each feature variable $ \bool_j^i $, {\imli} constructs a unit clause as $ \neg \bool_j^i $. Similar to training accuracy, the weight for this clause is derived as $ \lambda $ from Eq.~\eqref{interpretability_imli_eq:obj}.
+	\item \textbf{Soft clauses for minimizing rule-sparsity:} To favor rule-sparsity, we learn a classifier with as few literals as possible. Hence, for each feature variable $ \bool_j^i $, we construct a unit clause as $ \neg \bool_j^i $. Similar to training accuracy, the weight for this clause is derived as $ \lambda $ from Eq.~\eqref{interpretability_imli_eq:obj}.
 	\begin{equation}
 		\label{interpretability_imli_soft_clause_feature}
 		S_j^i:= \neg \bool_j^i; \qquad \clauseweight{S_j^i}= \lambda
@@ -37,7 +37,7 @@ We consider a partial-weighted MaxSAT formula, where we encode the objective fun
 	
 
 	
-	\item \textbf{Hard clauses for encoding constraints:} In a MaxSAT problem, constraints that must be satisfied are encoded as hard clauses. In {\imli}, we have a learning constraint that, if the error variable is false, the associated sample must be correctly classified, and vice-versa. Let  $\boolset_i= \{\bool^i_{j} \mid j \in \{1,\dots,m \}\}$ be a vector of feature variables corresponding to the $ i^\text{th} $  clause in $ \mathcal{R} $. Then, we define the following hard clause.
+	\item \textbf{Hard clauses for encoding constraints:} In a MaxSAT problem, constraints that must be satisfied are encoded as hard clauses. In rule-based classification, we have a learning constraint that, if the error variable is false, the associated sample must be correctly classified, and vice-versa. Let  $\boolset_i= \{\bool^i_{j} \mid j \in \{1,\dots,m \}\}$ be a vector of feature variables corresponding to the $ i^\text{th} $  clause in $ \mathcal{R} $. Then, we define the following hard clause.
 	
 	\begin{equation}
 			\label{interpretability_imli_hard_clause_rule_consistency}
@@ -162,9 +162,9 @@ In this example, we consider regularizer $ \lambda = 0.1 $, thereby setting the 
 	
 \subsection{Flexible Interpretability Objectives}
 \label{interpretability_imli_sec:complex_interpretability_objectives}
-{\imli} can be extended to consider more flexible interpretability objectives than the simplified one in Eq.~\eqref{interpretability_imli_eq:obj}. In Eq.~\eqref{interpretability_imli_eq:obj}, we prioritize all features equally by providing the same weight to the clause $ S_j^i $ for all  values of $ i $ and $ j $. In practice, users may prefer rules containing certain features. In {\imli}, such an extension can be achieved by modifying the weight function and/or the definition of  $ S_j^i $. For example, to constrain the classifier to never include a feature, the weight of the clause $ S_j^i := \neg \bool_j^i $ can be set to $ \infty $. In contrast, to always include a feature, we can define $ S_j^i := \bool_j^i $ with weight $ \infty $. In both cases, we treat $ S_j^i $ as a hard clause. 
+In interpretable classification rules, we can consider more flexible interpretability objectives than the simplified one in Eq.~\eqref{interpretability_imli_eq:obj}. In Eq.~\eqref{interpretability_imli_eq:obj}, we prioritize all features equally by providing the same weight to the clause $ S_j^i $ for all  values of $ i $ and $ j $. In practice, users may prefer rules containing certain features. In the MaxSAT formulation, such an extension can be achieved by modifying the weight function and/or the definition of  $ S_j^i $. For example, to constrain the classifier to never include a feature, the weight of the clause $ S_j^i := \neg \bool_j^i $ can be set to $ \infty $. In contrast, to always include a feature, we can define $ S_j^i := \bool_j^i $ with weight $ \infty $. In both cases, we treat $ S_j^i $ as a hard clause. 
 
-Another use case may be to learn rules where clauses have disjoint set of features. To this end, we consider a pseudo-Boolean constraint $ \sum_{i=1}^k \bool^i_j \le 1 $, which specifies that the feature $ X_j $ appears in at-most one of the $ k $ clauses. This constraint may be soft or hard depending on the priority in the application domain. In either case, we convert this constraint to CNF using pseudo-Boolean to CNF translation~\cite{philipp2015pblib}. Thus, {\imli} allows us to consider varied interpretability constraints by only modifying the MaxSAT query without requiring changes in the MaxSAT solving. Therefore, the \emph{separation between modeling and solving} turns out to be the key strength of {\imli}.
+Another use case may be to learn rules where clauses have disjoint set of features. To this end, we consider a pseudo-Boolean constraint $ \sum_{i=1}^k \bool^i_j \le 1 $, which specifies that the feature $ X_j $ appears in at-most one of the $ k $ clauses. This constraint may be soft or hard depending on the priority in the application domain. In either case, we convert this constraint to CNF using pseudo-Boolean to CNF translation~\cite{philipp2015pblib}. Thus, the MaxSAT formulation allows us to consider varied interpretability constraints by only modifying the MaxSAT query without requiring changes in the MaxSAT solving. Therefore, the \emph{separation between modeling and solving} turns out to be the key strength of the presented MaxSAT formulation.
 
 
 

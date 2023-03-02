@@ -62,7 +62,7 @@ In Algorithm~\ref{interpretability_imli_algo:iterative_decision_lists_learning},
 		\State $ \mathcal{R}_L \leftarrow \{\}$
 		\For{$ i \leftarrow 1, \dots, k-1 $ and $ \dataset \ne \emptyset $}
 		\State $ V_i \leftarrow \textsc{MajorityClass}(\{y^{(i)}\}_{i=1}^{|\dataset|}) $ \Comment{$ V_i $ specifies the target class given class label}
-		\State $ C_i \leftarrow \textsc{MiniBatchDNFLearning}( \dataset, \lambda, 1, V_i) $ \Comment{Ref. Section~\ref{interpretability_imli_sec:dnf_learning}}
+		\State $ C_i \leftarrow \textsc{MiniBatchDNFLearning}( \dataset, \lambda, 1, V_i) $ \Comment{Ref. Chapter~\ref{interpretability_imli_sec:dnf_learning}}
 		
 %		\label{interpretability_imli_algo:iterative_CNF_learning_incremental_learning}
 		\State $ \dataset' \leftarrow \textsc{Coverage}(\dataset, C_i) $
