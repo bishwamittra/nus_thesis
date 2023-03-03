@@ -8,7 +8,7 @@ We represent sets/vectors by bold letters, and the corresponding distributions b
 
 \section{Formal Methods}
 
-\subsection{Propositional Satisfiability}
+\subsection{Propositional Satisfiability (SAT)}
 
 Let $\propformula$ be a Boolean formula defined over a set of Boolean variables $\boolset = \{\bool_1,\bool_2,\dots ,\bool_m \}$. A literal $ \literal $ is a variable $ \bool $ or its complement $\neg \bool$, and a clause $ \propclause $ is a disjunction ($ \vee $) or a conjunction ($ \wedge $) of literals.\footnote{While \emph{term} is reserved to denote disjunction of literals, we use clause for both disjunction and conjunction.}  $\propformula$ is in Conjunctive Normal Form (CNF) if $\propformula \triangleq  \bigwedge_i \propclause_i$ is a conjunction of clauses where each clause $\propclause_i \triangleq  \bigvee_j \literal_j $  is a disjunction of literals. In contrast, $ \propformula $ is in Disjunctive Normal Form (DNF) if $\propformula \triangleq  \bigvee_i \propclause_i$ is a disjunction of clauses where each clause $\propclause_i \triangleq  \bigwedge_j \literal_j $ is a conjunction of literals. We use $\sigma$ to denote an assignment of variables in  $\boolset$ where $ \sigma(\bool_i) \in $ \{true, false\}. A \emph{satisfying assignment} $ \sigma^* $ of $\propformula$ is an assignment  that evaluates $\propformula$  to true and is denoted by $ \sigma^* \models \propformula $. The propositional satisfiability (SAT) problem finds a satisfying assignment $ \sigma^* $ to a CNF formula $ \propformula $  such that $ \forall i, \sigma^* \models \propclause_i $, wherein $ \sigma^*\models \propclause_i $ if and only if $ \exists \literal_j \in \propclause_i, \sigma^*(\literal_j) = \text{true} $. Informally, $ \sigma^* $ satisfies at least one literal in each clause of a CNF. 
 
@@ -17,7 +17,7 @@ Let $\propformula$ be a Boolean formula defined over a set of Boolean variables 
 
 \subsection{Relaxation of Logical Formulas}
 
-A hard-OR or a soft-AND clause is a tuple $ (\propclause,\card) $ with an extra parameter $ \card $, where $ \card $ is the threshold on the literals in $ C $. Let $ \mathds{1}[\text{true}]=1 $ and $ \mathds{1}[\text{false}]=0 $. Motivated by Boolean cardinality constraints, we propose relaxed-CNF formulas, where in addition to $\propformula$, we have two more parameters $\card_c$ and $\card_l$. We say that $(\propformula,\card_c, \card_l)$ is in relaxed-CNF and $ \sigma^* $ is its satisfying assignment if and only if $\sigma^* \models (\propformula,\card_c, \card_l)$ whenever $\sum_{i=1}^k \mathds{1}[\sigma^* \models (\propclause_i,\card_l)] \ge \card_c$, where $\sigma^* \models (\propclause_i, \card_l)$ if and only if $\sum_{V \in \propclause_i} \mathds{1}[\sigma^* \models V] \geq \card_l$. Informally,  $\sigma^*$ satisfies a clause $(\propclause_i, \card_l)$ if  at least $\card_l$ literals in $\propclause_i$ are set to true by $\sigma^*$ and $\sigma^*$ satisfies $(\propformula,\card_c, \card_l)$ if at least $\card_c$  clauses out of all $\{(\propclause_i,\card_l)\}_{i=1}^k$ clauses are true. 
+A hard-OR or a soft-AND clause is a tuple $ (\propclause,\card) $ with an extra parameter $ \card $, where $ \card $ is the threshold on the literals in $ C $. Let $ \mathds{1}[\text{true}]=1 $ and $ \mathds{1}[\text{false}]=0 $. Motivated by Boolean cardinality constraints, we introduce relaxed-CNF formulas, where in addition to $\propformula$, we have two more parameters $\card_c$ and $\card_l$. We say that $(\propformula,\card_c, \card_l)$ is in relaxed-CNF and $ \sigma^* $ is its satisfying assignment if and only if $\sigma^* \models (\propformula,\card_c, \card_l)$ whenever $\sum_{i=1}^k \mathds{1}[\sigma^* \models (\propclause_i,\card_l)] \ge \card_c$, where $\sigma^* \models (\propclause_i, \card_l)$ if and only if $\sum_{V \in \propclause_i} \mathds{1}[\sigma^* \models V] \geq \card_l$. Informally,  $\sigma^*$ satisfies a clause $(\propclause_i, \card_l)$ if  at least $\card_l$ literals in $\propclause_i$ are set to true by $\sigma^*$ and $\sigma^*$ satisfies $(\propformula,\card_c, \card_l)$ if at least $\card_c$  clauses out of all $\{(\propclause_i,\card_l)\}_{i=1}^k$ clauses are true. 
 
 
 \begin{theorem}[\cite{benhamou1994two}]
@@ -34,7 +34,7 @@ For example, let us consider a vector of variables $ \mathbf{U} = [U_1, U_2, U_3
 
 
 
-\subsection{MaxSAT}
+\subsection{Maximum Satisfiability (MaxSAT)}
 
 
 The MaxSAT problem is an optimization analog to the satisfiability (SAT) problem, which is complete for the class $ \mathrm{FP}^{\mathrm{NP}} $. Although the MaxSAT problem is NP-hard, dramatic progress has been made in designing solvers that can handle large-scale problems arising in practice. This has encouraged researchers to reduce several optimization problems into MaxSAT such as  optimal planning~\cite{robinson2010partial}, automotive configuration~\cite{walter2013applications}, group-testing~\cite{CGSM2020}, data analysis in machine learning~\cite{berg2019applications}, and automatic test pattern generation for cancer therapy~\cite{lin2012application}. 
@@ -90,7 +90,7 @@ Let $ \boolset \triangleq \{\bool_i\}_{i=1}^{|\boolset|}$ be a set of Boolean va
 
 \section{Interpretable Machine Learning}
 \label{chapter_interpretability_preliminaries}
-We consider a standard binary classification problem where the dataset $ \dataset $ is a collection of $ n $ samples  $\{(\mathbf{x}^{(i)}, y^{(i)})\}_{i=1}^n$ generated from an underlying distribution $\mathcal{D}$.  Here, the feature valuation vector $ \mathbf{x} = [x_1, \dots, x_{m}] \in \{0, 1\}^m $ is a vector of $ m $ Boolean features with $ y \in \{0,1\} $ being the binary class label. Thus, $ (\mathbf{x}, y) $ is called a positive sample if $ y = 1 $, and a negative sample otherwise.  We use $ (\nonsensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, y) $. Hence, each feature $ X_j \in \nonsensitive $ is sampled from a Bernoulli distribution $ \mathcal{X}_j $, and $ \mathcal{D} = \prod_{j=1}^m \mathcal{X}_j  $ is the product distribution of all features. 
+We consider a  binary classification problem where the dataset $ \dataset $ is a collection of $ n $ samples  $\{(\mathbf{x}^{(i)}, y^{(i)})\}_{i=1}^n$ generated from an underlying distribution $\mathcal{D}$.  Here, the feature valuation vector $ \mathbf{x} = [x_1, \dots, x_{m}] \in \{0, 1\}^m $ is a vector of $ m $ Boolean features with $ y \in \{0,1\} $ being the binary class label. Thus, $ (\mathbf{x}, y) $ is called a positive sample if $ y = 1 $, and a negative sample otherwise.  We use $ (\nonsensitive, Y) $ to denote the random variables corresponding to $ (\mathbf{x}, y) $. Hence, each feature $ X_j \in \nonsensitive $ is sampled from a Bernoulli distribution $ \mathcal{X}_j $, and $ \mathcal{D} = \prod_{j=1}^m \mathcal{X}_j  $ is the product distribution of all features. 
 
 
 

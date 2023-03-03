@@ -313,7 +313,7 @@ We perform experiments on a Red Hat Enterprise Linux Server release 6.10 (Santia
 
 
 
-\subsection{Accurate Approximation of Equalized Odds and Predictive Parity using FIFs.}
+\subsection{Accuracy: Equalized Odds \& Predictive Parity via FIFs.}
 The accuracy of approximating equalized odds and predictive parity for {\fairXplainer} and SHAP is compared in Table~\ref{fairness_fairXplainer_tab:accuracy_eo_pp}. {\fairXplainer} shows lower estimation error compared to SHAP, especially when $\lambda=2$. SHAP is unable to explain predictive parity as predictive parity relies on the ground label $Y$, which is not available for randomly generated data points by SHAP for estimating local explanations.
 
 
@@ -329,7 +329,7 @@ The accuracy of approximating equalized odds and predictive parity for {\fairXpl
 \end{figure}
 
 
-\subsection{Execution Time for FIF Estimation of Equalized Odds and Predictive Parity}
+\subsection{Execution Time: Equalized Odds \& Predictive Parity via FIFs}
 In Figure~\ref{fairness_fairXplainer_fig:execution_time_cactus_plot_eo_pp}, we demonstrate the execution time of different methods in estimating FIFs of equalized odds and predictive parity in cactus plots. {\fairXplainer} with $ \lambda = 1 $ is more efficient than $ \lambda = 2 $ and solves all $ 480 $ fairness instances with at least one order of magnitude less execution time. Compared to {\fairXplainer} ($ \lambda = 1 $), SHAP demonstrates less computational efficiency.
 
 \begin{figure}

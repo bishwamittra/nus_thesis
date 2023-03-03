@@ -5,7 +5,7 @@ In this section, we empirically evaluate the performance of {\imli}. We first pr
 
 
 \subsection{Experimental Setup}
-We implement a prototype of {\imli} in Python to evaluate the performance of the proposed MaxSAT-based formulation for learning classification rules. To implement {\imli}, we deploy a state-of-the-art MaxSAT solver Open-WBO~\cite{martins2014open}, which returns the current best solution upon reaching a timeout. 
+We implement a prototype of {\imli} in Python to evaluate the performance of the  MaxSAT-based formulation for learning classification rules. To implement {\imli}, we deploy a state-of-the-art MaxSAT solver Open-WBO~\cite{martins2014open}, which returns the current best solution upon reaching a timeout. 
 
 We compare {\imli} with state-of-the-art interpretable and non-interpretable classifiers. Among interpretable classifiers, we compare with RIPPER~\cite{cohen1995fast}, BRL~\cite{letham2015interpretable}, CORELS~\cite{angelino2017learning}, and BRS~\cite{wang2017bayesian}. Among non-interpretable classifiers, we compare with Random Forest (RF), Support Vector Machine with linear kernels (SVM), Logistic Regression classifier (LR), and k-Nearest Neighbors classifier (kNN). We deploy the Scikit-learn library in Python for implementing non-interpretable classifiers. 
 

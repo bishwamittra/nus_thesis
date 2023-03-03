@@ -188,17 +188,22 @@
 \begin{document}
 \title{Interpretability and Fairness in Machine Learning: A Formal Methods Approach}
 \author{Bishwamittra Ghosh}
-\prevdegrees{%
-  Ph.D.\ Candidate, National University of Singapore}
+%\prevdegrees{%
+%  Ph.D.\ Candidate, National University of Singapore}
 \degree{Doctor of Philosophy}
 \field{Computer Science}
 \degreeyear{2023}
-\supervisor{Assistant Professor Kuldeep S.\ Meel}
+%\supervisor{Assistant Professor Kuldeep S.\ Meel}
+\supervisor{Kuldeep S.\ Meel (NUS, Singapore)}
+
 
 % only involve the examiners in the final submission
 \examiners{%
-  Assistant Professor Reza Shokri\\
-  Assistant Professor Harold Soh}
+%  Assistant Professor Reza Shokri\\
+%  Assistant Professor Harold Soh\\
+	Reza Shokri (NUS, Singapore)\\
+	Harold Soh (NUS, Singapore)\\
+  	Debabrota Basu (INRIA, France)}
 
 \maketitle
 
@@ -225,11 +230,11 @@
 
 
 \part{Interpretable Rule-based Machine Learning}
-In this part of the thesis, we discuss  an incremental learning framework for interpretable classification rules in Chapter~\ref{chapter:imli}, and extend incremental learning to more expressible classification rules in Chapter~\ref{chapter:crr}. 
+We discuss  an incremental learning framework based on MaxSAT for interpretable classification rules in Chapter~\ref{chapter:imli}. This allows us to scale up classification on large datasets. In Chapter~\ref{chapter:crr}, we improve the expressiveness of rule-based classifiers and apply incremental solving for an efficient learning.
 
 % Interpretability
 % IMLI
-\chapter{Efficient Learning of Interpretable Classification Rules}
+\chapter{Scalability via Incremental Learning}
 \input{chapters/interpretability/imli/introduction}
 \input{chapters/interpretability/imli/related_work}
 \input{chapters/interpretability/imli/problem_formulation}
@@ -241,7 +246,7 @@ In this part of the thesis, we discuss  an incremental learning framework for in
 
 
 % Relaxed CNF
-\chapter{Interpretable Rules in Relaxed Logical Form}
+\chapter{Expressiveness via Logical Relaxation}
 \input{chapters/interpretability/relaxed-cnf/introduction.tex}
 \input{chapters/interpretability/relaxed-cnf/problem_formulation.tex}
 \input{chapters/interpretability/relaxed-cnf/ilp_formulation.tex}
@@ -252,11 +257,11 @@ In this part of the thesis, we discuss  an incremental learning framework for in
 
 \part{~Fairness in Machine Learning}
 
-In this part of the thesis, we discuss formal fairness verification for finite classifiers encoded as Boolean formulas in Chapter~\ref{chapter:justicia} and a special case of linear classifiers in Chapter~\ref{chapter:fvgm}.
+In Chapter~\ref{chapter:justicia}, we discuss an SSAT-based framework to formally verify the fairness of finite classifiers encoded as Boolean formulas. In Chapter~\ref{chapter:fvgm}, we handle feature correlations in fairness verification and discuss a tractable fairness verification of linear classifiers.
 
 % Fairness
 % Justicia
-\chapter{Formal Verification of Fairness}
+\chapter{Fairness Verification using SSAT}
 \input{chapters/fairness/justicia/introduction.tex}
 \input{chapters/fairness/justicia/framework.tex}
 \input{chapters/fairness/justicia/practical.tex}
@@ -264,7 +269,7 @@ In this part of the thesis, we discuss formal fairness verification for finite c
 \input{chapters/fairness/justicia/discussion.tex}
 
 % FVGM
-\chapter{Fairness Verification with Feature Correlation}
+\chapter{Handling Feature Correlations in Fairness Verification}
 \input{chapters/fairness/fvgm/introduction}
 \input{chapters/fairness/fvgm/framework}
 \input{chapters/fairness/fvgm/framework2}
@@ -278,8 +283,11 @@ In this part of the thesis, we discuss formal fairness verification for finite c
 
 
 \part{~Epilogue}
+In Chapter~\ref{chapter:fif}, we envision towards combining two research themes in the thesis: interpretability and fairness, and discuss an algorithmic framework to interpret  fairness in machine learning. In Chapter~\ref{chapter:conclusion}, we conclude the thesis and discuss future work.
+
+
 %%		FairXplainer
-\chapter{Interpreting Fairness}				
+\chapter{Interpreting Fairness: Identifying Sources of Bias}				
 \input{chapters/fairness/fif/introduction.tex}
 \input{chapters/fairness/fif/framework.tex}
 \input{chapters/fairness/fif/fairxplainer.tex}

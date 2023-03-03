@@ -1,7 +1,7 @@
 %\section{Introduction}
 %\paragraph{Motivation: \red{ML} + Fairness}
 \label{chapter:justicia}
-In this chapter, we study formal fairness verification problem in machine learning, where we verify the bias of a classifier given the probability distribution of features. To verify fairness as a model property, several probabilistic fairness verifiers such as FairSquare~\cite{albarghouthi2017fairsquare} and VeriFair~\cite{bastani2019probabilistic} have been proposed. 
+We discuss formal fairness verification problem in machine learning where we verify the bias of a classifier given the probability distribution of features. To verify fairness as a model property, several probabilistic fairness verifiers such as FairSquare~\cite{albarghouthi2017fairsquare} and VeriFair~\cite{bastani2019probabilistic} have been proposed. 
 %FairSquare verifies demographic parity and individual fairness as a numerical integration problem for a specific program semantics.
 %VeriFair translates fairness metrics to an enumeration problem of a specified Boolean syntax.
 %These papers operate for a specific Boolean sensitive feature.
@@ -14,7 +14,7 @@ Since sample-based verifiers are dataset-specific, they generally do not provide
 %\blue{Other papers: Probabilistic Verification of Fairness Properties via	Concentration, Verifying Individual Fairness in Machine Learning Models~\cite{john2020verifying}}
 Thus, a \textit{unified formal framework} to verify \textit{different fairness metrics} of a classifer, which is \textit{scalable}, capable of \textit{handling compound sensitive groups}, \textit{robust} with respect to the test data, and \textit{operational on real-life} datasets and fairness-enhancing algorithms, is missing in the literature.
 
-\paragraph{Contribution.} We propose to model verifying different fairness metrics as a SSAT problem.  We primarily focus on reductions to the exist-random quantified fragment of SSAT, which is also known as E-MAJSAT~\cite{littman2001stochastic}.   Our choice of SSAT as a target formulation is motivated by the recent algorithmic progress that has yielded efficient SSAT tools~\cite{lee2017solving,lee2018solving}.
+\paragraph{Contribution.} We discuss model verifying different fairness metrics as a SSAT problem.  We primarily focus on reductions to the exist-random quantified fragment of SSAT, which is also known as E-MAJSAT~\cite{littman2001stochastic}.   Our choice of SSAT as a target formulation is motivated by the recent algorithmic progress that has yielded efficient SSAT tools~\cite{lee2017solving,lee2018solving}.
 
 
 
@@ -24,9 +24,9 @@ Thus, a \textit{unified formal framework} to verify \textit{different fairness m
 
 Our contributions are summarised below:
 \begin{itemize}
-	\item We propose a unified SSAT-based approach, {\justicia}, to verify independence and separation metrics of group  fairness metrics for different datasets and classifiers.
+	\item We discuss a unified SSAT-based approach, {\justicia}, to verify independence and separation metrics of group  fairness metrics for different datasets and classifiers.
 	%\item \blue{{\justicia} measures fairness metrics for pre-, in-, and post-processing \red{algorithm}s with respect to the data  generating distribution}.
-	\item Unlike previously proposed formal probabilistic verifiers, namely FairSquare and VeriFair, {\justicia} verifies fairness for compound and non-Boolean sensitive features.%, and also \red{separation metrics}.
+	\item Unlike earlier probabilistic verifiers, namely FairSquare and VeriFair, {\justicia} verifies fairness for compound and non-Boolean sensitive features.%, and also \red{separation metrics}.
 	\item Our experiments validate that our method is more accurate and scalable than the probabilistic verifiers, such as FairSquare and VeriFair, and more robust than the sample-based empirical verifiers, such as AIF360.
 %	\item We prove a finite-sample error bound on our estimated fairness metrics which is stronger than the existing asymptotic guarantees.
 \end{itemize}
