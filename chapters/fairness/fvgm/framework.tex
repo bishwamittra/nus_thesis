@@ -65,10 +65,10 @@ Observe that when $ \textbf{B} $ is empty, $S$ is computed as $ 1 $ if $ \tau \l
  \label{fvgm_sec:dp_formulation}
  %\dbcomment{Use $ \mathsf{dp}(i, \tau) $ given $ B $}
 
-We propose a dynamic programming approach~\cite{pisinger1999linear,woeginger1992equal} to solve {\stochastic} as the problem has overlapping sub-problem properties. 
+We discuss a dynamic programming approach~\cite{pisinger1999linear,woeginger1992equal} to solve {\stochastic} as the problem has overlapping sub-problem properties. 
 For example, $S(\mathbf{B}, \tau)$ can be solved by solving $S(\mathbf{B}[2:n], \tau')$, where the updated threshold $\tau'$, called the \textit{residual threshold}, depends on the original threshold $\tau$ and the assignment of $B_1$ as shown in Eq.~\eqref{fvgm_eq:semantics_recurse}.
 %\red{For example, the residual threshold $ \tau $ can be equal for a fixed subset of $ \mathbf{B} $, say $ \mathbf{B}[i:n] \triangleq \{B_j\}_{j=i}^{n} $, derived from different assignments of $ B_1, \dots, B_{i-1} $.} 
-Building on this observation, we propose the recursion and terminating condition leading to our dynamic programming algorithm. 
+Building on this observation, we discuss the recursion and terminating condition leading to our dynamic programming algorithm. 
 
 \textit{Recursion.} We consider a function $ \mathsf{dp}(i, \tau) $ that solves the sub-problem $ S(\mathbf{B}[i:n],\tau)  $, for $ i \in \{1,\ldots,n\}  $. The semantics of  $ S(\mathbf{B},\tau) $ in Eq.~\eqref{fvgm_eq:semantics_recurse} induces the recursive definition of $ \mathsf{dp}(i,\tau) $ as: 
 
@@ -124,7 +124,7 @@ Eq.~\eqref{fvgm_eq:dp_recurse} and~\eqref{fvgm_eq:dp_terminus} together define o
 
 
 \paragraph{A Heuristic for Faster Computation.} 
-We propose two improvements for a faster computation of the dynamic programming solution. Firstly, we observe that in Eq.~\eqref{fvgm_eq:dp_recurse}, existential/universal variables are deterministically  assigned based on their weights. Hence, we reorder $ \mathbf{B} $ such that existential/universal variables appear earlier in $ \mathbf{B} $ than random variables. This allows us to avoid unnecessary repeated exploration of existential/universal variables in $ \mathsf{dp} $. Moreover, according to the remark in Chapter~\ref{fvgm_lm:property_s3p}, reordering $ \mathbf{B} $ still produces the same exact solution of {\stochastic}. Secondly, to reach the terminating condition of $ \mathsf{dp}(i, \tau) $ more frequently, we sort $ \mathbf{B} $ based on their weights\textemdash more specifically, within each cluster of random, existential, and universal variables. In particular, if $ \tau \le 0.5(W_{pos} - W_{neg}) $, $ \tau $ is closer to $ W_{pos} $ than $ W_{neg} $. Hence, we sort each cluster in descending order of weights. Otherwise,  we sort in ascending order. We illustrate our dynamic programming approach in Example~\ref{fvgm_example:subset-sum}.
+We discuss two improvements for a faster computation of the dynamic programming solution. Firstly, we observe that in Eq.~\eqref{fvgm_eq:dp_recurse}, existential/universal variables are deterministically  assigned based on their weights. Hence, we reorder $ \mathbf{B} $ such that existential/universal variables appear earlier in $ \mathbf{B} $ than random variables. This allows us to avoid unnecessary repeated exploration of existential/universal variables in $ \mathsf{dp} $. Moreover, according to the remark in Chapter~\ref{fvgm_lm:property_s3p}, reordering $ \mathbf{B} $ still produces the same exact solution of {\stochastic}. Secondly, to reach the terminating condition of $ \mathsf{dp}(i, \tau) $ more frequently, we sort $ \mathbf{B} $ based on their weights\textemdash more specifically, within each cluster of random, existential, and universal variables. In particular, if $ \tau \le 0.5(W_{pos} - W_{neg}) $, $ \tau $ is closer to $ W_{pos} $ than $ W_{neg} $. Hence, we sort each cluster in descending order of weights. Otherwise,  we sort in ascending order. We illustrate our dynamic programming approach in Example~\ref{fvgm_example:subset-sum}.
 	
 \begin{example}\label{fvgm_example:subset-sum}
 \normalfont
