@@ -5,8 +5,10 @@ We formalize Fairness Influence Functions (FIF) as a quantifier of the contribut
 
 \subsection{Fairness Metrics as the Variance of Prediction}
 \label{fairness_fairXplainer_sec:metric_as_variance}
+First we recall the definition of statistical parity in Chapter~\ref{chapter_fairness_preliminaries_fairness_metrics}.
+\[ f_{\mathsf{SP}}(\alg, \mathbf{D}) \triangleq \max_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] - \min_{\mathbf{a}}\Pr[\widehat{Y} =1 | \mathbf{A} = \mathbf{a}] \]
 
-First, we observe that the random variable central to computing statistical parity is $ \mathds{1}[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}] $.
+Therefore, the random variable central to computing statistical parity is $ \mathds{1}[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}] $.
 We refer to this indicator function as \textit{Conditional Positive Prediction (CPP)} of a classifier. Now, we express statistical parity as a functional of the probability of CPPs for different sensitive groups~\cite{benesse2021fairness}. For brevity, we defer similar formulations for the other fairness metrics, i.e. equalized odds and predictive parity, to Appendix~\ref{fairness_fairXplainer_app:pp}. %CPP has an additional conditional $ Y = y $.}
 %For indicator functions, probability and expectation are equal.
 
@@ -95,6 +97,10 @@ When $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\max} ] = \Pr[\widehat{
 \end{proposition}
 When a classifier always yields positive predictions for the most favoured group and only negative predictions for the least favoured group, we obtain $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\max} ] = 1 $ and $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\min} ] = 0 $. This is a perfectly biased classifier, which can be expressed by the binary rule $\widehat{Y} = 1$ if $\sensitive = \mathbf{a}_{\max}$ and $0$ otherwise. As the discrimination is only due to the sensitive features, our FIF formulation cannot attribute any bias to the any other subset of  features, which leads to $ w_{\mathbf{S}} = 0 $ for all $\mathbf{S}$.
 
+
+\begin{remark}
+	For detecting degenerate cases, we require to compute $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\max} ]  $ and $ \Pr[\widehat{Y} = 1 \mid \sensitive = \mathbf{a}_{\min} ]  $ on the dataset $ \mathbf{D} $. Hence, the detection can be performed in a straightforward manner.
+\end{remark}
 
 
 \textit{Expressing FIF in terms of the variance decomposition over a subset of features allows us to import and extend well-studied techniques of GSA to perform FIF estimation}, which we elaborate on Chapter~\ref{fairness_fairXplainer_sec:fairxplainer}.

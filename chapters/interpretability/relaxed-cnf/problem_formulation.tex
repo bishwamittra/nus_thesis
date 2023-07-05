@@ -36,9 +36,10 @@ In practical classification tasks, perfect classification is very unusual. Hence
 
 %\vspace{-12pt}
 \[
-\min\limits_{\mathcal{R}} \;  \frac{\lambda}{n}|\mathcal{E}_{\dataset}| + \frac{1-\lambda}{k\cdot m} |\mathcal{R}|  
+\min\limits_{\mathcal{R}} \;  \frac{\lambda}{n}|\mathcal{E}_{\dataset}| + \frac{1-\lambda}{k\cdot m} |\mathcal{R}|, 
 \]
-%\vspace{-13pt}
+
+where $ |\mathcal{R}| $ denotes the size of rule, i.e., the number of literals in relaxed-CNF formula $ \mathcal{R} $ (ref.~\ref{chapter_interpretability_preliminaries_rule_based_classification}).
 
 Each term in the  objective function is normalized in $ [0,1] $. 
 The data-fidelity parameter $ \lambda \in [0,1] $  serves to balance

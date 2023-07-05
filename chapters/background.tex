@@ -99,8 +99,9 @@ We consider a  binary classification problem where the dataset $ \dataset $ is a
 %$ \mathbf{X} \in \{0,1\}^{n\times m} $ is a binary feature matrix\footnote{Our framework allows learning on real-valued and categorical features, as discussed in Section~\ref{interpretability_imli_sec:non-binary}.} defined over Boolean features $\mathbf{x} = \{x_1, x_2, \dots, x_m\}$ and $ \mathbf{y} \in \{0,1\}^n $ is a vector of binary class labels.  The $ i^\text{th} $ row of $ \mathbf{X} $, denoted by $ \mathbf{X}_i \in \mathcal{X} $, is called a sample generated from a product distribution of all features $ \mathcal{X} $. Thus, $ \mathbf{X}_i $ is the valuation of features in $ \mathbf{x} $ and $ y_i $ is its class label.  $ \mathbf{X}_i $ is called a positive sample if $ y_i = 1 $, and a negative sample otherwise.
 
 \subsection{Rule-based Classification}
+\label{chapter_interpretability_preliminaries_rule_based_classification}
 A classifier $ \Rule: \mathbf{X} \rightarrow \widehat{Y} \in  \{0,1\} $ is a  function that takes a feature vector as input and outputs the predicted class label $\widehat{Y}$.  %We define two rules  $ \R_1 $ and $ \R_2 $ to be  equivalent  if $ \forall i,\R_1(\X_i)=\R_2(\X_i) $. 
-In a rule-based classifier such as a CNF formula, we view $ \mathcal{R} $ as a propositional formula defined over Boolean features $ \mathbf{X} $ such that, if $ \Rule $ becomes true for an input, the prediction $ \widehat{Y} = 1 $ and $ \widehat{Y} = 0 $, otherwise.  The goal is to design $\Rule$ not only to approximate the training data, but also to generalize to unseen samples arising from the same distribution. Additionally, we prefer to learn a \emph{sparse} $ \Rule $ in order to favor interpretability. We define the structural complexity of $ \Rule $, referred to as \emph{rule-size}, in terms of the number of literals it contains. Let $\clause(\Rule,i)$ denote  the  $i^\text{th}$ clause of $\Rule$ and $ |\clause(\Rule,i)| $ be  the number of literals in $\clause(\Rule,i)$. Thus, the size of the classifier is $|\Rule| =  \Sigma_i |\clause(\Rule,i)| $, which is the sum of literals in all clauses in $ \Rule $. 
+In a rule-based classifier such as a CNF formula, we view $ \mathcal{R} $ as a propositional formula defined over Boolean features $ \mathbf{X} $ such that, if $ \Rule $ becomes true for an input, the prediction $ \widehat{Y} = 1 $ and $ \widehat{Y} = 0 $, otherwise.  The goal is to design $\Rule$ not only to approximate the training data, but also to generalize to unseen samples arising from the same distribution. Additionally, we prefer to learn a \emph{sparse} $ \Rule $ in order to favor interpretability. We define the structural complexity of $ \Rule $, referred to as \emph{rule size}, in terms of the number of literals it contains. Let $\clause(\Rule,i)$ denote  the  $i^\text{th}$ clause of $\Rule$ and $ |\clause(\Rule,i)| $ be  the number of literals in $\clause(\Rule,i)$. Thus, the size of the classifier is $|\Rule| =  \Sigma_i |\clause(\Rule,i)| $, which is the sum of literals in all clauses in $ \Rule $. 
 
 \begin{example}
 	\normalfont
@@ -124,7 +125,7 @@ We denote the random variables corresponding to $ (\mathbf{z}, \mathbf{x}, \math
 
 
 \subsection{Fairness Metrics}
-
+\label{chapter_fairness_preliminaries_fairness_metrics}
 A classifier $\alg$ that solely optimizes accuracy, i.e. the average number of times $\widehat{Y} = Y$, may discriminate certain compound sensitive groups over others~\cite{chouldechova2020snapshot}. In the following, we describe two well-known fairness definitions: group fairness and causal fairness. To this end, we denote $ f(\alg, \mathcal{D}) $ to quantify the fairness of the classifier $ \alg $ given the distribution of features $ \mathcal{D} $. Alternatively, a fairness metric can be computed on a finite dataset instead of on the distribution. In that case, we use the notation $ f(\alg, \dataset) $, which is the bias of the classifier $ \alg $ on a dataset $ \dataset $. 
 
 \paragraph{Statistical Parity ($ \mathsf{SP} $).} Statistical parity belongs to \textit{independence} measuring group fairness metrics, where the prediction $ \widehat{Y} $ is statistically independent of sensitive features $ \sensitive $~\cite{feldman2015certifying}.  The statistical parity of  a classifier is measured as 
@@ -174,7 +175,7 @@ Therefore, path-specific causal fairness constrains that the prediction $ \wideh
 \paragraph{Fairness Verification.} We verify the fairness of a classifier by comparing $ f(\alg, \mathcal{D}) $ with a fairness threshold, denoted by $ \epsilon \in [0,1] $, that quantifies the desired level of fairness. In particular, a classifier is $ \epsilon $-fair with respect to statistical parity, equalized odds, predictive parity, and path-specific causal fairness if and only if $ f(\alg, \mathcal{D}) \le \epsilon $. In contrast, a classifier achieves $(1 - \epsilon)$-disparate impact  if and only if $ f(\alg, \mathcal{D}) \ge 1 - \epsilon $. In all above fairness metrics, a lower value of $ \epsilon $ refers to higher fairness of the classifier.
 
 
-\subsection{Bayesian Network}
+\section{Bayesian Network}
 \label{chapter_fairness_preliminaries_BN}
 In general, a Probabilistic Graphical Model~\cite{koller2009probabilistic}, and specifically a \textit{Bayesian network}~\cite{pearl1985bayesian,chavira2008probabilistic}, encodes the dependencies and conditional independence between a set of random variables. In fairness verification with correlated features, we leverage an access to a Bayesian network on sensitive and non-sensitive features $ \nonsensitive \cup \sensitive $ that represents the joint distribution on them. A Bayesian network is denoted by a pair $ (\graph, \theta)$, where $ \graph \triangleq (\graphvertices, \graphedges) $ is a DAG (Directed Acyclic Graph), and $\theta$ is a set of parameters encoding the conditional probabilities induced by the joint distribution under investigation. Each vertex $\graphvertex_i \in \graphvertices$ corresponds to a random variable. Edges $ \graphedges \in \graphvertices \times \graphvertices $ imply conditional dependencies among variables. For each variable $ \graphvertex_i \in \graphvertices $, let $ \parent(\graphvertex_i) \subseteq \graphvertices \setminus \{\graphvertex_i\} $ denote the set of parents of $ \graphvertex_i $. Given $\parent(\graphvertex_i)$ and parameters $\theta$, $ \graphvertex_i $ is independent of its other non-descendant variables in $\graph$. Thus, for the assignment $ v_i $ of $ \graphvertex_i $ and $ \mathbf{u} $ of $ \parent(\graphvertex_i) $, the aforementioned semantics of a Bayesian network encodes the joint distribution of $\graphvertices$ as:
 
@@ -193,7 +194,7 @@ The complexity $ \bncomplexity(\graph) $ of a Bayesian network $ (\graph, \theta
 \end{align}
 
 
-\subsection{Global Sensitivity Analysis (GSA): Variance Decomposition}
+\section{Global Sensitivity Analysis (GSA): Variance Decomposition}
 Global sensitivity analysis is an active field of research that studies how the global uncertainty in the output of a function can be attributed to the different sources of uncertainties in the input variables~\cite{saltelli2008global}.
 Sensitivity analysis is an essential component for quality assurance and impact assessment of models in EU~\cite{eu}, USA~\cite{usepa}, and research communities~\cite{saltelli2020five}.
 %\paragraph{Sensitivity Analysis:}
